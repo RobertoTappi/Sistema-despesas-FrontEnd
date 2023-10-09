@@ -2,15 +2,28 @@ import React, {useState} from 'react'
 import {Grid,Paper,Avatar, TextField,FormControlLabel, Checkbox, Typography,Link} from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Button from '@mui/material/Button';
+import {validarEmail} from '../../util/functionsUtils.js'
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
-
-function validarEmail(email) {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
+const notify = () =>{
+    toast.error('🦄 Email/Senha invalida!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+    });
 }
 
-const Login = ()=>{
+
+const Login = () =>{
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,6 +40,7 @@ const Login = ()=>{
     const avatarStyle={backgroundColor:'green',height:100,width:100}
     const iconStyle={height:70,width:70}
     const buttonStyle={height:50}
+    const typographyStyle={margin: '10px 0px'}
     
 
     const handleEmailChange = (e) => {
@@ -44,7 +58,6 @@ const Login = ()=>{
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-        debugger
 
         if((password.length < 7)){
             setErrorPassword(true);
@@ -55,8 +68,27 @@ const Login = ()=>{
         }
     }
 
+    const validarFormulario = () =>{
+        var emailValido = validarEmail(email)
+        var senhaValida = password.length >= 8;
+        var formularioValido = emailValido && senhaValida;
+        setIsButtonDisabled(!formularioValido);
+        debugger
+        return formularioValido;
+    }
+
+    const handleLogin = () =>{
+        if(validarFormulario()){
+            console.log('Email e senha valido,relizando o login')
+        }else{
+            console.log('error')
+            notify()
+        }
+    }
+
     return(
         <Grid>
+            <ToastContainer/>
             <Paper elevation={10} style={paperStyle}>
                 <Grid align='center'marginTop={10}>
                     <Avatar style={avatarStyle}><LockOutlinedIcon style={iconStyle}></LockOutlinedIcon></Avatar>
@@ -65,8 +97,8 @@ const Login = ()=>{
 
                 <Grid>
                     <TextField
-                        label='Email'
-                        placeholder='Email'
+                        label='Email's
+                        placeholder='Digite seu email'
                         fullWidth required
                         value={email}
                         onChange={handleEmailChange}
@@ -74,11 +106,10 @@ const Login = ()=>{
                         helperText={errorEmailText}>
                     </TextField>
                 </Grid>
-
                 <Grid marginTop={4}>
                     <TextField
                         label='Senha'
-                        placeholder='Senha'
+                        placeholder='Digite sua senha'
                         fullWidth required 
                         type='password' 
                         value={password} 
@@ -96,19 +127,16 @@ const Login = ()=>{
                     </FormControlLabel>
                 </Grid>
                 <Grid marginTop={2}>
-                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle}>LOGAR</Button>
+                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle} onClick={handleLogin}disabled={isButtonDisabled}>Acessar</Button>
                 </Grid>
-
-
+                    
                 <Grid>
                     <Typography>
-                        <Link href="#">
+                        <Link href="/RecuperarSenha">
                             Esqueci minha senha
                         </Link>
                     </Typography>
-                </Grid>
-                <Grid marginTop={12}>
-                    <Typography> Ainda não possui conta? 
+                    <Typography style={typographyStyle}> Ainda não possui conta? 
                         <Link href="#">
                             Faça o cadastro!
                         </Link>
