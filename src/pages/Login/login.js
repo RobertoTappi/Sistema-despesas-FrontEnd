@@ -36,7 +36,7 @@ const Login = () =>{
 
 
     //Estilizacao
-    const paperStyle={padding:20,height:'65vh',width:400,margin:'20px auto'}
+    const paperStyle={padding:20, minHeight:'65vh',width:400,margin:'20px auto'}
     const avatarStyle={backgroundColor:'green',height:100,width:100}
     const iconStyle={height:70,width:70}
     const buttonStyle={height:50}
@@ -137,7 +137,7 @@ const Login = () =>{
                         </Link>
                     </Typography>
                     <Typography style={typographyStyle}> Ainda não possui conta? 
-                        <Link href="#">
+                        <Link href="/cadastro">
                             Faça o cadastro!
                         </Link>
                     </Typography>

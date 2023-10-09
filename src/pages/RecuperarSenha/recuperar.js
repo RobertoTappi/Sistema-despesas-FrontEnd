@@ -24,7 +24,7 @@ const Recuperar = ()=>{
         }
     }
 
-    const paperStyle={padding:20,height:'65vh',width:400,margin:'20px auto'}
+    const paperStyle={padding:20, minHeight:'65vh',width:400,margin:'20px auto'}
     const avatarStyle={backgroundColor:'green',height:100,width:100}
     const iconStyle={height:70,width:70}
     const buttonStyle={height:50}
