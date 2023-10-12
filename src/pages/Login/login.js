@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Grid,Paper,Avatar, TextField,FormControlLabel, Checkbox, Typography,Link} from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Button from '@mui/material/Button';
-import {validarEmail} from '../../util/functionsUtils.js'
+import {validarEmail , getCookie} from '../../util/functionsUtils.js'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,18 +22,21 @@ const notify = () =>{
 }
 
 
-const Login = () =>{
-    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    
+const Login = () =>{
+
+
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    console.log(getCookie('myusrname'));
+    const [email, setEmail] = useState(getCookie('myusrname'));
+    const [password, setPassword] = useState(getCookie('mypswd'));
     const [errorPassword, setErrorPassword] = useState(false);
     const [errorPasswordText, setPasswordErrorText] = useState('');
 
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorEmailText, setEmailErrorText] = useState('');
 
+    const [checked, setChecked] = useState(false);
 
     //Estilizacao
     const paperStyle={padding:20, minHeight:'65vh',width:400,margin:'20px auto'}
@@ -54,31 +57,32 @@ const Login = () =>{
             setErrorEmail(false);
             setEmailErrorText(false)
         }
+        validarFormulario();
     }
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-
-        if((password.length < 7)){
+        if(password.length < 7){
             setErrorPassword(true);
             setPasswordErrorText('Senha fraca menos de 8 caracteres')
         }else{
             setErrorPassword(false);
             setPasswordErrorText(false)
         }
+        validarFormulario();
     }
 
     const validarFormulario = () =>{
         var emailValido = validarEmail(email)
-        var senhaValida = password.length >= 8;
+        var senhaValida = password.length > 6;
         var formularioValido = emailValido && senhaValida;
         setIsButtonDisabled(!formularioValido);
-        debugger
         return formularioValido;
     }
 
     const handleLogin = () =>{
         if(validarFormulario()){
+            setCookie()
             console.log('Email e senha valido,relizando o login')
         }else{
             console.log('error')
@@ -86,6 +90,17 @@ const Login = () =>{
         }
     }
 
+    const setCookie = () =>{
+        if(checked){
+            document.cookie="myusrname="+email+";path=http://localhost:3000/";
+            document.cookie="mypswd="+password+";path=http://localhost:3000/";
+        }
+    }
+
+    setTimeout(validarFormulario,100)
+    const handleChangeCheckBox = (event) =>{
+        setChecked(event.target.checked)
+    }
     return(
         <Grid>
             <ToastContainer/>
@@ -122,12 +137,12 @@ const Login = () =>{
                 <Grid marginTop={2}>
                     <FormControlLabel
                     control={
-                        <Checkbox name="checkedB" color='primary'></Checkbox>
+                        <Checkbox name="checkedB" color='primary' checked={checked} onChange={handleChangeCheckBox}></Checkbox>
                     } label="Lembrar senha">
                     </FormControlLabel>
                 </Grid>
                 <Grid marginTop={2}>
-                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle} onClick={handleLogin}disabled={isButtonDisabled}>Acessar</Button>
+                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle} onClick={handleLogin}disabled={(errorPassword || errorEmail) || isButtonDisabled}>Acessar</Button>
                 </Grid>
                     
                 <Grid>
