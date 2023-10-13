@@ -10,6 +10,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import PasswordStrenghMeter from '../../util/PasswordStrenghMeter.js';
 
 
 // Estilos
@@ -23,6 +24,7 @@ const iconListStyle = { height: '70px', width: '70px' }
 
 const buttonStyle = { height: '50px' }
 
+const passwordBar = { backgroundColor: 'black', borderRadius: '10px'}
 
 // JS
 const Cadastro = () => {
@@ -61,7 +63,6 @@ const Cadastro = () => {
         
     }
 
-
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
 
@@ -77,6 +78,7 @@ const Cadastro = () => {
     return (
         <Grid style={displayFlex}>
             <Paper elevation={10} style={paperStyle}>
+                
                 <Grid align='center' marginTop='10px'>
                     <Avatar style={avatarListStyle}>
                         <AppRegistrationIcon style={iconListStyle}></AppRegistrationIcon>
@@ -109,6 +111,7 @@ const Cadastro = () => {
 
                 <Grid marginTop='35px'>
                     <FormControl fullWidth required variant="outlined">
+
                         <InputLabel
                             htmlFor="outlined-adornment-password">Password</InputLabel>
                         <OutlinedInput
@@ -118,6 +121,7 @@ const Cadastro = () => {
                             error={errorPassword}
                             helperText={errorPasswordText}
                             endAdornment={
+                                
                                 <InputAdornment position="end">
                                     <IconButton
                                         aria-label="toggle password visibility"
@@ -129,22 +133,35 @@ const Cadastro = () => {
                                 </InputAdornment>
                             }
                             label="Password" />
+
                     </FormControl>
+
                     <FormHelperText error={errorPassword}>
+                    <PasswordStrenghMeter password={password} style={passwordBar} />
                     {errorPasswordText}
                     </FormHelperText>
+
                 </Grid>
 
-                <Grid marginTop='40px'>
-                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle}>CADASTRAR</Button>
+                <Grid marginTop='20px'>
+                    <Button 
+                        variant="contained" 
+                        type='submit' 
+                        color='primary' 
+                        fullWidth 
+                        style={buttonStyle}>
+                            CADASTRAR
+                        </Button>
                 </Grid>
 
                 <Grid marginTop='10px'>
+
                     <Typography>Já possui cadastro?
                         <Link href="/" marginLeft='5px'>
                             Clique aqui!
                         </Link>
                     </Typography>
+
                 </Grid>
             </Paper>
         </Grid>
