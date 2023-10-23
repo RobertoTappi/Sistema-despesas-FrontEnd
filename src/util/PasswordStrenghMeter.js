@@ -1,10 +1,13 @@
 import React from 'react';
 import zxcvbn from 'zxcvbn';
 
+
+let num
+
 const PasswordStrengthMeter = ({ password }) => {
     const testResult = zxcvbn(password);
 
-    let num = (testResult.score * 100 / 4)
+    num = (testResult.score * 100 / 4)
 
     if ((testResult.score * 100 / 4) === 0) {
         num = 25
@@ -52,7 +55,6 @@ const PasswordStrengthMeter = ({ password }) => {
 
 
     const changePasswordColor = () => {
-        console.log(num)
         const width = `${num}%`
         const background = funcProgressColor();
 
@@ -78,3 +80,4 @@ const PasswordStrengthMeter = ({ password }) => {
 }
 
 export default PasswordStrengthMeter
+export { num }

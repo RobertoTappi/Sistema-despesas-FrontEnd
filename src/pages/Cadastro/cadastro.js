@@ -10,7 +10,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import PasswordStrenghMeter from '../../util/PasswordStrenghMeter.js';
+import PasswordStrenghMeter, { num } from '../../util/PasswordStrenghMeter.js';
 
 
 // Estilos
@@ -24,14 +24,19 @@ const iconListStyle = { height: '70px', width: '70px' }
 
 const buttonStyle = { height: '50px' }
 
-const passwordBar = { backgroundColor: 'black', borderRadius: '10px'}
+const passwordBar = { backgroundColor: 'black', borderRadius: '10px' }
 
 // JS
 const Cadastro = () => {
 
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const [errorName, setErrorName] = useState(false)
+    const [errorNameText, setNameErrorText] = useState('');
 
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorEmailText, setEmailErrorText] = useState('');
@@ -41,6 +46,7 @@ const Cadastro = () => {
 
     // Password
     const [showPassword, setShowPassword] = useState(false);
+
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     const handleMouseDownPassword = (event) => {
@@ -48,37 +54,72 @@ const Cadastro = () => {
     };
 
     // Validações
+    const handleNameChange = (e) => {
+        setName(e.target.value);
+
+        const result = name.includes(' ')
+
+        if (!result) {
+            setErrorName(true);
+            setNameErrorText('Insira nome e sobrenome!');
+        } else {
+            setErrorName(false);
+            setNameErrorText(false);
+        }
+        validateForm()
+    }
+
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-        
+
         const result = validarEmail(email);
 
-        if(!result) {
+        if (!result) {
             setErrorEmail(true);
             setEmailErrorText('E-mail invalido!');
         } else {
             setErrorEmail(false);
             setEmailErrorText(false);
-        }  
-        
+        }
+        validateForm()
     }
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
 
-        if (password.length < 7) {
+        if (num < 50) {
             setErrorPassword(true);
-            setPasswordErrorText('Senha fraca! Menos de 8 caracteres')
+            setPasswordErrorText('Senha deve ser OK!')
         } else {
             setErrorPassword(false);
             setPasswordErrorText(false)
+        }
+        validateForm()
+    }
+
+    const validateForm = () => {
+        var validName = name.includes(' ')
+        var validEmail = validarEmail(email)
+        var validPassword = (num >= 50);
+
+        var validForm = validName && validEmail && validPassword;
+        setIsButtonDisabled(!validForm);
+
+        return validForm;
+    }
+
+    const handleRegister = () => {
+        if (validateForm()) {
+            console.log('Dados válidos, relizando o cadastro')
+        } else {
+            console.log('Erro')
         }
     }
 
     return (
         <Grid style={displayFlex}>
             <Paper elevation={10} style={paperStyle}>
-                
+
                 <Grid align='center' marginTop='10px'>
                     <Avatar style={avatarListStyle}>
                         <AppRegistrationIcon style={iconListStyle}></AppRegistrationIcon>
@@ -91,6 +132,10 @@ const Cadastro = () => {
                         type='text'
                         label='Nome completo:'
                         placeholder='Insira seu nome'
+                        value={name}
+                        onChange={handleNameChange}
+                        error={errorName}
+                        helperText={errorNameText}
                         fullWidth required
                     >
                     </TextField>
@@ -121,7 +166,7 @@ const Cadastro = () => {
                             error={errorPassword}
                             helperText={errorPasswordText}
                             endAdornment={
-                                
+
                                 <InputAdornment position="end">
                                     <IconButton
                                         aria-label="toggle password visibility"
@@ -137,21 +182,24 @@ const Cadastro = () => {
                     </FormControl>
 
                     <FormHelperText error={errorPassword}>
-                    <PasswordStrenghMeter password={password} style={passwordBar} />
-                    {errorPasswordText}
+                        <PasswordStrenghMeter
+                            password={password}
+                            style={passwordBar} />
+                        {errorPasswordText}
                     </FormHelperText>
 
                 </Grid>
 
                 <Grid marginTop='20px'>
-                    <Button 
-                        variant="contained" 
-                        type='submit' 
-                        color='primary' 
-                        fullWidth 
-                        style={buttonStyle}>
-                            CADASTRAR
-                        </Button>
+                    <Button
+                        variant="contained"
+                        type='submit'
+                        color='primary'
+                        fullWidth
+                        style={buttonStyle}
+                        onClick={handleRegister}
+                        disabled={(errorPassword || errorEmail) || isButtonDisabled}
+                    >CADASTRAR</Button>
                 </Grid>
 
                 <Grid marginTop='10px'>
