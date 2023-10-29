@@ -3,7 +3,7 @@ import {Grid,Paper,Avatar, TextField,FormControlLabel, Checkbox, Typography,Link
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Button from '@mui/material/Button';
 import {validarEmail , getCookie} from '../../util/functionsUtils.js'
-
+import { LoginAXIOS } from '../../services/loginService.js';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,8 +20,6 @@ const notify = () =>{
         theme: "colored",
     });
 }
-
-
 
 const Login = () =>{
 
@@ -82,7 +80,16 @@ const Login = () =>{
 
     const handleLogin = () =>{
         if(validarFormulario()){
-            setCookie()
+
+            try{
+                const response = LoginAXIOS(email,password);
+                setCookie()
+                //continua salvo token no cookie document cookie mudo rota 
+            }catch(error){
+                notify()
+                
+            }
+            
             console.log('Email e senha valido,relizando o login')
         }else{
             console.log('error')
