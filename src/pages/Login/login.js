@@ -6,36 +6,50 @@ import {validarEmail , getCookie} from '../../util/functionsUtils.js'
 import { LoginAXIOS } from '../../services/loginService.js';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 
-const notify = () =>{
-    toast.error('🦄 Email/Senha invalida!', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-    });
+function notify(msg,abc){
+    if(abc){
+        toast.error(msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+    }else{
+        toast.success(msg, {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+    }
 }
 
 const Login = () =>{
 
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-    console.log(getCookie('myusrname'));
     const [email, setEmail] = useState(getCookie('myusrname'));
     const [password, setPassword] = useState(getCookie('mypswd'));
     const [errorPassword, setErrorPassword] = useState(false);
     const [errorPasswordText, setPasswordErrorText] = useState('');
-
+    const [mostrarCircular, setMostrarCircular] = useState(false);
     const [errorEmail, setErrorEmail] = useState(false);
     const [errorEmailText, setEmailErrorText] = useState('');
-
+    
     const [checked, setChecked] = useState(false);
-
+    
     //Estilizacao
     const paperStyle={padding:20, minHeight:'65vh',width:400,margin:'20px auto'}
     const avatarStyle={backgroundColor:'green',height:100,width:100}
@@ -47,7 +61,6 @@ const Login = () =>{
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
         const result = validarEmail(email);
-
         if(!result){
             setErrorEmail(true);
             setEmailErrorText('Email invalido!')
@@ -80,22 +93,25 @@ const Login = () =>{
 
     const handleLogin = () =>{
         if(validarFormulario()){
-
-            try{
-                const response = LoginAXIOS(email,password);
-                setCookie()
-                //continua salvo token no cookie document cookie mudo rota 
-            }catch(error){
-                notify()
-                
-            }
-            
-            console.log('Email e senha valido,relizando o login')
+            logar()
         }else{
-            console.log('error')
-            notify()
+            notify("Preencha corretamente Email/Senha",true)
         }
     }
+
+    async function logar(){
+        const response = await LoginAXIOS(email, password);
+        console.log(response);
+        if(response.status === 200){
+            notify("Login realizado com sucesso",false)
+            setCookie();
+            setMostrarCircular(true);
+        }else if(response.status === 400){
+            notify(response.data.mensagem,true)
+        }
+
+        }
+    
 
     const setCookie = () =>{
         if(checked){
@@ -163,6 +179,13 @@ const Login = () =>{
                             Faça o cadastro!
                         </Link>
                     </Typography>
+                </Grid>
+                <Grid>
+                    {mostrarCircular && (
+                        <Box sx={{ textAlign: 'center' }}>
+                            <CircularProgress />
+                        </Box>
+                    )}
                 </Grid>
             </Paper>
         </Grid>
