@@ -1,25 +1,19 @@
 import axios from "axios"
 
-const URL = "http://localhost:8080/api/user/registrar"
+const URL = "http://localhost:8080/api/user/register"
 
 let credenciais = {}
 
-export function RegisterAXIOS(email, password, name) {
+export async function RegisterAXIOS(email, password, name) {
+    credenciais.email = email;
+    credenciais.password = password;
+    credenciais.name = name;
+    credenciais.role = "USER";
 
-    return new Promise((resolve, reject) => {
-        credenciais.email = email;
-        credenciais.password = password;
-        credenciais.name = name;
-        credenciais.role = "USER";
-
-        axios.post(URL, credenciais)
-            .then(response => {
-                console.log(response.data);
-                resolve(response.data);
-            })
-            .catch(error => {
-                console.error("Ocorreu um erro na requisição:", error);
-                reject(new Error("Erro na requisição"));
-            });
-    });
+    try {
+        const response = await axios.post(URL, credenciais)
+        return response
+    } catch (error) {
+        return error.response
+    }
 }

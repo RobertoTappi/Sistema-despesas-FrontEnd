@@ -14,32 +14,34 @@ import PasswordStrenghMeter, { num } from '../../util/PasswordStrenghMeter.js';
 import { RegisterAXIOS } from '../../services/cadastroService.js';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const notifySuccess = () => {
-    toast.success('🦄 Cadastro realizado com sucesso', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-    });
+function notify(msg, abc) {
+    if (abc) {
+        toast.error(msg, {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+    } else {
+        toast.success(msg, {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
+    }
 }
 
-const notifyError = () => {
-    toast.error('🦄 Problemas com o servidor', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-    });
-}
 
 
 // Estilos
@@ -81,6 +83,8 @@ const Cadastro = () => {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+
+    const navigate = useNavigate()
 
     // Validações
     const handleNameChange = (e) => {
@@ -139,119 +143,128 @@ const Cadastro = () => {
 
     const handleRegister = () => {
         if (validateForm()) {
-
-            try {
-                const response = RegisterAXIOS(email, password, name);
-                notifySuccess()
-            } catch (error) {
-                notifyError()
-            }
-
+            register()
         } else {
-            notifyError()
+            return
         }
     }
 
-    return (
-        <Grid style={displayFlex}>
-            <ToastContainer />
+    async function register() {
+        const response = await RegisterAXIOS(email, password, name)
+        console.log(response.status)
 
-            <Paper elevation={10} style={paperStyle}>
+        if (response.status === 200) {
+            notify("Cadastro realizado com sucesso", false)
 
-                <Grid align='center' marginTop='10px'>
-                    <Avatar style={avatarListStyle}>
-                        <AppRegistrationIcon style={iconListStyle}></AppRegistrationIcon>
-                    </Avatar>
-                    <h1>Cadastrar conta</h1>
-                </Grid>
+            setTimeout(() => {
+                navigate('..')
+              }, "2100");
 
-                <Grid marginTop='35px'>
-                    <TextField
-                        type='text'
-                        label='Nome completo:'
-                        placeholder='Insira seu nome'
-                        value={name}
-                        onChange={handleNameChange}
-                        error={errorName}
-                        helperText={errorNameText}
-                        fullWidth required
-                    >
-                    </TextField>
-                </Grid>
+        } else if (response.status === 400) {
+            notify(response.data.mensagem, true)
+        }
+    }
 
-                <Grid marginTop='35px'>
-                    <TextField
-                        type='text'
-                        label='E-mail:'
-                        placeholder='Insira seu e-mail'
-                        value={email}
-                        onChange={handleEmailChange}
-                        error={errorEmail}
-                        helperText={errorEmailText}
-                        fullWidth required>
-                    </TextField>
-                </Grid>
+return (
+    <Grid style={displayFlex}>
+        <ToastContainer />
 
-                <Grid marginTop='35px'>
-                    <FormControl fullWidth required variant="outlined">
+        <Paper elevation={10} style={paperStyle}>
 
-                        <InputLabel
-                            htmlFor="outlined-adornment-password">Password</InputLabel>
-                        <OutlinedInput
-                            type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={handlePasswordChange}
-                            error={errorPassword}
-                            helperText={errorPasswordText}
-                            endAdornment={
+            <Grid align='center' marginTop='10px'>
+                <Avatar style={avatarListStyle}>
+                    <AppRegistrationIcon style={iconListStyle}></AppRegistrationIcon>
+                </Avatar>
+                <h1>Cadastrar conta</h1>
+            </Grid>
 
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        edge="end">
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            label="Password" />
+            <Grid marginTop='35px'>
+                <TextField
+                    type='text'
+                    label='Nome completo:'
+                    placeholder='Insira seu nome'
+                    value={name}
+                    onChange={handleNameChange}
+                    error={errorName}
+                    helperText={errorNameText}
+                    fullWidth required
+                >
+                </TextField>
+            </Grid>
 
-                    </FormControl>
+            <Grid marginTop='35px'>
+                <TextField
+                    type='text'
+                    label='E-mail:'
+                    placeholder='Insira seu e-mail'
+                    value={email}
+                    onChange={handleEmailChange}
+                    error={errorEmail}
+                    helperText={errorEmailText}
+                    fullWidth required>
+                </TextField>
+            </Grid>
 
-                    <FormHelperText error={errorPassword}>
-                        <PasswordStrenghMeter
-                            password={password}
-                            style={passwordBar} />
-                        {errorPasswordText}
-                    </FormHelperText>
+            <Grid marginTop='35px'>
+                <FormControl fullWidth required variant="outlined">
 
-                </Grid>
+                    <InputLabel
+                        htmlFor="outlined-adornment-password">Password</InputLabel>
+                    <OutlinedInput
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={handlePasswordChange}
+                        error={errorPassword}
+                        helperText={errorPasswordText}
+                        endAdornment={
 
-                <Grid marginTop='20px'>
-                    <Button
-                        variant="contained"
-                        type='submit'
-                        color='primary'
-                        fullWidth
-                        style={buttonStyle}
-                        onClick={handleRegister}
-                        disabled={(errorPassword || errorEmail) || isButtonDisabled}
-                    >CADASTRAR</Button>
-                </Grid>
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="end">
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                        label="Password" />
 
-                <Grid marginTop='10px'>
+                </FormControl>
 
-                    <Typography>Já possui cadastro?
-                        <Link href="/" marginLeft='5px'>
-                            Clique aqui!
-                        </Link>
-                    </Typography>
+                <FormHelperText error={errorPassword}>
+                    <PasswordStrenghMeter
+                        password={password}
+                        style={passwordBar} />
+                    {errorPasswordText}
+                </FormHelperText>
 
-                </Grid>
-            </Paper>
-        </Grid>
-    );
+            </Grid>
+
+            <Grid marginTop='20px'>
+                <Button
+                    variant="contained"
+                    type='submit'
+                    color='primary'
+                    fullWidth
+                    style={buttonStyle}
+                    onClick={handleRegister}
+                    disabled={(errorPassword || errorEmail) || isButtonDisabled}
+                >CADASTRAR</Button>
+            </Grid>
+
+            <Grid marginTop='10px'>
+
+                <Typography>Já possui cadastro?
+                    <Link href="/" marginLeft='5px'>
+                        Clique aqui!
+                    </Link>
+                </Typography>
+
+            </Grid>
+        </Paper>
+    </Grid>
+);
 }
 
 
