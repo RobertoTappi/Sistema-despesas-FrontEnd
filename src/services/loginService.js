@@ -16,19 +16,16 @@ export async function LoginAXIOS(email,password){
     }
 }
 
+export async function alterarSenha(token,password){
+    let obj = {}
+    obj.token = token
+    obj.senha = password
 
-    // return new Promise((resolve, reject) => {
-    //     credenciais.email = email;
-    //     credenciais.password = password;
-
-    //     axios.post(URL, credenciais)
-    //         .then(response => {
-    //             console.log(response.data);
-    //             resolve(response.data); 
-    //         })
-    //         .catch(error => {
-    //             console.error(error.response.data.Mensagem);
-    //              reject();
-    //         });
-    //     });
+    try{
+        const response = await axios.put("http://localhost:8080/api/user/changePassword",obj)
+        return response;
+    }catch(error){
+        return error.response;
+    }
+}
 
