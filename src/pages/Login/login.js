@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Grid, Paper, Avatar, TextField, FormControlLabel, Checkbox, Typography, Link } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Button from '@mui/material/Button';
@@ -13,6 +13,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
+import { useNavigate } from 'react-router-dom';
 
 
 function notify(msg, abc) {
@@ -42,9 +43,11 @@ function notify(msg, abc) {
 }
 
 const Login = () => {
+    const navigate = useNavigate()
+    const textFieldPasswordRef = useRef(null);
+    const textFieldEmailRef = useRef(null);
 
-
-    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [email, setEmail] = useState(getCookie('myusrname'));
     const [password, setPassword] = useState(getCookie('mypswd'));
     const [errorPassword, setErrorPassword] = useState(false);
@@ -72,37 +75,27 @@ const Login = () => {
     };
 
 
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-        const result = validarEmail(email);
-        if (!result) {
-            setErrorEmail(true);
-            setEmailErrorText('Email invalido!')
-        } else {
-            setErrorEmail(false);
-            setEmailErrorText(false)
-        }
-        validarFormulario();
-    }
-
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        if (password.length < 7) {
-            setErrorPassword(true);
-            setPasswordErrorText('Senha fraca menos de 8 caracteres')
-        } else {
-            setErrorPassword(false);
-            setPasswordErrorText(false)
-        }
-        validarFormulario();
-    }
-
     const validarFormulario = () => {
         var emailValido = validarEmail(email)
-        var senhaValida = password.length > 6;
+        var senhaValida = password.length > 3;
         var formularioValido = emailValido && senhaValida;
-        setIsButtonDisabled(!formularioValido);
-        return formularioValido;
+        if(!emailValido){
+            setErrorEmail(true);
+            setEmailErrorText('Email invalido!')
+            textFieldEmailRef.current.focus();
+        }else if(!senhaValida){
+            setErrorEmail(false);
+            setEmailErrorText('')
+            setErrorPassword(true);
+            setPasswordErrorText('Senha invalida menos de 4 caracteres')
+            textFieldPasswordRef.current.focus();
+        }else{
+            setErrorEmail(false);
+            setEmailErrorText('')
+            setErrorPassword(false);
+            setPasswordErrorText('')
+            return formularioValido;
+        }
     }
 
     const handleLogin = () => {
@@ -119,9 +112,25 @@ const Login = () => {
         if (response.status === 200) {
             notify("Login realizado com sucesso", false)
             setCookie();
+            const token = response.data.token;
+            localStorage.setItem("user",token)
+            const idUser = response.data.id;
+            localStorage.setItem("userId",idUser)
+            setTimeout(() => {
+                navigate('/home')
+              }, "1200");
             setMostrarCircular(true);
         } else if (response.status === 400) {
-            notify(response.data.mensagem, true)
+            if(response.status === 'Email nao cadastrado no sistema'){
+                notify(response.data.mensagem, true)
+                textFieldEmailRef.current.focus();
+            }
+            else if(response.data.erro === 'Bad credentials'){
+                notify('Senha errada por favor digite novamente', true)
+                textFieldPasswordRef.current.focus();
+            }else{
+                notify(response.data.mensagem, true)
+            }
         }
 
     }
@@ -134,9 +143,15 @@ const Login = () => {
         }
     }
 
-    setTimeout(validarFormulario, 100)
+
     const handleChangeCheckBox = (event) => {
         setChecked(event.target.checked)
+    }
+    const handleTextEmailChange = (e) => {
+        setEmail(e.target.value)
+    }
+    const handleTextPasswordChange = (e) => {
+        setPassword(e.target.value)
     }
     return (
         <Grid>
@@ -149,11 +164,12 @@ const Login = () => {
 
                 <Grid>
                     <TextField
+                        inputRef={textFieldEmailRef}
                         label='Email' 
                         placeholder='Digite seu email'
                         fullWidth required
                         value={email}
-                        onChange={handleEmailChange}
+                        onChange={handleTextEmailChange}
                         error={errorEmail}
                         helperText={errorEmailText}>
                     </TextField>
@@ -165,10 +181,11 @@ const Login = () => {
                     <InputLabel
                         htmlFor="outlined-adornment-password">Password</InputLabel>
                     <OutlinedInput
+                        inputRef={textFieldPasswordRef}
                         type={showPassword ? "text" : "password"}
                         value={password}
-                        onChange={handlePasswordChange}
                         error={errorPassword}
+                        onChange={handleTextPasswordChange}
                         helperText={errorPasswordText}
                         endAdornment={
 
@@ -194,7 +211,7 @@ const Login = () => {
                     </FormControlLabel>
                 </Grid>
                 <Grid marginTop={2}>
-                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle} onClick={handleLogin} disabled={(errorPassword || errorEmail) || isButtonDisabled}>Acessar</Button>
+                    <Button variant="contained" type='submit' color='primary' fullWidth style={buttonStyle} onClick={handleLogin}>Acessar</Button>
                 </Grid>
 
                 <Grid>

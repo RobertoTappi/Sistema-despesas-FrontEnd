@@ -10,6 +10,7 @@ import IconButton from "@mui/material/IconButton";
 import axios from "axios"
 import { alterarSenha } from '../../services/loginService';
 import { ToastContainer, toast } from 'react-toastify';
+
 function notify(msg, abc) {
     if (abc) {
         toast.error(msg, {
