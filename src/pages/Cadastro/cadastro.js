@@ -155,9 +155,13 @@ const Cadastro = () => {
 
         if (response.status === 200) {
             notify("Cadastro realizado com sucesso", false)
-
+            const token = response.data.token;
+            localStorage.setItem('user',token)
+            const idUser = response.data.id
+            localStorage.setItem('userId',idUser)
+            debugger
             setTimeout(() => {
-                navigate('..')
+                navigate('/home')
               }, "2100");
 
         } else if (response.status === 400) {
