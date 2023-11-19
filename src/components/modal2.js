@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { Button, Dialog, Grid, DialogContent, DialogTitle, IconButton, InputAdornment, Stack, TextField } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import CloseIcon from "@mui/icons-material/Close"
 import dayjs from "dayjs";
 import BasicSelect from "./select";
 import SelectCategory from "./selectcategory"
 
 // Estilos
 
-const btnStyle = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
+const btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 const selectStyle = { minWidth: '250px' }
 const selectStyle2 = { minWidth: '250px', marginLeft: '40px' }
 
 
-
-function Modalpopup() {
+function Modal2popup() {
     const [open, openchange] = useState(false);
 
     const dateNow = dayjs().format('YYYY-MM-DD')
@@ -28,10 +27,10 @@ function Modalpopup() {
 
     return (
         <div style={{ margin: '10px' }}>
-            <Button onClick={functionopenpopup} color="primary" variant="contained" style={btnStyle}>Adicionar despesa</Button>
+            <Button onClick={functionopenpopup} color="primary" variant="contained" style={btnStyle}>Adicionar receita</Button>
             <Dialog
                 open={open} onClose={closepopup} fullWidth maxWidth="sm">
-                <DialogTitle>Nova Despesa
+                <DialogTitle>Nova receita
                     <IconButton onClick={closepopup} style={{ float: 'right' }}>
                         <CloseIcon color="primary"></CloseIcon>
                     </IconButton>
@@ -56,7 +55,7 @@ function Modalpopup() {
                             </Grid>
                         </Grid>
 
-                        <Button color="primary" variant="contained">Criar despesa</Button>
+                        <Button color="primary" variant="contained">Criar receita</Button>
                     </Stack>
                 </DialogContent>
             </Dialog>
@@ -64,4 +63,4 @@ function Modalpopup() {
     );
 }
 
-export default Modalpopup;
+export default Modal2popup;

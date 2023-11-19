@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import { ThirteenMpSharp } from '@mui/icons-material';
 
 const pages = ['Menu inicial', 'Lançamentos'];
 const settings = ['Perfil', 'Configurações', 'Sair'];
@@ -34,6 +35,10 @@ function NavBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const Sair = () => {
+    
+  }
 
   return (
     <AppBar position="static">
