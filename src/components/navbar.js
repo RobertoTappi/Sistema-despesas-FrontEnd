@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-import { ThirteenMpSharp } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['Menu inicial', 'Lançamentos'];
 const settings = ['Perfil', 'Configurações', 'Sair'];
@@ -36,16 +36,24 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
-  const Sair = () => {
-    
-  }
+  const navigate = useNavigate();
+
+  const handleClick = (setting) => {
+    handleCloseUserMenu();
+
+    if (setting === 'Sair') {
+      localStorage.clear();
+      navigate('/login');
+    }
+  };
+
 
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-        {/* Tela cheia */}
+          {/* Tela cheia */}
           <CurrencyExchangeIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -136,7 +144,7 @@ function NavBar() {
             ))}
           </Box>
 
-        {/* Botão do avatar */}
+          {/* Botão do avatar */}
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Opções de perfil">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -160,10 +168,11 @@ function NavBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={() => handleClick(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
+
             </Menu>
           </Box>
         </Toolbar>

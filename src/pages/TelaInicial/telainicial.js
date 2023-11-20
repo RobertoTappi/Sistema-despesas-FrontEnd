@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import NavBar from '../../components/navbar';
 import ModalDespesa from '../../components/modal';
@@ -11,55 +11,51 @@ const URL = "http://localhost:8080/api/"
 
 
 const Principal = () => {
-    const [accountsData,setAccounts] = useState(null)
+  const [accountsData, setAccounts] = useState(null)
+  
+  const token = localStorage.getItem('user');
+  const idUser = localStorage.getItem('userId')
 
 
-    const token = localStorage.getItem('user');
-    const idUser = localStorage.getItem('userId')
-    useEffect(() => {
-       
-        const obterAccounts = async () => {
-          try {
+  useEffect(() => {
 
-            const response = await axios.get(URL+'account/'+idUser,{
-                headers: {
-                    Authorization: 'Bearer '+token
-                }
-            });
-            console.log(response)
-            setAccounts(response.data);
+    const obterAccounts = async () => {
+      try {
 
-          } catch (error) {
-            console.error('Erro ao buscar dados:', error);
+        const response = await axios.get(URL + 'account/' + idUser, {
+          headers: {
+            Authorization: 'Bearer ' + token
           }
-        };
+        });
+        console.log(response)
+        setAccounts(response.data);
 
-        // const obterTransacoes = async () =>{
-        //     try{
-        //         const response = await axios.get()
-        //     }
-        // };
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    };
 
-
-        obterAccounts(); // Chama a função ao montar o componente
-      }, []);
-
-
-
-
-
+    // const obterTransacoes = async () =>{
+    //     try{
+    //         const response = await axios.get()
+    //     }
+    // };
 
 
+    obterAccounts(); // Chama a função ao montar o componente
+  }, []);
 
-    
-   return (
+
+
+
+  return (
     <Grid>
-        <NavBar></NavBar>
-        <ModalReceita></ModalReceita>
-        <ModalDespesa></ModalDespesa>
-        <BasicModal></BasicModal>
-        {/* <TransacaoModal></TransacaoModal> */}
+      <NavBar></NavBar>
+      <ModalReceita accounts={accountsData}></ModalReceita>
+      <ModalDespesa accounts={accountsData}></ModalDespesa>
+      <BasicModal></BasicModal>
+      {/* <TransacaoModal></TransacaoModal> */}
     </Grid>
-   )
+  )
 }
 export default Principal;
