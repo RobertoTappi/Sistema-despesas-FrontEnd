@@ -12,6 +12,7 @@ export async function RegisterAXIOS(email, password, name) {
 
     try {
         const response = await axios.post(URL, credenciais)
+
         return response
     } catch (error) {
         return error.response
