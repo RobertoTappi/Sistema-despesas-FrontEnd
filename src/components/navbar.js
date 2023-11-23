@@ -15,11 +15,13 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import { useNavigate } from 'react-router-dom';
 
 const pages = ['Menu inicial', 'Lançamentos'];
-const settings = ['Perfil', 'Configurações', 'Sair'];
+const settings = ['Configurações', 'Sair'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -36,16 +38,17 @@ function NavBar() {
     setAnchorElUser(null);
   };
 
-  const navigate = useNavigate();
 
   const handleClick = (setting) => {
     handleCloseUserMenu();
 
     if (setting === 'Sair') {
-      localStorage.clear();
-      navigate('/login');
+      localStorage.clear()
+      navigate('/login')
+    } else if (setting === 'Configurações') {
+      navigate('/configuracoes')
     }
-  };
+  }
 
 
   return (

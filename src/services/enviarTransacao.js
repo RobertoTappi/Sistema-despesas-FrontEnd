@@ -7,7 +7,6 @@ const token = localStorage.getItem('user');
 
 
 export async function TransactionAXIOS(idUser, valor, descricao, dataTransacao, tipoTransacao, idAccount) {
-    debugger;
     dados = {
         idUser: idUser,
         valor: valor,
@@ -23,7 +22,6 @@ export async function TransactionAXIOS(idUser, valor, descricao, dataTransacao, 
     };
         
     try {
-        debugger;
         const response = await axios.post(URL, dados, {
             headers: {
                 Authorization: 'Bearer ' + token
