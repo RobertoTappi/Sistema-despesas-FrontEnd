@@ -1,26 +1,19 @@
 import { useState } from "react";
-import { Button, Dialog, Grid, DialogContent, InputAdornment, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import dayjs from "dayjs";
+import { Button, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import SelectCategory from "./selectcategory";
 import { TransactionAXIOS } from '../services/enviarTransacao';
+import { mask } from 'remask'
 
 
 // Estilos
 
 const btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 
-function commaToDot(value) {
-    if (value.includes(',')) {
-        return value.replace(',', '.');
-    }
-    return value;
-}
 
-
-function Modal2popup({ accounts }) {
+function Modal2popup({ accounts, categorys }) {
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
-    const [amount, setAmount] = useState(0);
+    const [amount, setAmount] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
     const typeTransaction = "RECEITA"
     const [selectedAccount, setSelectedAccount] = useState('');
@@ -36,17 +29,17 @@ function Modal2popup({ accounts }) {
         openchange(false);
     };
 
-    const formatDate = (e) => {
-        const formattedDate = dayjs(e.target.value).format('DD/MM/YYYY');
-        setSelectedDate(formattedDate);
+    const handleDate = (e) => {
+        const value = e.target.value
+        const pattern = ['99/99/9999']
+        setSelectedDate(mask(value, pattern));
     }
 
     const handleAmountChange = (e) => {
-        const inputValue = e.target.value;
-        const valorTratado = commaToDot(inputValue);
-        setAmount(valorTratado);
-    };
+        const inputValue = e.target.value
 
+        setAmount(inputValue)
+    };
 
     const handleChange = (event) => {
         setSelectedAccount(event.target.value);
@@ -54,7 +47,7 @@ function Modal2popup({ accounts }) {
 
     async function handleTransaction() {
         const amountToSend = parseFloat(amount).toFixed(2);
-        
+
         const response = await TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount)
 
         console.log(response)
@@ -80,21 +73,20 @@ function Modal2popup({ accounts }) {
 
                         <TextField
                             variant="outlined"
-                            label="Valor ($)"
-                            type="number"
-                            step="0.01"
-                            InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
+                            label="Valor (R$)"
+                            type="text"
                             value={amount}
                             onChange={handleAmountChange}
                         />
 
                         <TextField
                             variant="outlined"
-                            type="date"
+                            type="text"
                             label="Data"
-                            defaultValue={selectedDate}
+                            placeholder="dd/mm/yyyy"
+                            value={selectedDate}
                             InputLabelProps={{ shrink: true }}
-                            onChange={formatDate}
+                            onChange={handleDate}
                         />
 
                         <Grid container spacing={1}>
