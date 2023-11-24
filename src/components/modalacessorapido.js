@@ -39,7 +39,7 @@ function saudacao() {
     }
 }
 
-const AcessoRapido = ({ children }) => {
+const AcessoRapido = ({ children, }) => {
     return (
         <Container>
             <Paper elevation={10} style={paperStyle}>
@@ -52,12 +52,12 @@ const AcessoRapido = ({ children }) => {
                         <div style={wrapperStyle}>
                             <Paper elevation={5} style={itemStyle}>
                                 <h3>Receita mensal</h3>
-                                <p>Valor da Receita</p>
+                                <p>R${}</p>
                             </Paper>
 
                             <Paper elevation={5} style={itemStyle}>
                                 <h3>Despesa mensal</h3>
-                                <p>Valor da Despesa</p>
+                                <p>R${}</p>
                             </Paper>
                         </div>
                     </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Grid, Paper, Avatar, TextField, FormControlLabel, Checkbox, Typography, Link } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Button from '@mui/material/Button';
@@ -14,6 +14,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 function notify(msg, abc) {
@@ -43,6 +44,7 @@ function notify(msg, abc) {
 }
 
 const Login = () => {
+    const token = localStorage.getItem('user');
     const navigate = useNavigate()
     const textFieldPasswordRef = useRef(null);
     const textFieldEmailRef = useRef(null);
@@ -57,7 +59,7 @@ const Login = () => {
     const [errorEmailText, setEmailErrorText] = useState('');
 
     const [checked, setChecked] = useState(false);
-
+    const [isValidToken, setIsValidToken] = useState(null);
     //Estilizacao
     const paperStyle = { padding: 20, minHeight: '65vh', width: 400, margin: '20px auto' }
     const avatarStyle = { backgroundColor: 'green', height: 100, width: 100 }
@@ -153,8 +155,21 @@ const Login = () => {
     const handleTextPasswordChange = (e) => {
         setPassword(e.target.value)
     }
-    return (
-        <Grid>
+
+    useEffect(() => {
+        const checkTokenValidity = async () => {
+          try {
+            await axios.post("http://localhost:8080/api/user/validIsToken", { token });
+            setIsValidToken(true);
+          } catch (error) {
+            setIsValidToken(false);
+          }
+        };
+        checkTokenValidity();
+      }, [token]);
+
+    if (isValidToken == false) {
+        return(<Grid>
             <ToastContainer />
             <Paper elevation={10} style={paperStyle}>
                 <Grid align='center' marginTop={10}>
@@ -236,6 +251,9 @@ const Login = () => {
             </Paper>
         </Grid>
     )
+    } else if (isValidToken) {
+            window.location.href = '/home';
+    } 
 }
 
 export default Login

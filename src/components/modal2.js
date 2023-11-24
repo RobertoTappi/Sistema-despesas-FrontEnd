@@ -26,8 +26,7 @@ function Modal2popup({ accounts }) {
     const [selectedAccount, setSelectedAccount] = useState('');
 
     const idUser = localStorage.getItem('userId');
-
-
+    const token = localStorage.getItem('user');
     const functionopenpopup = () => {
         openchange(true);
     };
@@ -52,14 +51,16 @@ function Modal2popup({ accounts }) {
         setSelectedAccount(event.target.value);
     };
 
-    async function handleTransaction() {
-        const amountToSend = parseFloat(amount).toFixed(2);
-        
-        const response = await TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount)
-
-        console.log(response)
+     function handleTransaction() {
+        cadastrarTransacao();
         closepopup();
     };
+
+
+    async function cadastrarTransacao(){
+        const amountToSend = parseFloat(amount).toFixed(2);
+        TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount,token)
+    }
 
 
     return (

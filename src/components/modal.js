@@ -18,7 +18,7 @@ function commaToDot(value) {
 }
 
 
-function Modalpopup({ accounts }) {
+function Modalpopup({ accounts,category }) {
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState(0);
@@ -27,7 +27,7 @@ function Modalpopup({ accounts }) {
     const [selectedAccount, setSelectedAccount] = useState('');
 
     const idUser = localStorage.getItem('userId');
-
+    const token = localStorage.getItem('user');
 
     const functionopenpopup = () => {
         openchange(true);
@@ -53,14 +53,16 @@ function Modalpopup({ accounts }) {
         setSelectedAccount(event.target.value);
     };
 
-    async function handleTransaction() {
-        const amountToSend = parseFloat(amount).toFixed(2);
-
-        const response = await TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount)
-        
-        console.log(response)
+    function handleTransaction() {
+        cadastrarTransacao();
         closepopup();
     };
+
+    async function cadastrarTransacao(){
+        const amountToSend = parseFloat(amount).toFixed(2);
+        TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount,token)
+    }
+
 
 
     return (
