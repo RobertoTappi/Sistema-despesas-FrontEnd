@@ -30,7 +30,7 @@ const PrivateRoutes = () => {
 
 
   if (isValidToken === null) {
-    return <div>Verificando token...</div>;
+    return <div></div>;
   }
 
   // Renderiza o componente com base no resultado da validação

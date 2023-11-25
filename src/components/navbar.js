@@ -15,7 +15,7 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import { useNavigate } from 'react-router-dom';
 
 const pages = ['Menu inicial', 'Lançamentos'];
-const settings = ['Configurações', 'Sair'];
+const settings = ['Contas', 'Categorias', 'Sair'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -45,8 +45,18 @@ function NavBar() {
     if (setting === 'Sair') {
       localStorage.clear()
       navigate('/login')
-    } else if (setting === 'Configurações') {
-      navigate('/configuracoes')
+    } else if (setting === 'Contas') {
+      navigate('/configuracoes/contas')
+    } else if (setting === 'Categorias') {
+      navigate('/configuracoes/categorias')
+    }
+  }
+
+  const handlePages = (pages) => {
+    if (pages === "Menu inicial") {
+      navigate('/home')
+    } else if (pages === "Lançamentos") {
+      navigate('/lancamentos')
     }
   }
 
@@ -62,7 +72,7 @@ function NavBar() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/home"
             sx={{
               mr: 7,
               display: { xs: 'none', md: 'flex' },
@@ -114,13 +124,15 @@ function NavBar() {
             </Menu>
           </Box>
 
+
+
           {/* Mobile */}
           <CurrencyExchangeIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
+            href="/home"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -139,7 +151,7 @@ function NavBar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => handlePages(page)}
                 sx={{ my: 2, color: 'white', display: 'block', mr: '25px' }}
               >
                 {page}
@@ -183,4 +195,6 @@ function NavBar() {
     </AppBar>
   );
 }
+
+
 export default NavBar;

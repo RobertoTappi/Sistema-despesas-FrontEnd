@@ -2,15 +2,14 @@ import axios from "axios"
 
 const URL = "http://localhost:8080/api/transaction/addTransacao"
 
-let dados = {}
-const token = localStorage.getItem('user');
 
 
-export async function TransactionAXIOS(idUser, valor, descricao, dataTransacao, tipoTransacao, idAccount) {
+export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dataTransacao, tipoTransacao, idAccount, token) {
+    let dados = {}
     dados = {
         idUser: idUser,
         valor: valor,
-        idCategory: null,
+        idCategory: idCategory,
         descricao: descricao,
         dataTransacao: dataTransacao,
         tipoTransacao: tipoTransacao,

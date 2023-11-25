@@ -5,7 +5,12 @@ import ModalDespesa from '../../components/modal';
 import ModalReceita from '../../components/modal2'
 import axios from 'axios';
 import TransacaoModalDespesa from '../../components/modaltransacaodespesa.js'
+import TransacaoModalReceita from '../../components/modaltransacaoreceita.js'
 import AcessoRapido from '../../components/modalacessorapido.js';
+
+// Estilos
+
+const transacaoStyle = { display: 'flex', gap: '70px', justifyContent: 'center'}
 
 
 const URL = "http://localhost:8080/api/"
@@ -14,7 +19,7 @@ const URL = "http://localhost:8080/api/"
 const Principal = () => {
   const [accountsData, setAccounts] = useState(null)
   const [transactionData, setTransaction] = useState(null)
-
+  const [categorysData, setCategory] = useState(null)
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
 
@@ -23,19 +28,31 @@ const Principal = () => {
 
     const obterAccounts = async () => {
       try {
-
         const response = await axios.get(URL + 'account/' + idUser, {
           headers: {
             Authorization: 'Bearer ' + token
           }
         });
-
         setAccounts(response.data);
-
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
     };
+
+    const obterCategory = async () => {
+      try {
+        const response = await axios.get(URL + 'category/' + idUser, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        setCategory(response.data);
+        console.log(response.data)
+
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    }
 
     const obterTransacoes = async () => {
       try {
@@ -45,32 +62,32 @@ const Principal = () => {
           }
         });
         setTransaction(response.data)
-
-        console.log(response)
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
     };
 
+    obterCategory();
     obterTransacoes();
     obterAccounts();
   }, []);
-
-
-
 
   return (
     <Grid>
       <NavBar></NavBar>
 
       <AcessoRapido>
-        <ModalReceita accounts={accountsData} />
-        <ModalDespesa accounts={accountsData} />
+        <ModalReceita accounts={accountsData} categorys={categorysData} />
+        <ModalDespesa accounts={accountsData} categorys={categorysData} />
       </AcessoRapido>
 
-      <TransacaoModalDespesa props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
-      
+      <Grid style={transacaoStyle}>
+        <TransacaoModalReceita props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
+        <TransacaoModalDespesa props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
+      </Grid>
+
     </Grid>
   )
 }
+
 export default Principal;

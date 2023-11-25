@@ -1,8 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import SelectCategory from "./selectcategory";
 import { TransactionAXIOS } from '../services/enviarTransacao';
 import { mask } from 'remask'
+import { useMemo } from "react";
 
 
 // Estilos
@@ -17,9 +17,10 @@ function Modal2popup({ accounts, categorys }) {
     const [selectedDate, setSelectedDate] = useState('');
     const typeTransaction = "RECEITA"
     const [selectedAccount, setSelectedAccount] = useState('');
+    const [category, setCategory] = useState(null);
 
     const idUser = localStorage.getItem('userId');
-
+    const token = localStorage.getItem('user');
 
     const functionopenpopup = () => {
         openchange(true);
@@ -37,7 +38,6 @@ function Modal2popup({ accounts, categorys }) {
 
     const handleAmountChange = (e) => {
         const inputValue = e.target.value
-
         setAmount(inputValue)
     };
 
@@ -45,15 +45,23 @@ function Modal2popup({ accounts, categorys }) {
         setSelectedAccount(event.target.value);
     };
 
-    async function handleTransaction() {
-        const amountToSend = parseFloat(amount).toFixed(2);
+    const handleChangeCategory = (event) => {
+        setCategory(event.target.value);
+    };
 
-        const response = await TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount)
+    const filteredCategorys = useMemo(() => {
+        return categorys ? categorys.filter(category => category.tipo === 'RECEITA') : [];
+    }, [categorys]);
 
-        console.log(response)
+    function handleTransaction() {
+        cadastrarTransacao();
         closepopup();
     };
 
+    async function cadastrarTransacao() {
+        const amountToSend = parseFloat(amount).toFixed(2);
+        TransactionAXIOS(idUser, amountToSend, category, description, selectedDate, typeTransaction, selectedAccount, token)
+    }
 
     return (
         <div style={{ margin: '10px' }}>
@@ -103,7 +111,7 @@ function Modal2popup({ accounts, categorys }) {
                                         >
 
                                             {accounts && accounts.map((account) => (
-                                                <MenuItem key={account.id} value={account.id}>
+                                                <MenuItem value={account.id}>
                                                     {account.name}
                                                 </MenuItem>
                                             ))}
@@ -113,7 +121,24 @@ function Modal2popup({ accounts, categorys }) {
 
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <SelectCategory />
+                                <Box sx={{ maxWidth: 230 }}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={category}
+                                            label="Categoria"
+                                            onChange={handleChangeCategory}
+                                        >
+                                            {filteredCategorys && filteredCategorys.map((category) => (
+                                                <MenuItem value={category.id}>
+                                                    {category.nome}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
                             </Grid>
                         </Grid>
 

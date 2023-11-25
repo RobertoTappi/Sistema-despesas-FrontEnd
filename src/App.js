@@ -7,7 +7,9 @@ import RecuperarSenha from './pages/RecuperarSenha/recuperar.js'
 import ChangePassword from './pages/RecuperarSenha/changepassword.js';
 import PrivateRoutes from './pages/auth/PrivateRoute.js';
 import TelaInicial from './pages/TelaInicial/telainicial.js'
-import Configuracoes from './pages/Configuracoes/configuracoes.js'
+import Contas from './pages/Configuracoes/contas.js'
+import Categorias from './pages/Configuracoes/categorias.js';
+import Lancamentos from './pages/Lançamentos/lancamentos.js';
 
 function App() {
 
@@ -17,7 +19,9 @@ function App() {
       <Routes>
         <Route element={<PrivateRoutes></PrivateRoutes>}>
           <Route path="/home" element={<TelaInicial></TelaInicial>} exact></Route>
-          <Route path="/configuracoes" element={<Configuracoes></Configuracoes>} exact></Route>
+          <Route path="/configuracoes/contas" element={<Contas></Contas>} exact></Route>
+          <Route path="/configuracoes/categorias" element={<Categorias></Categorias>} exact></Route>
+          <Route path="/lancamentos" element={<Lancamentos></Lancamentos>} exact></Route>
 
         </Route>
 

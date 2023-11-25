@@ -3,7 +3,7 @@ import { Paper, Grid } from '@mui/material'
 import List from '@mui/material/List';
 import ListItemDespesa from './listdespesa';
 
-const TransacaoModalDespesa = (props) => {
+const TransacaoModalReceita = (props) => {
     const transactionData = props.props
     console.log(transactionData)
 
@@ -12,7 +12,7 @@ const TransacaoModalDespesa = (props) => {
     return (
         <Paper elevation={10} style={paperStyle}>
             <Grid align='center'>
-                <h2>Contas a pagar</h2>
+                <h2>Contas a Receber</h2>
             </Grid>
             <Grid>
                 <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
@@ -23,7 +23,6 @@ const TransacaoModalDespesa = (props) => {
             </Grid>
         </Paper>
     );
-
 }
 
-export default TransacaoModalDespesa;
+export default TransacaoModalReceita;
