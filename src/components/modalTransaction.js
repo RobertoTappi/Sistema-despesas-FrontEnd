@@ -1,26 +1,39 @@
-import React, { useState } from "react";
-import { Button, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { useState } from "react";
+import { Button, Dialog, Grid, DialogContent, InputAdornment, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import dayjs from "dayjs";
+import SelectCategory from "./selectcategory";
 import { TransactionAXIOS } from '../services/enviarTransacao';
-import { mask } from 'remask'
-import { useMemo } from "react";
 
 
 // Estilos
 
 const btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 
+function commaToDot(value) {
+    if (value.includes(',')) {
+        return value.replace(',', '.');
+    }
+    return value;
+}
 
-function Modal2popup({ accounts, categorys }) {
+
+const ModalTransaction =({ tipo,accounts,onAdicionarTransacao  }) =>{
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
-    const [amount, setAmount] = useState('');
+    const [amount, setAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState('');
-    const typeTransaction = "RECEITA"
+    const typeTransaction = tipo
     const [selectedAccount, setSelectedAccount] = useState('');
-    const [category, setCategory] = useState(null);
 
     const idUser = localStorage.getItem('userId');
     const token = localStorage.getItem('user');
+
+    let btnStyle;
+    if(tipo === "RECEITA"){
+        btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
+    }else{
+        btnStyle = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
+    }
 
     const functionopenpopup = () => {
         openchange(true);
@@ -30,43 +43,39 @@ function Modal2popup({ accounts, categorys }) {
         openchange(false);
     };
 
-    const handleDate = (e) => {
-        const value = e.target.value
-        const pattern = ['99/99/9999']
-        setSelectedDate(mask(value, pattern));
+    const formatDate = (e) => {
+        const formattedDate = dayjs(e.target.value).format('DD/MM/YYYY');
+        setSelectedDate(formattedDate);
     }
 
     const handleAmountChange = (e) => {
-        const inputValue = e.target.value
-        setAmount(inputValue)
+        const inputValue = e.target.value;
+        const valorTratado = commaToDot(inputValue);
+        setAmount(valorTratado);
     };
+
 
     const handleChange = (event) => {
         setSelectedAccount(event.target.value);
     };
 
-    const handleChangeCategory = (event) => {
-        setCategory(event.target.value);
-    };
-
-    const filteredCategorys = useMemo(() => {
-        return categorys ? categorys.filter(category => category.tipo === 'RECEITA') : [];
-    }, [categorys]);
-
-    function handleTransaction() {
+     function handleTransaction() {
         cadastrarTransacao();
         closepopup();
     };
 
-    async function cadastrarTransacao() {
+
+    async function cadastrarTransacao(){
         const amountToSend = parseFloat(amount).toFixed(2);
-        TransactionAXIOS(idUser, amountToSend, category, description, selectedDate, typeTransaction, selectedAccount, token)
+        const response =TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount,token)
+        //await onAdicionarTransacao(response.data)
     }
+
 
     return (
         <div style={{ margin: '10px' }}>
             <Button onClick={functionopenpopup} color="primary" variant="contained" style={btnStyle}>
-                Adicionar receita
+                Adicionar {tipo === "RECEITA" ? "Receita" : "Despesa"}
             </Button>
             <Dialog open={open} onClose={closepopup} fullWidth maxWidth="sm">
                 <DialogContent>
@@ -81,20 +90,21 @@ function Modal2popup({ accounts, categorys }) {
 
                         <TextField
                             variant="outlined"
-                            label="Valor (R$)"
-                            type="text"
+                            label="Valor ($)"
+                            type="number"
+                            step="0.01"
+                            InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                             value={amount}
                             onChange={handleAmountChange}
                         />
 
                         <TextField
                             variant="outlined"
-                            type="text"
+                            type="date"
                             label="Data"
-                            placeholder="dd/mm/yyyy"
-                            value={selectedDate}
+                            defaultValue={selectedDate}
                             InputLabelProps={{ shrink: true }}
-                            onChange={handleDate}
+                            onChange={formatDate}
                         />
 
                         <Grid container spacing={1}>
@@ -111,7 +121,7 @@ function Modal2popup({ accounts, categorys }) {
                                         >
 
                                             {accounts && accounts.map((account) => (
-                                                <MenuItem value={account.id}>
+                                                <MenuItem key={account.id} value={account.id}>
                                                     {account.name}
                                                 </MenuItem>
                                             ))}
@@ -121,29 +131,12 @@ function Modal2popup({ accounts, categorys }) {
 
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Box sx={{ maxWidth: 230 }}>
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={category}
-                                            label="Categoria"
-                                            onChange={handleChangeCategory}
-                                        >
-                                            {filteredCategorys && filteredCategorys.map((category) => (
-                                                <MenuItem value={category.id}>
-                                                    {category.nome}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                </Box>
+                                <SelectCategory />
                             </Grid>
                         </Grid>
 
                         <Button color="primary" variant="contained" onClick={handleTransaction}>
-                            Criar receita
+                            Criar {tipo === "RECEITA" ? "Receita" : "Despesa"}
                         </Button>
                     </Stack>
                 </DialogContent>
@@ -152,4 +145,4 @@ function Modal2popup({ accounts, categorys }) {
     );
 }
 
-export default Modal2popup; 
+export default ModalTransaction; 
