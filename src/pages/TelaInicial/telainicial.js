@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import NavBar from '../../components/navbar';
-import ModalDespesa from '../../components/modal';
-import ModalReceita from '../../components/modal2'
+// import ModalDespesa from '../../components/modal';
+// import ModalReceita from '../../components/modal2'
 import axios from 'axios';
 import TransacaoModalDespesa from '../../components/modaltransacaodespesa.js'
 import TransacaoModalReceita from '../../components/modaltransacaoreceita.js'
@@ -69,16 +69,17 @@ const Principal = () => {
   }, []);
 
 
+  const adicionarTransacao = (novaTransacao) => {
+    console.log( "aqui")
+    setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
+};
 
 
   return (
     <Grid>
       <NavBar></NavBar>
 
-      <AcessoRapido>
-        <ModalReceita accounts={accountsData} category={categorysData} />
-        <ModalDespesa accounts={accountsData} category={categorysData} />
-      </AcessoRapido>
+      <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} ></AcessoRapido>
 
       <TransacaoModalDespesa props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
       <TransacaoModalReceita props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>

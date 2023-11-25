@@ -17,16 +17,24 @@ function commaToDot(value) {
 }
 
 
-function Modal2popup({ accounts }) {
+const ModalTransaction =({ tipo,accounts,onAdicionarTransacao  }) =>{
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState('');
-    const typeTransaction = "RECEITA"
+    const typeTransaction = tipo
     const [selectedAccount, setSelectedAccount] = useState('');
 
     const idUser = localStorage.getItem('userId');
     const token = localStorage.getItem('user');
+
+    let btnStyle;
+    if(tipo === "RECEITA"){
+        btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
+    }else{
+        btnStyle = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
+    }
+
     const functionopenpopup = () => {
         openchange(true);
     };
@@ -59,14 +67,15 @@ function Modal2popup({ accounts }) {
 
     async function cadastrarTransacao(){
         const amountToSend = parseFloat(amount).toFixed(2);
-        TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount,token)
+        const response =TransactionAXIOS(idUser, amountToSend, description, selectedDate, typeTransaction, selectedAccount,token)
+        //await onAdicionarTransacao(response.data)
     }
 
 
     return (
         <div style={{ margin: '10px' }}>
             <Button onClick={functionopenpopup} color="primary" variant="contained" style={btnStyle}>
-                Adicionar receita
+                Adicionar {tipo === "RECEITA" ? "Receita" : "Despesa"}
             </Button>
             <Dialog open={open} onClose={closepopup} fullWidth maxWidth="sm">
                 <DialogContent>
@@ -127,7 +136,7 @@ function Modal2popup({ accounts }) {
                         </Grid>
 
                         <Button color="primary" variant="contained" onClick={handleTransaction}>
-                            Criar receita
+                            Criar {tipo === "RECEITA" ? "Receita" : "Despesa"}
                         </Button>
                     </Stack>
                 </DialogContent>
@@ -136,4 +145,4 @@ function Modal2popup({ accounts }) {
     );
 }
 
-export default Modal2popup; 
+export default ModalTransaction; 

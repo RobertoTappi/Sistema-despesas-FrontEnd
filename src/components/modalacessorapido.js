@@ -1,5 +1,6 @@
 import React from 'react';
 import { Paper, Grid, Container } from '@mui/material';
+import ModalTransaction from './modalTransaction.js';
 
 // Estilos
 const paperStyle = {
@@ -39,7 +40,7 @@ function saudacao() {
     }
 }
 
-const AcessoRapido = ({ children, }) => {
+const AcessoRapido = ({ accounts,category,onAdicionarTransacao }) => {
     return (
         <Container>
             <Paper elevation={10} style={paperStyle}>
@@ -63,9 +64,10 @@ const AcessoRapido = ({ children, }) => {
                     </Grid>
 
                     <Grid>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            {children}
-                        </div>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts}></ModalTransaction>
+                        <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts}></ModalTransaction>
+                    </div>
                     </Grid>
                 </Grid>
             </Paper>
