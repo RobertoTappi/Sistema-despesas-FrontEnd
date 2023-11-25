@@ -40,7 +40,7 @@ function saudacao() {
     }
 }
 
-const AcessoRapido = ({ accounts,category,onAdicionarTransacao }) => {
+const AcessoRapido = ({ accounts, category, onAdicionarTransacao }) => {
     return (
         <Container>
             <Paper elevation={10} style={paperStyle}>
@@ -65,8 +65,8 @@ const AcessoRapido = ({ accounts,category,onAdicionarTransacao }) => {
 
                     <Grid>
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts}></ModalTransaction>
-                        <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts}></ModalTransaction>
+                        <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
+                        <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
                     </div>
                     </Grid>
                 </Grid>

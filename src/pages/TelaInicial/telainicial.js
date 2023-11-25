@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import NavBar from '../../components/navbar';
-// import ModalDespesa from '../../components/modal';
-// import ModalReceita from '../../components/modal2'
 import axios from 'axios';
 import TransacaoModalDespesa from '../../components/modaltransacaodespesa.js'
 import TransacaoModalReceita from '../../components/modaltransacaoreceita.js'
@@ -20,6 +18,7 @@ const Principal = () => {
   const [accountsData, setAccounts] = useState(null)
   const [transactionData, setTransaction] = useState(null)
   const [categorysData, setCategory] = useState(null)
+  
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
 

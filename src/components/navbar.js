@@ -46,7 +46,7 @@ function NavBar() {
       localStorage.clear()
       navigate('/login')
     } else if (setting === 'Contas') {
-      navigate('/configuracoes/contas')
+      navigate('/configuracoes/contas');
     } else if (setting === 'Categorias') {
       navigate('/configuracoes/categorias')
     }

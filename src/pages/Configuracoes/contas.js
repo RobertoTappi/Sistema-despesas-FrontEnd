@@ -13,13 +13,13 @@ import AppsIcon from '@mui/icons-material/Apps';
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
 import NavBar from '../../components/navbar';
 import { useNavigate } from 'react-router-dom';
-import { Container, Paper } from '@mui/material';
+import { Container, Grid, Paper } from '@mui/material';
 
 // Estilos 
 
 const paperStyle = {
     padding: '10px',
-    minHeight: '250px',
+    minHeight: '650px',
     maxWidth: '1200px',
     margin: '20px auto',
     borderRadius: '10px'
@@ -78,7 +78,16 @@ function Contas() {
                     <Toolbar />
                     <Container>
                         <Paper elevation={5} style={paperStyle}>
-
+                            <Grid align='center'>
+                                <h2>Suas contas</h2>
+                            </Grid>
+                            <Grid>
+                                {/* <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
+                                    {accountsData && accountsData.map((accountsData, index) => (
+                                        <ListItemDespesa index={index} />
+                                    ))}
+                                </List> */}
+                            </Grid>
                         </Paper>
                     </Container>
 
