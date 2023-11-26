@@ -40,25 +40,32 @@ function saudacao() {
     }
 }
 
-const AcessoRapido = ({ accounts, category, onAdicionarTransacao }) => {
+const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons,userName }) => {
     return (
         <Container>
             <Paper elevation={10} style={paperStyle}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
-                        <h2 style={saudacaoStyle}>{saudacao()}</h2>
+                        <h2 style={saudacaoStyle}>{saudacao()}  {userName && userName.name}</h2>
                     </Grid>
-
                     <Grid id="values">
                         <div style={wrapperStyle}>
                             <Paper elevation={5} style={itemStyle}>
                                 <h3>Receita mensal</h3>
-                                <p>R${}</p>
+                                <p>{transacitons && transacitons
+                                        .filter(transacao => transacao.type === 'RECEITA')
+                                        .reduce((soma, transacao) => soma + transacao.valor, 0)
+                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </p>
                             </Paper>
 
                             <Paper elevation={5} style={itemStyle}>
                                 <h3>Despesa mensal</h3>
-                                <p>R${}</p>
+                                <p>{transacitons && transacitons
+                                        .filter(transacao => transacao.type === 'DESPESA')
+                                        .reduce((soma, transacao) => soma + transacao.valor, 0)
+                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </p>
                             </Paper>
                         </div>
                     </Grid>

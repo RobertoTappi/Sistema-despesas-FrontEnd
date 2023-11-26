@@ -3,14 +3,11 @@ import { Button, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl
 import { TransactionAXIOS } from '../services/enviarTransacao';
 import { mask } from 'remask'
 import { useMemo } from "react";
-
-
-// Estilos
-
-const btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
+import { CurrencyInput } from 'react-currency-mask';
 
 
 const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) => {
+
 
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
@@ -44,12 +41,6 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         setSelectedDate(mask(value, pattern));
     }
 
-    const handleAmountChange = (e) => {
-        const inputValue = e.target.value
-        setAmount(inputValue)
-    };
-
-
     const handleChange = (event) => {
         setSelectedAccount(event.target.value);
     };
@@ -66,16 +57,21 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         setCategory(event.target.value);
     };
 
-    function handleTransaction() {
+     function handleTransaction() {
         cadastrarTransacao();
         closepopup();
     };
 
 
     async function cadastrarTransacao() {
-        const amountToSend = parseFloat(amount).toFixed(2);
+        console.error("erro ao cadastrar transacao fora");
+        try {
+            const response = await TransactionAXIOS(idUser, amount,category, description, selectedDate, typeTransaction, selectedAccount, token);
 
-        TransactionAXIOS(idUser, amountToSend, category, description, selectedDate, typeTransaction, selectedAccount, token)
+            onAdicionarTransacao(response.data);
+        } catch (error) {
+            console.error("erro ao cadastrar transacao",error);
+        }
     }
 
 
@@ -95,12 +91,11 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
                             onChange={(e) => setDescription(e.target.value)}
                         />
 
-                        <TextField
-                            variant="outlined"
-                            label="Valor (R$)"
-                            type="text"
-                            value={amount}
-                            onChange={handleAmountChange}
+                        <CurrencyInput
+                            onChangeValue={(event, originalValue, maskedValue) => {
+                                setAmount(originalValue)
+                        }}
+                            InputElement={<TextField label="Valor" ></TextField>}
                         />
 
                         <TextField

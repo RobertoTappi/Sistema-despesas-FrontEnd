@@ -2,8 +2,6 @@ import axios from "axios"
 
 const URL = "http://localhost:8080/api/transaction/addTransacao"
 
-
-
 export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dataTransacao, tipoTransacao, idAccount, token) {
     let dados = {}
     dados = {
@@ -21,14 +19,17 @@ export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dat
     };
         
     try {
+        debugger
         const response = await axios.post(URL, dados, {
             headers: {
                 Authorization: 'Bearer ' + token
             }
         });
         console.log(response)
+        return response
 
     } catch (error) {
-        console.error(error);
+        console.log(error.response)
+        return error.response
     }
 };
