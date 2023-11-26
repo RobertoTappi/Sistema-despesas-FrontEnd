@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const URL = "http://localhost:8080/api/user/changePassword"
+const URL = "http://localhost:8080/api/user/sendEmailResetPassword"
 
 let credenciais = {}
 

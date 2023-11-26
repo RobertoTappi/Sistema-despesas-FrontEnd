@@ -7,6 +7,16 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
+
+function retornaValor(dados){
+    debugger;
+    if(dados && dados !=null && dados!=undefined){
+        return dados.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    }
+
+
+}
+
 const ListItemDespesa = ({ dados, index }) => {
     return (
         <>
@@ -30,7 +40,7 @@ const ListItemDespesa = ({ dados, index }) => {
                                 component="span"
                                 variant="body2"
                             >
-                                {dados.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                { retornaValor(dados.valor)}
                             </Typography>
                         </Box>
                     }
