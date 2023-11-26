@@ -27,16 +27,16 @@ const itemStyle = {
     textAlign: "center",
 };
 
-function saudacao() {
+function saudacao(user) {
     const agora = new Date();
     const hora = agora.getHours();
 
-    if (hora >= 5 && hora < 12) {
-        return 'Bom dia! ☀️';
+    if (hora >= 5 && hora < 12) { 
+        return 'Bom dia!  '+ user+  ' ☀️';
     } else if (hora >= 12 && hora < 18) {
-        return 'Boa tarde! 🌓';
+        return 'Boa tarde!   '+ user+ ' 🌓';
     } else {
-        return 'Boa noite! 🌙';
+        return 'Boa noite!   '+ user+ ' 🌙';
     }
 }
 
@@ -46,7 +46,7 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons,u
             <Paper elevation={10} style={paperStyle}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
-                        <h2 style={saudacaoStyle}>{saudacao()}  {userName && userName.name}</h2>
+                        <h2 style={saudacaoStyle}>{saudacao(userName && userName.name)}</h2>
                     </Grid>
                     <Grid id="values">
                         <div style={wrapperStyle}>

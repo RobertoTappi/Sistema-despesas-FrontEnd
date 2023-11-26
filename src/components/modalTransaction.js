@@ -95,7 +95,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
                             onChangeValue={(event, originalValue, maskedValue) => {
                                 setAmount(originalValue)
                         }}
-                            InputElement={<TextField label="Valor" ></TextField>}
+                            InputElement={<TextField variant="outlined" type="text" label="Valor" ></TextField>}
                         />
 
                         <TextField

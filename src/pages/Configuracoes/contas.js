@@ -46,7 +46,7 @@ function Contas() {
 
         const obterAccounts = async () => {
             try {
-                const response = await axios.get(URL + 'account/' + idUser, {
+                const response = await axios.get(URL + 'account/findAllAccounts/' + idUser, {
                     headers: {
                         Authorization: 'Bearer ' + token
                     }
