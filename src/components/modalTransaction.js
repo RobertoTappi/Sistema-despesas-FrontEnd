@@ -5,11 +5,6 @@ import { mask } from 'remask'
 import { useMemo } from "react";
 
 
-// Estilos
-
-const btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
-
-
 const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) => {
 
     const [open, openchange] = useState(false);

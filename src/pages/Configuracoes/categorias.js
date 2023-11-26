@@ -13,7 +13,10 @@ import ListItemText from '@mui/material/ListItemText';
 import AppsIcon from '@mui/icons-material/Apps';
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
 import NavBar from '../../components/navbar';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import axios from 'axios';
+import { useState } from 'react';
 
 const drawerWidth = 240;
 
@@ -33,8 +36,8 @@ function Categorias() {
         <div>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, boxShadow: 'none'}}>
-                    <NavBar/>
+                <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, boxShadow: 'none' }}>
+                    <NavBar />
                 </AppBar>
 
                 <Drawer
@@ -45,7 +48,7 @@ function Categorias() {
                         [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', marginTop: '5px' },
                     }}
                 >
-                    
+
                     <Toolbar />
                     <Box sx={{ overflow: 'auto' }}>
                         <List>
