@@ -14,6 +14,11 @@ import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
 import NavBar from '../../components/navbar';
 import { useNavigate } from 'react-router-dom';
 import { Container, Grid, Paper } from '@mui/material';
+import ListItemContas from '../../components/listcontas';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import axios from 'axios';
+
 
 // Estilos 
 
@@ -29,8 +34,32 @@ const paperStyle = {
 const drawerWidth = 240;
 
 function Contas() {
-
     const navigate = useNavigate()
+
+    const [accountsData, setAccounts] = useState(null)
+
+    const URL = "http://localhost:8080/api/"
+    const token = localStorage.getItem('user');
+    const idUser = localStorage.getItem('userId')
+
+    useEffect(() => {
+
+        const obterAccounts = async () => {
+            try {
+                const response = await axios.get(URL + 'account/' + idUser, {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                });
+                setAccounts(response.data);
+
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        };
+        obterAccounts()
+    }, [])
+    console.log(accountsData)
 
     const handlePages = (page) => {
         if (page === 'Contas') {
@@ -82,11 +111,11 @@ function Contas() {
                                 <h2>Suas contas</h2>
                             </Grid>
                             <Grid>
-                                {/* <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
+                                <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
                                     {accountsData && accountsData.map((accountsData, index) => (
-                                        <ListItemDespesa index={index} />
+                                        <ListItemContas index={index} accountsData={accountsData} />
                                     ))}
-                                </List> */}
+                                </List>
                             </Grid>
                         </Paper>
                     </Container>

@@ -36,6 +36,7 @@ const Principal = () => {
         });
         console.log("data accounts",{response})
         setAccounts(response.data);
+        console.log(accountsData)
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
