@@ -40,13 +40,13 @@ function saudacao() {
     }
 }
 
-const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons,userName }) => {
+const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, userName }) => {
     return (
         <Container>
             <Paper elevation={10} style={paperStyle}>
                 <Grid container direction="column" spacing={2}>
                     <Grid item>
-                        <h2 style={saudacaoStyle}>{saudacao()}  {userName && userName.name}</h2>
+                        <h2 style={saudacaoStyle}>{saudacao()} {userName && userName.name}</h2>
                     </Grid>
                     <Grid id="values">
                         <div style={wrapperStyle}>
