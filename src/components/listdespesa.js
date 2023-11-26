@@ -30,7 +30,7 @@ const ListItemDespesa = ({ dados, index }) => {
                                 component="span"
                                 variant="body2"
                             >
-                                {dados.valor}
+                                {dados.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                             </Typography>
                         </Box>
                     }

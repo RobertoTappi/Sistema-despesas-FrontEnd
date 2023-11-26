@@ -101,6 +101,7 @@ const Login = () => {
     }
 
     const handleLogin = () => {
+        
         if (validarFormulario()) {
             logar()
         } else {
@@ -136,6 +137,23 @@ const Login = () => {
         }
 
     }
+
+    // const handleKeyDown = (event) => {
+    //     console.log(event.key)
+
+    //     if (event.key === 'Enter') {
+    //         // logar()
+    //     }
+    //   };
+
+    //   useEffect(() => {
+
+    //     document.body.addEventListener('keydown', handleKeyDown);
+    
+    //     return () => {
+    //       document.body.removeEventListener('keydown', handleKeyDown);
+    //     };
+    //   }, []); 
 
 
     const setCookie = () => {

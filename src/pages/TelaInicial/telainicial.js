@@ -18,12 +18,14 @@ const Principal = () => {
   const [accountsData, setAccounts] = useState(null)
   const [transactionData, setTransaction] = useState(null)
   const [categorysData, setCategory] = useState(null)
-  
+  const [dadosUser,setDadosUser] = useState(null)
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
+  const [isValidToken, setIsValidToken] = useState(null);
 
 
   useEffect(() => {
+
 
     const obterAccounts = async () => {
       try {
@@ -32,6 +34,7 @@ const Principal = () => {
             Authorization: 'Bearer ' + token
           }
         });
+        console.log("data accounts",{response})
         setAccounts(response.data);
         console.log(accountsData)
       } catch (error) {
@@ -47,7 +50,7 @@ const Principal = () => {
           }
         });
         setCategory(response.data);
-        console.log(response.data)
+        console.log("category accounts",{response})
 
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -67,6 +70,21 @@ const Principal = () => {
       }
     };
 
+    const obterDadosUser = async () => {
+      try {
+        const response = await axios.get(URL + 'user/' + idUser, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        console.log("user",response)
+        setDadosUser(response.data)
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    };
+
+    obterDadosUser();
     obterCategory();
     obterTransacoes();
     obterAccounts();
@@ -74,24 +92,24 @@ const Principal = () => {
 
 
   const adicionarTransacao = (novaTransacao) => {
-    console.log( "aqui")
-    setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
+    if(transactionData){
+      setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
+    }
 };
 
+return (
+  <Grid>
+    <NavBar></NavBar>
 
-  return (
-    <Grid>
-      <NavBar></NavBar>
+    <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} transacitons={transactionData} userName={dadosUser} ></AcessoRapido>
 
-      <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} ></AcessoRapido>
-
-      <Grid style={transacaoStyle}>
-        <TransacaoModalReceita props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
-        <TransacaoModalDespesa props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
-      </Grid>
-
+    <Grid style={transacaoStyle}>
+      <TransacaoModalReceita props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
+      <TransacaoModalDespesa props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
     </Grid>
-  )
+
+  </Grid>
+)
 }
 
 export default Principal;
