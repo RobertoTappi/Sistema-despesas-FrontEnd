@@ -29,7 +29,7 @@ const Principal = () => {
 
     const obterAccounts = async () => {
       try {
-        const response = await axios.get(URL + 'account/' + idUser, {
+        const response = await axios.get(URL + 'account/findAllAccounts/' + idUser, {
           headers: {
             Authorization: 'Bearer ' + token
           }
@@ -64,6 +64,7 @@ const Principal = () => {
           }
         });
         setTransaction(response.data)
+        debugger
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
