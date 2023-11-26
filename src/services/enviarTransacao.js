@@ -19,7 +19,6 @@ export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dat
     };
         
     try {
-        debugger
         const response = await axios.post(URL, dados, {
             headers: {
                 Authorization: 'Bearer ' + token

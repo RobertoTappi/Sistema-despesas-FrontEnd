@@ -40,7 +40,7 @@ function saudacao(user) {
     }
 }
 
-const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons,userName }) => {
+const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, userName }) => {
     return (
         <Container>
             <Paper elevation={10} style={paperStyle}>
