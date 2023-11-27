@@ -15,7 +15,7 @@ const saudacaoStyle = { fontSize: '25px', marginBottom: "30px", marginLeft: "15p
 
 const wrapperStyle = {
     display: 'flex',
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: "left",
     margin: "0px 30px",
     gap: '20px'
@@ -31,12 +31,12 @@ function saudacao(user) {
     const agora = new Date();
     const hora = agora.getHours();
 
-    if (hora >= 5 && hora < 12) { 
-        return 'Bom dia!  '+ user+  ' ☀️';
+    if (hora >= 5 && hora < 12) {
+        return 'Bom dia ' + user + '! ☀️';
     } else if (hora >= 12 && hora < 18) {
-        return 'Boa tarde!   '+ user+ ' 🌓';
+        return 'Boa tarde ' + user + '! 🌓';
     } else {
-        return 'Boa noite!   '+ user+ ' 🌙';
+        return 'Boa noite ' + user + '! 🌙';
     }
 }
 
@@ -53,28 +53,28 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, 
                             <Paper elevation={5} style={itemStyle}>
                                 <h3>Receita mensal</h3>
                                 <p>{transacitons && transacitons
-                                        .filter(transacao => transacao.type === 'RECEITA')
-                                        .reduce((soma, transacao) => soma + transacao.valor, 0)
-                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    .filter(transacao => transacao.type === 'RECEITA')
+                                    .reduce((soma, transacao) => soma + transacao.valor, 0)
+                                    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </p>
                             </Paper>
 
                             <Paper elevation={5} style={itemStyle}>
                                 <h3>Despesa mensal</h3>
                                 <p>{transacitons && transacitons
-                                        .filter(transacao => transacao.type === 'DESPESA')
-                                        .reduce((soma, transacao) => soma + transacao.valor, 0)
-                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    .filter(transacao => transacao.type === 'DESPESA')
+                                    .reduce((soma, transacao) => soma + transacao.valor, 0)
+                                    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </p>
                             </Paper>
                         </div>
                     </Grid>
 
                     <Grid>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                        <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
-                        <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
-                    </div>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
+                            <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
+                        </div>
                     </Grid>
                 </Grid>
             </Paper>

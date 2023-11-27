@@ -16,7 +16,7 @@ const ModalEditTransa = ({open,dados, onClose , tipo}) =>{
     const [openModal, setOpenModal] = useState(false);
     const [amount, setAmount] = useState(null)
     useEffect(() => {
-        debugger
+        
         setOpenModal(open);
         setAmount(dados.valor)
       }, [open]);

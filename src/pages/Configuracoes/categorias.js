@@ -5,7 +5,6 @@ import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -13,24 +12,78 @@ import ListItemText from '@mui/material/ListItemText';
 import AppsIcon from '@mui/icons-material/Apps';
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
 import NavBar from '../../components/navbar';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Container, Grid, Paper } from '@mui/material';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useState } from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import ListItemCategorias from '../../components/listcategorias';
+
+// Estilos
+const paperStyle = {
+    padding: '10px',
+    minHeight: '650px',
+    maxWidth: '1200px',
+    margin: '20px auto',
+    borderRadius: '10px'
+};
 
 const drawerWidth = 240;
 
 function Categorias() {
+    const navigate = useNavigate();
 
-    const navigate = useNavigate()
+    const [categorysData, setCategorysData] = useState(null);
+    const [receitas, setReceitas] = useState([]);
+    const [despesas, setDespesas] = useState([]);
+
+    const URL = "http://localhost:8080/api/";
+    const token = localStorage.getItem('user');
+    const idUser = localStorage.getItem('userId');
+
+    const [value, setValue] = useState(0);
+
+    useEffect(() => {
+        const obterCategorys = async () => {
+            try {
+                const response = await axios.get(URL + 'category/' + idUser, {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                });
+
+                setCategorysData(response.data);
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        };
+
+        obterCategorys();
+    }, []);
+
+    useEffect(() => {
+        
+        if (categorysData) {
+            const receitasFiltradas = categorysData.filter(category => category.tipo === 'RECEITA');
+            const despesasFiltradas = categorysData.filter(category => category.tipo === 'DESPESA');
+
+            setReceitas(receitasFiltradas);
+            setDespesas(despesasFiltradas);
+        }
+    }, [categorysData]);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const handlePages = (page) => {
         if (page === 'Contas') {
-            navigate('/configuracoes/contas')
+            navigate('/configuracoes/contas');
         } else if (page === 'Categorias') {
-            navigate('/configuracoes/categorias')
+            navigate('/configuracoes/categorias');
         }
-    }
+    };
 
     return (
         <div>
@@ -53,7 +106,7 @@ function Categorias() {
                     <Box sx={{ overflow: 'auto' }}>
                         <List>
                             {['Contas', 'Categorias'].map((text, index) => (
-                                <ListItem disablePadding>
+                                <ListItem disablePadding key={text}>
                                     <ListItemButton onClick={() => handlePages(text)}>
                                         <ListItemIcon>
                                             {index % 2 === 0 ? <SwitchAccountIcon /> : <AppsIcon />}
@@ -64,37 +117,42 @@ function Categorias() {
                             ))}
                         </List>
                     </Box>
-
                 </Drawer>
+
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                     <Toolbar />
-                    <Typography paragraph>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                        enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                        imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-                        Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-                        Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-                        adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-                        nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-                        leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-                        feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-                        consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-                        sapien faucibus et molestie ac.
-                    </Typography>
-                    <Typography paragraph>
-                        Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-                        eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-                        neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-                        tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-                        sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-                        tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                        gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-                        et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-                        tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-                        eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-                        posuere sollicitudin aliquam ultrices sagittis orci a.
-                    </Typography>
+                    <Container>
+                        <Paper elevation={5} style={paperStyle}>
+                            <Grid align='center'>
+                                <h2>Suas categorias</h2>
+                            </Grid>
+
+                            <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                                <Tabs value={value} onChange={handleChange} centered>
+                                    <Tab label="Receitas" />
+                                    <Tab label="Despesas" />
+                                </Tabs>
+                            </Box>
+
+                            <Grid>
+                                {value === 0 && (
+                                    <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
+                                        {receitas.map((receitas, index) => (
+                                            <ListItemCategorias key={index} categorysData={categorysData} categoryReceita={receitas} />
+                                        ))}
+                                    </List>
+                                )}
+
+                                {value === 1 && (
+                                    <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
+                                        {despesas.map((despesas, index) => (
+                                            <ListItemCategorias key={index} categorysData={categorysData} categoryDespesa={despesas} />
+                                        ))}
+                                    </List>
+                                )}
+                            </Grid>
+                        </Paper>
+                    </Container>
                 </Box>
             </Box>
         </div>
