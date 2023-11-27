@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import {ListItem,Dialog,Button, DialogContent} from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
@@ -18,8 +18,7 @@ function retornaValor(dados){
 
 
 
-const ListItemDespesa = ({ dados, index }) => {
-
+const ListItemDespesa = ({ dados, index,onAtualizarTrasacao,onRemoverTransacao}) => {
     const [openModal, setOpenModal] = useState(false);
 
     const handleClickOpen = () => {
@@ -29,7 +28,6 @@ const ListItemDespesa = ({ dados, index }) => {
     const handleClose = () => {
       setOpenModal(false);
     };
-
 
     return (
         <>
@@ -60,7 +58,8 @@ const ListItemDespesa = ({ dados, index }) => {
                 />
             </ListItem>
             <Divider variant="inset" component="li" />
-            <ModalEditTransa open={openModal}dados={dados} onClose={handleClose}></ModalEditTransa>
+            <ModalEditTransa onRemoverTransacao={onRemoverTransacao} open={openModal} dados={dados} onClose={handleClose} onAtualizarTrasacao={onAtualizarTrasacao}></ModalEditTransa>
+
         </>
     );
 };

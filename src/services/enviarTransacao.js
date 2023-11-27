@@ -9,6 +9,7 @@ export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dat
         valor: valor,
         idCategory: idCategory,
         descricao: descricao,
+        idAccount: idAccount,
         dataTransacao: dataTransacao,
         tipoTransacao: tipoTransacao,
         account: {

@@ -16,7 +16,7 @@ const URL = "http://localhost:8080/api/"
 
 const Principal = () => {
   const [accountsData, setAccounts] = useState(null)
-  const [transactionData, setTransaction] = useState(null)
+  const [transactionData, setTransaction] = useState([])
   const [categorysData, setCategory] = useState(null)
   const [dadosUser,setDadosUser] = useState(null)
   const token = localStorage.getItem('user');
@@ -65,6 +65,7 @@ const Principal = () => {
           }
         });
         setTransaction(response.data)
+        console.error('Transacitons', {response});
         debugger
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -92,10 +93,32 @@ const Principal = () => {
   }, []);
 
 
-  const adicionarTransacao = (novaTransacao) => {
-    if(transactionData){
-      setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
-    }
+const adicionarTransacao = (novaTransacao) => {
+    setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
+};
+
+const atualizarTransacao = (novaTransacao) => {
+  debugger
+  if(novaTransacao){
+    setTransaction((prevTransactions) => {
+      const index = prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
+
+      if (index !== -1) {
+        const newTransactions = [...prevTransactions];
+
+
+        newTransactions[index] = novaTransacao;
+        return newTransactions;
+      }
+      return prevTransactions;
+    });
+  }
+}
+
+const removerTransacao = (transacaoId) => {
+  setTransaction((prevTransactions) =>
+    prevTransactions.filter((transacao) => transacao.id !== transacaoId)
+  );
 };
 
 return (
@@ -105,8 +128,8 @@ return (
     <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} transacitons={transactionData} userName={dadosUser} ></AcessoRapido>
 
     <Grid style={transacaoStyle}>
-      <TransacaoModalReceita props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
-      <TransacaoModalDespesa props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
+      <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
+      <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
     </Grid>
 
   </Grid>
