@@ -65,8 +65,6 @@ const Principal = () => {
           }
         });
         setTransaction(response.data)
-        console.error('Transacitons', {response});
-        debugger
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }

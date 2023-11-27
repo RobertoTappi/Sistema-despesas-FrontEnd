@@ -13,7 +13,7 @@ const URL = "http://localhost:8080/api/"
 const btnStyleSalvar = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 const btnStyleFechar = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
 
-const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTransacao,       tipoEntrada,tipoEntradaTrueReceita }) =>{
+const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTransacao,}) =>{
     const token = localStorage.getItem('user');
     const idUser = localStorage.getItem('userId')
     const [openModal, setOpenModal] = useState(false);
@@ -30,8 +30,8 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
     const [category, setCategoryUnico] = useState('');
 
     useEffect(() => {
-      if(!tipoEntrada){
-        //Modal de editar e excluir transacao
+      
+        
         const obterAccounts = async () => {
 
           try {
@@ -89,10 +89,9 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
       setFormLabelTitle(`Editar - ${dados && dados.type}`);
       setDescricao(dados &&dados.descricao)
       setIdCategory(dados &&dados.idCategory)
-      }else{
-        // nao é edit e nem excluir é os botoes de adcionar receita e despesa
-        setOpenModal(open);
-      }
+      
+        
+      
 
       }, [open]);
 
@@ -203,12 +202,7 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
         onRemoverTransacao(dados.id)
     }
     
-    // Funcoes para os botoes de adicioanr receita e adicionar despesa
-
-    const mostrarText = ()=>{
-      if(tipoEntradaTrueReceita) return "Adicionar Receita"
-      return "Adicionar Despesa"
-    }
+ 
 
 
     return (
@@ -216,7 +210,7 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
       <DialogContent style={{ padding: '20px', textAlign: 'center', minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <FormControl>
           <FormLabel id="demo-row-radio-buttons-group-label">
-            <h4>{tipoEntrada ? mostrarText():formLabelTitle}</h4>
+            <h4>{formLabelTitle}</h4>
           </FormLabel>
 
               <RadioGroup

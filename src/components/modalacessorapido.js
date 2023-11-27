@@ -16,7 +16,7 @@ const saudacaoStyle = { fontSize: '25px', marginBottom: "30px", marginLeft: "15p
 
 const wrapperStyle = {
     display: 'flex',
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: "left",
     margin: "0px 30px",
     gap: '20px'
@@ -32,12 +32,12 @@ function saudacao(user) {
     const agora = new Date();
     const hora = agora.getHours();
 
-    if (hora >= 5 && hora < 12) { 
-        return 'Bom dia!  '+ user+  ' ☀️';
+    if (hora >= 5 && hora < 12) {
+        return 'Bom dia ' + user + '! ☀️';
     } else if (hora >= 12 && hora < 18) {
-        return 'Boa tarde!   '+ user+ ' 🌓';
+        return 'Boa tarde ' + user + '! 🌓';
     } else {
-        return 'Boa noite!   '+ user+ ' 🌙';
+        return 'Boa noite ' + user + '! 🌙';
     }
 }
 const btnStyleReceita = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }

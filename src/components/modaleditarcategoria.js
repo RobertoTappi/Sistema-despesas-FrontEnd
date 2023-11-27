@@ -24,13 +24,13 @@ const btnStyle = {
 }
 
 
-const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, removerTransacao }) => {
+const EditarCategoria = ({ categoryReceita, categoryDespesa, open, onClose, handleActualName }) => {
     const [openModal, setOpenModal] = useState(false)
     const [editing, setEditing] = useState(false)
-    const [editedName, setEditedName] = useState(accountsData.name)
-    const [actualName, setActualName] = useState(accountsData.name)
+    const [editedName, setEditedName] = useState(categoryReceita && <div>{categoryReceita.nome}</div>)
+    const [actualName, setActualName] = useState(categoryReceita && <div>{categoryReceita.nome}</div>)
 
-    const idAccount = accountsData.id
+    const idUser = localStorage.getItem('userId')
     const token = localStorage.getItem('user');
 
     useEffect(() => {
@@ -61,25 +61,11 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
         handleActualName(editedName)
     }
 
-    const handleSaldoStyle = () => {
-        return saldo < 0 ? { color: 'red' } : { color: 'green' };
-    }
-
-    const formatarSaldo = (saldo) => {
-        const saldoFormatado = saldo.toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        });
-
-        return ` ${saldoFormatado}`;
-    };
-
     async function deletarConta() {
         try {
-            const response = await DeletarContaAXIOS(idAccount, token);
+            const response = await DeletarContaAXIOS(idUser, token);
             console.log(response.data)
 
-            removerTransacao(idAccount)
 
         } catch (error) {
             console.error("erro ao excluir a conta");
@@ -98,20 +84,17 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
                             Nome da conta:{' '}
                             {editing ? (
                                 <input
-                                    style={{ minHeight: '27px', fontSize: '18px' }}
-                                    value={editedName}
+                                    style={{ minHeight: '27px', fontSize: '18px' }}                                
                                     onChange={handleChangeName}
                                     variant="outlined"
                                 />
                             ) : (
-                                <span style={{ fontWeight: 'normal' }}>{editedName}</span>
+                                <span style={{ fontWeight: 'normal' }}></span>
                             )}
                         </h3>
 
                         <h3 style={{ marginTop: '25px' }}>Saldo: 
-                            <span style={{ fontWeight: 'bold', ...handleSaldoStyle() }}> 
-                                {formatarSaldo(saldo)}
-                            </span>
+                            
                         </h3>
                     </Stack>
 
@@ -157,4 +140,4 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
 };
 
 
-export default EditarConta;
+export default EditarCategoria;

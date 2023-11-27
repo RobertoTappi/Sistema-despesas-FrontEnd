@@ -59,7 +59,12 @@ function Contas() {
         };
         obterAccounts()
     }, [])
-    console.log(accountsData)
+
+    const removerTransacao = (accountId) => {
+        setAccounts((prevAccount) =>
+            prevAccount.filter((account) => account.id !== accountId)
+        );
+    };
 
     const handlePages = (page) => {
         if (page === 'Contas') {
@@ -113,7 +118,7 @@ function Contas() {
                             <Grid>
                                 <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
                                     {accountsData && accountsData.map((accountsData, index) => (
-                                        <ListItemContas index={index} accountsData={accountsData} />
+                                        <ListItemContas index={index} accountsData={accountsData} removerTransacao={removerTransacao}/>
                                     ))}
                                 </List>
                             </Grid>
