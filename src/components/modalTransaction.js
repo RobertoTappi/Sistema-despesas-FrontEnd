@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useRef } from "react";
-import { Button,IconButton,Typography, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Button,IconButton,FormControlLabel,Checkbox,Typography, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { TransactionAXIOS } from '../services/enviarTransacao';
 import { mask } from 'remask'
 import { useMemo } from "react";
@@ -36,7 +36,11 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         }
     })
 
-
+    function retornaValor(dados){
+        if(dados && dados !=null && dados!=undefined){
+            return dados.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+        }
+    }
 
     const functionopenpopup = () => {
         openchange(true);
@@ -120,7 +124,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     async function cadastrarTransacao() {
         console.error("erro ao cadastrar transacao fora");
         try {
-            const response = await TransactionAXIOS(idUser, amount,category, description, selectedDate, typeTransaction, selectedAccount, token);
+            const response = await TransactionAXIOS(idUser, amount,category, description, selectedDate, typeTransaction, selectedAccount,showParcelasSelect,selectedParcela, token);
 
             onAdicionarTransacao(response.data);
 
@@ -128,6 +132,17 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             console.error("erro ao cadastrar transacao",error);
         }
     }
+
+    const [showParcelasSelect, setShowParcelasSelect] = useState(false);
+    const [selectedParcela, setSelectedParcela] = useState(2);
+  
+    const handleCheckboxChange = () => {
+      setShowParcelasSelect(!showParcelasSelect);
+    };
+  
+    const handleParcelaChange = (event) => {
+      setSelectedParcela(event.target.value);
+    };
 
 
     return (
@@ -230,10 +245,48 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
                     </Box>
                 </Grid>
                 </Grid>
-
-                <Button color="primary" variant="contained" onClick={handleTransaction}>
-                Criar {tipo === "RECEITA" ? "Receita" : "Despesa"}
+                <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={6} md={4}>
+                <FormControlLabel
+                    sx={{ maxWidth: 120 }}
+                    value="start"
+                    control={<Checkbox
+                        checked={showParcelasSelect}
+                        onChange={handleCheckboxChange}
+                        inputProps={{ 'aria-label': 'controlled' }} />}
+                    label="Parcelado?"
+                    labelPlacement="start"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6} md={8}>
+                {showParcelasSelect && (
+                    <div>
+                        <FormControl fullWidth>
+                            <InputLabel id="parcela-select-label">Parcelas</InputLabel>
+                            <Select
+                                labelId="parcela-select-label"
+                                id="parcela-select"
+                                value={selectedParcela}
+                                label="Parcelas"
+                                onChange={handleParcelaChange}
+                            >
+                                {[ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((parcela) => (
+                                    <MenuItem value={parcela} key={parcela}>
+                                        {parcela}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Typography>{`${selectedParcela}x valor por parcela ${retornaValor(amount/selectedParcela)}`}</Typography>
+                    </div>
+                )}
+            </Grid>
+        </Grid>
+                
+                <Button onClick={handleTransaction} color="primary" variant="contained" style={btnStyle}>
+                    Adicionar {tipo === 'RECEITA' ? 'Receita' : 'Despesa'}
                 </Button>
+
             </Stack>
             </DialogContent>
         </Dialog>

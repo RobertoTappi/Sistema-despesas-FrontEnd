@@ -5,7 +5,7 @@ import axios from 'axios';
 import TransacaoModalDespesa from '../../components/modaltransacaodespesa.js'
 import TransacaoModalReceita from '../../components/modaltransacaoreceita.js'
 import AcessoRapido from '../../components/modalacessorapido.js';
-
+import DashBoardGastosMensais from '../../components/dashboardmensal';
 // Estilos
 
 const transacaoStyle = { display: 'flex', gap: '70px', justifyContent: 'center'}
@@ -64,7 +64,29 @@ const Principal = () => {
             Authorization: 'Bearer ' + token
           }
         });
-        setTransaction(response.data)
+        const converterStringParaData = (dataString) => {
+          const [dia, mes, ano] = dataString.split('/');
+          return new Date(parseInt(ano, 10), parseInt(mes, 10) - 1, parseInt(dia, 10));
+        };
+          const dataAtual = new Date();
+
+          const transacoesDoMesAtual = response.data.filter(transacao => {
+
+            const partesData = transacao.creationDate.split('/');
+            const dataDaTransacao = converterStringParaData(transacao.creationDate)
+
+            return (
+              dataDaTransacao.getMonth() === dataAtual.getMonth() &&
+              dataDaTransacao.getFullYear() === dataAtual.getFullYear()
+            );
+          });
+
+          transacoesDoMesAtual.sort((a, b) => {
+            const dataA = converterStringParaData(a.creationDate)
+            const dataB = converterStringParaData(b.creationDate)
+            return dataA - dataB;
+          });
+          setTransaction(transacoesDoMesAtual);
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
@@ -96,7 +118,6 @@ const adicionarTransacao = (novaTransacao) => {
 };
 
 const atualizarTransacao = (novaTransacao) => {
-  debugger
   if(novaTransacao){
     setTransaction((prevTransactions) => {
       const index = prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
@@ -128,6 +149,10 @@ return (
     <Grid style={transacaoStyle}>
       <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
       <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
+    </Grid>
+
+    <Grid>
+      <DashBoardGastosMensais categories={categorysData} gastosMensais={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} ></DashBoardGastosMensais>
     </Grid>
 
   </Grid>

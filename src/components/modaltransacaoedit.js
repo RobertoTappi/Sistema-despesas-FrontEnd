@@ -1,5 +1,5 @@
 import React,{useEffect, useState,useMemo} from 'react';
-import {Dialog,Button, IconButton,MenuItem, FormLabel,FormControl,RadioGroup,FormControlLabel,Radio,Grid, TextField,Box,InputLabel,Select, DialogContent,} from '@mui/material';
+import {Dialog,Button,Checkbox,Typography, IconButton,MenuItem, FormLabel,FormControl,RadioGroup,FormControlLabel,Radio,Grid, TextField,Box,InputLabel,Select, DialogContent,} from '@mui/material';
 import { CurrencyInput } from 'react-currency-mask';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -201,6 +201,17 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
         removerTransaction()
         onRemoverTransacao(dados.id)
     }
+
+    const [showParcelasSelect, setShowParcelasSelect] = useState(false);
+    const [selectedParcela, setSelectedParcela] = useState(1);
+  
+    const handleCheckboxChange = () => {
+      setShowParcelasSelect(!showParcelasSelect);
+    };
+  
+    const handleParcelaChange = (event) => {
+      setSelectedParcela(event.target.value);
+    };
     
  
 
@@ -329,6 +340,43 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
               <DeleteIcon />
             </IconButton>
           </Grid>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={6} md={4}>
+                <FormControlLabel
+                    sx={{ maxWidth: 120 }}
+                    value="start"
+                    control={<Checkbox
+                        checked={showParcelasSelect}
+                        onChange={handleCheckboxChange}
+                        inputProps={{ 'aria-label': 'controlled' }} />}
+                    label="Parcelado?"
+                    labelPlacement="start"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6} md={8}>
+                {showParcelasSelect && (
+                    <div>
+                        <FormControl fullWidth>
+                            <InputLabel id="parcela-select-label">Parcelas</InputLabel>
+                            <Select
+                                labelId="parcela-select-label"
+                                id="parcela-select"
+                                value={selectedParcela}
+                                label="Parcelas"
+                                onChange={handleParcelaChange}
+                            >
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((parcela) => (
+                                    <MenuItem value={parcela} key={parcela}>
+                                        {parcela}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Typography>{`${selectedParcela}x valor por parcela ${retornaValor(amount/selectedParcela)}`}</Typography>
+                    </div>
+                )}
+            </Grid>
+        </Grid>
         
       </DialogContent>
 
