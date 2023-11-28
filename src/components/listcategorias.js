@@ -48,7 +48,7 @@ const ListItemCategorias = ({ categoryReceita, categoryDespesa, categorysData })
             </ListItem >
             <Divider variant="inset" component="li" />
 
-            <EditarCategoria open={openModal} onClose={closeDialog} categorysData={categorysData} handleActualName={handleActualName} categoryDespesa={categoryDespesa} categoryReceita={categoryReceita} />
+            <EditarCategoria open={openModal} onClose={closeDialog} categorysData={categorysData} handleActualName={handleActualName} />
         </>
     );
 };

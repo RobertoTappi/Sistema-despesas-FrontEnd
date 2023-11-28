@@ -19,11 +19,11 @@ const ListItemContas = ({ accountsData, removerTransacao }) => {
     const handleClickOpen = () => {
         obterSaldo()
         setOpenModal(true);
-    };
+    }
 
     const closeDialog = () => {
         setOpenModal(false);
-    };
+    }
 
     const handleActualName = (e) => {
         setActualName(e)
@@ -49,8 +49,6 @@ const ListItemContas = ({ accountsData, removerTransacao }) => {
             console.error("erro ao obter o saldo");
         }
     }
-
-
 
     return (
         <>
