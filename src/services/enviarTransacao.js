@@ -2,7 +2,7 @@ import axios from "axios"
 
 const URL = "http://localhost:8080/api/transaction/addTransacao"
 
-export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dataTransacao, tipoTransacao, idAccount, token) {
+export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dataTransacao, tipoTransacao, idAccount,recorrencia,parcelas, token) {
     let dados = {}
     dados = {
         idUser: idUser,
@@ -10,8 +10,11 @@ export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dat
         idCategory: idCategory,
         descricao: descricao,
         idAccount: idAccount,
+        recorencia: recorrencia,
+        parcelas: parcelas,
         dataTransacao: dataTransacao,
         tipoTransacao: tipoTransacao,
+
         account: {
             id: idAccount,
             name: "string",
