@@ -71,15 +71,17 @@ const Principal = () => {
           const dataAtual = new Date();
 
           const transacoesDoMesAtual = response.data.filter(transacao => {
-
             const partesData = transacao.creationDate.split('/');
-            const dataDaTransacao = converterStringParaData(transacao.creationDate)
-
+            const dataDaTransacao = converterStringParaData(transacao.creationDate);
+          
+            // Verificar se a data da transação está no mesmo mês e ano e não é no futuro
             return (
+              dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
               dataDaTransacao.getMonth() === dataAtual.getMonth() &&
-              dataDaTransacao.getFullYear() === dataAtual.getFullYear()
+              dataDaTransacao.getDate() >= dataAtual.getDate()
             );
           });
+          
 
           transacoesDoMesAtual.sort((a, b) => {
             const dataA = converterStringParaData(a.creationDate)
@@ -87,6 +89,9 @@ const Principal = () => {
             return dataA - dataB;
           });
           setTransaction(transacoesDoMesAtual);
+        
+        
+        
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }

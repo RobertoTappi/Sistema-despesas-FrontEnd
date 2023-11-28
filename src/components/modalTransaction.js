@@ -14,7 +14,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     const [amount, setAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('pt-BR'));
     const typeTransaction = tipo
-    const [selectedAccount, setSelectedAccount] = useState('');
+    const [selectedAccount, setSelectedAccount] = useState(accounts && accounts.find(account => account.name === 'Conta Principal').id || '');
     const [category, setCategory] = useState('');
 
     const idUser = localStorage.getItem('userId');
@@ -27,14 +27,14 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         btnStyle = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
     }
 
-    useEffect(() => {
-        if (accounts) {
-            const contaEncontrada = accounts.find(account => account.name === 'Conta Principal') || null
-            if (contaEncontrada) {
-                setSelectedAccount(contaEncontrada.id)
-            }
-        }
-    })
+    
+        //  if (accounts) {
+        //     const contaEncontrada = accounts.find(account => account.name === 'Conta Principal') || null
+        //     if (contaEncontrada) {
+        //         setSelectedAccount(contaEncontrada.id)
+        //     }
+        // }
+    
 
     function retornaValor(dados){
         if(dados && dados !=null && dados!=undefined){
@@ -55,7 +55,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         const pattern = ['99/99/9999']
         setSelectedDate(mask(value, pattern));
     }
-
+    // adsaddsadsa
     const handleChange = (event) => {
         setSelectedAccount(event.target.value);
     };
@@ -149,7 +149,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             <Button onClick={functionopenpopup} color="primary" variant="contained" style={btnStyle}>
                 Adicionar {tipo === "RECEITA" ? "Receita" : "Despesa"}
             </Button>
-            <Dialog open={open} onClose={closepopup} fullWidth maxWidth="sm">
+            <Dialog open={open} onClose={closepopup} fullWidth maxWidth="sm" >
                 <DialogContent>
                     <Stack spacing={2} margin={2}>
                         <IconButton onClick={closepopup} style={{ position: 'absolute', top: 0, left: 0, color: '#000' }}>

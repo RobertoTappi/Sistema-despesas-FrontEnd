@@ -7,9 +7,13 @@ const paperStyle = {
   padding: '20px',
   minHeight: '300px',
   maxWidth: '500px',
-  margin: '20px 0px auto',
+  margin: '20px 0px auto', // Removendo a margem superior e inferior
   borderRadius: '10px',
   textAlign: 'center', 
+};
+
+const labelStyle = {
+  marginTop: '10px', // Ajuste a margem superior para separar a label do gráfico
 };
 
 const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
@@ -18,9 +22,8 @@ const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
   const formatChartData = () => {
     const consolidatedData = {};
 
-    const total = gastosMensais.reduce((acc, gasto) => acc + gasto.valor, 0);
     gastosMensais.forEach((gasto) => {
-      const category = categories.find((c) => c.id === gasto.idCategory);
+      const category = categories && categories.find((c) => c.id === gasto.idCategory);
 
       if (category) {
         const percentage = (gasto.valor / total) * 100;
@@ -40,19 +43,26 @@ const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
     return Object.values(consolidatedData);
   };
 
+  const total = gastosMensais.reduce((acc, gasto) => acc + gasto.valor, 0);
+
   return (
     <Container>
       <Paper elevation={10} style={paperStyle}>
         <Typography variant="h6">Maiores gastos do mês atual</Typography>
         <Grid container justifyContent="center" alignItems="center">
+          <div style={labelStyle}>
+            <Typography variant="body2"></Typography>
+          </div>
           <PieChart
             series={[
               {
                 data: formatChartData(),
               },
             ]}
-            width={400}
-            height={200}
+            width={600}
+            height={250}
+            label={({ dataEntry }) => dataEntry.label} // Personaliza a posição do rótulo
+            labelPosition={65} // Ajuste a posição da label para ficar abaixo do gráfico
           />
         </Grid>
       </Paper>
