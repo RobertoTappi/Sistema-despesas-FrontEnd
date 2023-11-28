@@ -13,10 +13,10 @@ import AppsIcon from '@mui/icons-material/Apps';
 import SwitchAccountIcon from '@mui/icons-material/SwitchAccount';
 import NavBar from '../../components/navbar';
 import { useNavigate } from 'react-router-dom';
-import { Container, Grid, Paper } from '@mui/material';
+import { Button, Container, Grid, Paper } from '@mui/material';
 import ListItemContas from '../../components/listcontas';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import CriarConta from '../../components/modalcriarconta';
 import axios from 'axios';
 
 
@@ -28,8 +28,13 @@ const paperStyle = {
     maxWidth: '1200px',
     margin: '20px auto',
     borderRadius: '10px'
-};
+}
 
+const gridStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+}
 
 const drawerWidth = 240;
 
@@ -57,8 +62,28 @@ function Contas() {
                 console.error('Erro ao buscar dados:', error);
             }
         };
+
+        const criarAccount = async () => {
+            try {
+                const response = await axios.get(URL + 'account/findAllAccounts/' + idUser, {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    }
+                });
+                setAccounts(response.data);
+
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        };
+
         obterAccounts()
+        criarAccount()
     }, [])
+
+    const addAccount = (account) => {
+        setAccounts((prevAccount) => [...prevAccount, account]);
+    };
 
     const removerTransacao = (accountId) => {
         setAccounts((prevAccount) =>
@@ -112,22 +137,22 @@ function Contas() {
                     <Toolbar />
                     <Container>
                         <Paper elevation={5} style={paperStyle}>
-                            <Grid align='center'>
+                            <div style={gridStyle}>
                                 <h2>Suas contas</h2>
-                            </Grid>
-                            <Grid>
+                            </div>
+                            <Grid style={{ minHeight: '500px' }}>
                                 <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
                                     {accountsData && accountsData.map((accountsData, index) => (
-                                        <ListItemContas index={index} accountsData={accountsData} removerTransacao={removerTransacao}/>
+                                        <ListItemContas index={index} accountsData={accountsData} removerTransacao={removerTransacao} />
                                     ))}
                                 </List>
                             </Grid>
+                            <CriarConta addAccount={addAccount}></CriarConta>
                         </Paper>
                     </Container>
-
                 </Box>
             </Box>
-        </div>
+        </div >
     );
 }
 
