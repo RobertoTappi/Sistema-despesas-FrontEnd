@@ -40,7 +40,7 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
                 Authorization: 'Bearer ' + token
               }
             });
-            debugger
+            
             console.log("data accounts",{response})
             setAccounts(response.data);
             console.log(accountsData)

@@ -3,7 +3,7 @@ import { Paper, Grid } from '@mui/material'
 import List from '@mui/material/List';
 import ListItemDespesa from './listdespesa';
 
-const TransacaoModalReceita = ({props,onAtualizarTrasacao,onRemoverTransacao}) => {
+const TransacaoModalReceita = ({ props, onAtualizarTrasacao, onRemoverTransacao }) => {
     const transactionData = props
 
 

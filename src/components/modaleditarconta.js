@@ -80,6 +80,7 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
             console.log(response.data)
 
             removerTransacao(idAccount)
+            closeDialog()
 
         } catch (error) {
             console.error("erro ao excluir a conta");
