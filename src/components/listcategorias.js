@@ -2,53 +2,98 @@ import React, { useState } from 'react';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { CategoriaAXIOS } from '../services/categoriaService';
 import EditarCategoria from './modaleditarcategoria';
+import { Avatar } from '@mui/material';
+import DeletarCategoriaAXIOS from '../services/deletarCategoria';
+import { EditarCategoriaAXIOS } from '../services/editarCategoria';
 
-const ListItemCategorias = ({ categoryReceita, categoryDespesa, categorysData }) => {
-
+const ListItemCategorias = ({ categorysData }) => {
     const [openModal, setOpenModal] = useState(false);
-    const [actualName, setActualName] = useState(categorysData.nome)
+    const [actualName, setActualName] = useState();
+
+    const [actualIcon, setActualIcon] = useState();
+    const [tipoCategoria, setTipoCategoria] = useState();
+    const [idCategoria, setIdCategoria] = useState();
 
     const token = localStorage.getItem('user');
-    const idUser = localStorage.getItem('userId')
+    const idUser = localStorage.getItem('userId');
 
-    const handleClickOpen = () => {
+
+    const handleClickOpen = (categoria) => {
         setOpenModal(true);
+        setActualName(categoria.nome);
+        setActualIcon(categoria.icon);
+        setTipoCategoria(categoria.tipo);
+        setIdCategoria(categoria.id)
     };
 
     const closeDialog = () => {
         setOpenModal(false);
     };
 
-    const handleActualName = (e) => {
-        setActualName(e)
-    }
+    const handleIconChange = (iconId) => {
+        setActualIcon(iconId);
+    };
 
-    async function obterCategoria() {
+    // async function obterCategoria() {
+    //     try {
+    //         const response = await CategoriaAXIOS(idUser, token);
+    //         console.log(response.data);
+    //     } catch (error) {
+    //         console.error("erro ao obter a categoria");
+    //     }
+    // }
+
+    async function editarCategoria(nomeCategoria) {
         try {
-            const response = await CategoriaAXIOS(idUser, token);
+            const response = await EditarCategoriaAXIOS(idCategoria, nomeCategoria, tipoCategoria, idUser, token);
+            debugger
             console.log(response.data)
 
         } catch (error) {
-            console.error("erro ao obter o saldo");
+            console.error("erro ao excluir a categoria");
+        }
+    }
+
+    async function deletarCategoria() {
+
+        try {
+            const response = await DeletarCategoriaAXIOS(idCategoria, tipoCategoria, idUser, token);
+            console.log(response.data)
+
+        } catch (error) {
+            console.error("erro ao excluir a categoria");
         }
     }
 
     return (
         <>
-            <ListItem alignItems="flex-start" button onClick={handleClickOpen}>
-                <AccountBoxIcon style={{ marginTop: '20px', marginLeft: '5px' }} />
+            {categorysData.map((categoria, index) => (
+                <React.Fragment key={index}>
+                    <ListItem alignItems="flex-start" button onClick={() => handleClickOpen(categoria)}>
+                        <Avatar style={{ marginTop: '20px', marginLeft: '5px' }}>
 
-                <ListItemText style={{ marginLeft: '22px', marginTop: '20px' }}>
-                    {categoryReceita && <div>{categoryReceita.nome}</div>}
-                    {categoryDespesa && <div>{categoryDespesa.nome}</div>}
-                </ListItemText>
-            </ListItem >
-            <Divider variant="inset" component="li" />
+                        </Avatar>
 
-            <EditarCategoria open={openModal} onClose={closeDialog} categorysData={categorysData} handleActualName={handleActualName} />
+                        <ListItemText style={{ marginLeft: '22px', marginTop: '20px' }}>
+                            {categoria && <div>{categoria.nome}</div>}
+                        </ListItemText>
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                </React.Fragment>
+            ))}
+
+            <EditarCategoria
+                open={openModal}
+                onClick={handleClickOpen}
+                onClose={closeDialog}
+                categorysData={categorysData}
+                handleActualName={actualName}
+                handleIconChange={handleIconChange}
+                deletarCategoria={deletarCategoria}
+                editarCategoria={editarCategoria}
+            />
         </>
     );
 };

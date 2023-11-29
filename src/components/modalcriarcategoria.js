@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, DialogContent, Stack, Grid, TextField, Divider, IconButton } from '@mui/material';
+import { Button, Dialog, DialogContent, Stack, Grid, TextField, Divider } from '@mui/material';
 import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
 import IconeComponent from '../util/mapCategorias';
-import { ArrowBack } from '@mui/icons-material';
+
+const btnStyle = {
+    width: '80%',
+    margin: '0 auto'
+}
+
+const buttonGridStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px'
+}
 
 const iconStyle = {
     display: 'flex',
@@ -22,16 +32,24 @@ const newIconStyle = {
     justifyContent: 'center',
 }
 
-const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, editarCategoria }) => {
+const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
     const [openModal, setOpenModal] = useState(false)
-    const [editedName, setEditedName] = useState()
+    const [editedName, setEditedName] = useState(categorysData)
+    const [actualName, setActualName] = useState(categorysData)
     const [selectedIcon, setSelectedIcon] = useState(null)
+    const [actualIcon, setActualIcon] = useState(selectedIcon)
 
+    const idCategoria = categorysData;
+    console.log(categorysData)
+    const token = localStorage.getItem('user')
 
     useEffect(() => {
         setOpenModal(open);
-        setEditedName(handleActualName && handleActualName)
     }, [open])
+
+    const openDialog = () => {
+        setOpenModal(true)
+    }
 
     const closeDialog = () => {
         onClose();
@@ -46,18 +64,12 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
     }
 
     const handleSave = () => {
-        editarCategoria(editedName)
-        onClose()
+        setOpenModal(false)
+        handleActualName(actualName)
     }
-
 
     const handleCancel = () => {
-        onClose()
-    }
-
-    const handleExcluir = () => {
-        deletarCategoria()
-        onClose()
+        setOpenModal(false)
     }
 
     const renderSelectedIcon = () => {
@@ -78,12 +90,14 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
 
     return (
         <div>
+            <Grid style={buttonGridStyle}>
+                <Button variant="contained" color="success" style={btnStyle} onClick={openDialog}>
+                    Adicionar conta
+                </Button>
+            </Grid>
             <Dialog open={openModal} onClose={closeDialog} fullWidth maxWidth="sm">
                 <DialogContent>
                     <Stack spacing={2}>
-                        <IconButton onClick={handleCancel} style={{ position: 'absolute', top: 0, left: 0, color: '#000' }}>
-                            <ArrowBack />
-                        </IconButton>
                         <Grid style={iconStyle}>
                             {selectedIcon !== null && <div style={newIconStyle}>{renderSelectedIcon()}</div>}
                         </Grid>
@@ -96,7 +110,7 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
 
                         <Divider sx={{ my: 1 }} />
 
-                        <h3 style={{ maxHeight: '30px' }}>Ícone da categoria</h3>
+                        <h3 style={{ maxHeight: '30px' }}>Icone da categoria</h3>
 
                         <Grid container spacing={2} style={{ marginTop: '10px', justifyContent: 'center' }}>
                             {mapeamentoDeIconesDespesa.map((item, index) => (
@@ -107,9 +121,12 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
                                     {(index + 1) % 7 === 0 && <Grid item xs={12} />}
                                 </React.Fragment>
                             ))}
-                            <Button variant="contained" style={{ backgroundColor: 'green', minWidth: '150px' }} onClick={handleSave}>Editar categoria</Button>
-                            <Button variant="contained" style={{ backgroundColor: '#f44336', marginLeft: '30px', minWidth: '150px' }} onClick={handleExcluir}>Excluir</Button>
+                            <Button variant="contained" style={{ backgroundColor: 'green', minWidth: '150px' }} onClick={handleSave}>Editar conta</Button>
+                            <Button variant="contained" style={{ backgroundColor: '#f44336', marginLeft: '30px', minWidth: '150px' }} onClick={handleCancel}>Cancelar</Button>
                         </Grid>
+                        <Button color="primary" variant="contained">
+                            Criar categoria
+                        </Button>
                     </Stack>
                 </DialogContent>
             </Dialog>
@@ -117,4 +134,4 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
     );
 };
 
-export default EditarCategoria;
+export default CriarCategoria;
