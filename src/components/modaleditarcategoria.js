@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, DialogContent, Stack, Grid, TextField, Divider, IconButton } from '@mui/material';
+import { Button, Dialog, DialogContent, Stack, Grid, Divider, IconButton } from '@mui/material';
 import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
 import IconeComponent from '../util/mapCategorias';
 import { ArrowBack } from '@mui/icons-material';
@@ -22,7 +22,7 @@ const newIconStyle = {
     justifyContent: 'center',
 }
 
-const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, editarCategoria }) => {
+const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, deletarCategoria, editarCategoria, actualIcon }) => {
     const [openModal, setOpenModal] = useState(false)
     const [editedName, setEditedName] = useState()
     const [selectedIcon, setSelectedIcon] = useState(null)
@@ -31,6 +31,7 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
     useEffect(() => {
         setOpenModal(open);
         setEditedName(handleActualName && handleActualName)
+        setSelectedIcon(actualIcon)
     }, [open])
 
     const closeDialog = () => {
@@ -43,9 +44,11 @@ const EditarCategoria = ({  open, onClose, handleActualName, deletarCategoria, e
 
     const handleIconClick = (iconId) => {
         setSelectedIcon(iconId)
+        handleIconChange(iconId)
     }
 
     const handleSave = () => {
+        handleIconChange(selectedIcon)
         editarCategoria(editedName)
         onClose()
     }

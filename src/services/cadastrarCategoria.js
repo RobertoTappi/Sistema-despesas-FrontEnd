@@ -2,25 +2,23 @@ import axios from "axios"
 
 const URL = "http://localhost:8080/api/"
 
-export async function DeletarCategoriaAXIOS(idCategory, idIcon, tipoCategory, idUser, token) {
-
+export async function AdicionarCategoriaAXIOS(nomeCategoria, idIcon, tipoCategoria, idUser, token) {
     let dados = {}
-    
+
     dados = {
-        id: idCategory,
-        nome: "string",
+        id: 0,
+        nome: nomeCategoria,
         idCon: idIcon,
-        tipo: tipoCategory,
+        tipo: tipoCategoria,
         userId: idUser
-    }
+      }
 
     try {
-        const response = await axios.delete(URL + 'category/deleteCategory', dados, {
+        const response = await axios.post(URL + 'category/createCategory', dados, {
             headers: {
                 Authorization: 'Bearer ' + token
             }
         });
-        
         debugger
         console.log(response)
         return response

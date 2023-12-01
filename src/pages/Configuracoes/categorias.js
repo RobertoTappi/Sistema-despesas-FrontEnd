@@ -76,10 +76,6 @@ function Categorias() {
         }
     };
 
-    const addCategoria = (categoria) => {
-        setCategorysData((prevCategoria) => [...prevCategoria, categoria]);
-    };
-
     return (
         <div>
             <Box sx={{ display: 'flex' }}>
@@ -142,7 +138,6 @@ function Categorias() {
                                     </List>
                                 )}
                             </Grid>
-                            <CriarCategoria addCategoria={addCategoria}></CriarCategoria>
                         </Paper>
                     </Container>
                 </Box>

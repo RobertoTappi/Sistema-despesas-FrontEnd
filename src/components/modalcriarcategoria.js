@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, DialogContent, Stack, Grid, TextField, Divider } from '@mui/material';
+import { Button, Dialog, DialogContent, Stack, Grid, Divider, IconButton } from '@mui/material';
 import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
 import IconeComponent from '../util/mapCategorias';
-
-const btnStyle = {
-    width: '80%',
-    margin: '0 auto'
-}
-
-const buttonGridStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '15px'
-}
+import { ArrowBack } from '@mui/icons-material';
 
 const iconStyle = {
     display: 'flex',
@@ -32,16 +22,22 @@ const newIconStyle = {
     justifyContent: 'center',
 }
 
-const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
-    const [openModal, setOpenModal] = useState(false)
-    const [editedName, setEditedName] = useState(categorysData)
-    const [actualName, setActualName] = useState(categorysData)
-    const [selectedIcon, setSelectedIcon] = useState(null)
-    const [actualIcon, setActualIcon] = useState(selectedIcon)
+const btnStyle = {
+    width: '80%',
+    margin: '0 auto'
+}
 
-    const idCategoria = categorysData;
-    console.log(categorysData)
-    const token = localStorage.getItem('user')
+const buttonGridStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px'
+}
+
+const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
+    const [openModal, setOpenModal] = useState(false)
+    const [editedName, setEditedName] = useState('')
+    const [selectedIcon, setSelectedIcon] = useState(null)
+
 
     useEffect(() => {
         setOpenModal(open);
@@ -52,24 +48,27 @@ const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
     }
 
     const closeDialog = () => {
-        onClose();
-    }
+        setOpenModal(false);
+        setEditedName('');
+        setSelectedIcon(null);
+    };
 
     const handleChangeName = (event) => {
         setEditedName(event.target.value)
     }
 
     const handleIconClick = (iconId) => {
+        handleIconChange(iconId)
         setSelectedIcon(iconId)
     }
 
-    const handleSave = () => {
-        setOpenModal(false)
-        handleActualName(actualName)
+    const handleCancel = () => {
+        closeDialog()
     }
 
-    const handleCancel = () => {
-        setOpenModal(false)
+    const handleSave = () => { 
+        addCategoria(editedName)
+        closeDialog()
     }
 
     const renderSelectedIcon = () => {
@@ -77,11 +76,12 @@ const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
             const iconeEncontrado = mapeamentoDeIconesDespesa.find((icone) => icone.id === selectedIcon);
 
             if (iconeEncontrado) {
+
                 return (
                     <div style={{ fontSize: '1px' }}>
                         {iconeEncontrado.icone}
                     </div>
-                )
+                );
             }
         }
 
@@ -90,14 +90,19 @@ const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
 
     return (
         <div>
-            <Grid style={buttonGridStyle}>
-                <Button variant="contained" color="success" style={btnStyle} onClick={openDialog}>
-                    Adicionar conta
-                </Button>
-            </Grid>
+            <div>
+                <Grid style={buttonGridStyle}>
+                    <Button variant="contained" color="success" style={btnStyle} onClick={openDialog}>
+                        Adicionar categoria
+                    </Button>
+                </Grid>
+            </div>
             <Dialog open={openModal} onClose={closeDialog} fullWidth maxWidth="sm">
                 <DialogContent>
                     <Stack spacing={2}>
+                        <IconButton onClick={handleCancel} style={{ position: 'absolute', top: 0, left: 0, color: '#000' }}>
+                            <ArrowBack />
+                        </IconButton>
                         <Grid style={iconStyle}>
                             {selectedIcon !== null && <div style={newIconStyle}>{renderSelectedIcon()}</div>}
                         </Grid>
@@ -110,7 +115,7 @@ const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
 
                         <Divider sx={{ my: 1 }} />
 
-                        <h3 style={{ maxHeight: '30px' }}>Icone da categoria</h3>
+                        <h3 style={{ maxHeight: '30px' }}>Ícone da categoria</h3>
 
                         <Grid container spacing={2} style={{ marginTop: '10px', justifyContent: 'center' }}>
                             {mapeamentoDeIconesDespesa.map((item, index) => (
@@ -121,12 +126,10 @@ const CriarCategoria = ({ categorysData, open, onClose, handleActualName }) => {
                                     {(index + 1) % 7 === 0 && <Grid item xs={12} />}
                                 </React.Fragment>
                             ))}
-                            <Button variant="contained" style={{ backgroundColor: 'green', minWidth: '150px' }} onClick={handleSave}>Editar conta</Button>
-                            <Button variant="contained" style={{ backgroundColor: '#f44336', marginLeft: '30px', minWidth: '150px' }} onClick={handleCancel}>Cancelar</Button>
+                            <Button color="primary" variant="contained" onClick={handleSave}>
+                                Criar categoria
+                            </Button>
                         </Grid>
-                        <Button color="primary" variant="contained">
-                            Criar categoria
-                        </Button>
                     </Stack>
                 </DialogContent>
             </Dialog>

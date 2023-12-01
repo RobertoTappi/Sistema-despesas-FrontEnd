@@ -2,14 +2,14 @@ import axios from "axios"
 
 const URL = "http://localhost:8080/api/"
 
-export async function EditarCategoriaAXIOS(idCategory, nomeCategory, tipoCategory, idUser, token) {
+export async function EditarCategoriaAXIOS(idCategory, nomeCategory, idIcon, tipoCategory, idUser, token) {
 
     let dados = {}
 
     dados = {
         id: idCategory,
         nome: nomeCategory,
-        idCon: 0,
+        idCon: idIcon,
         tipo: tipoCategory,
         userId: idUser
     }
