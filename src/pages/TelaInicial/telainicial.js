@@ -71,7 +71,6 @@ const Principal = () => {
           return new Date(parseInt(ano, 10), parseInt(mes, 10) - 1, parseInt(dia, 10));
         };
           const dataAtual = new Date();
-        debugger;
           const transacoesDoMesAtual = response.data.filter(transacao => {
             const partesData = transacao.creationDate.split('/');
             const dataDaTransacao = converterStringParaData(transacao.creationDate);
@@ -194,6 +193,7 @@ const removerTransacao = (transacaoId) => {
   );
 };
 
+
 return (
   <Grid>
      <ToastContainer />
@@ -202,8 +202,8 @@ return (
     <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} transacitons={transactionData} userName={dadosUser} ></AcessoRapido>
 
     <Grid style={transacaoStyle}>
-      <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")} isPagaTransacao={isPagaTransacao}></TransacaoModalReceita>
-      <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} isPagaTransacao={isPagaTransacao}></TransacaoModalDespesa>
+      <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")} isPagaTransacao={isPagaTransacao} categorysData={categorysData} ></TransacaoModalReceita>
+      <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} isPagaTransacao={isPagaTransacao} categorysData={categorysData} ></TransacaoModalDespesa>
     </Grid>
 
     <Grid>

@@ -9,8 +9,9 @@ import { EditarCategoriaAXIOS } from '../services/editarCategoria';
 import { AdicionarCategoriaAXIOS } from '../services/cadastrarCategoria'
 import IconeComponent from '../util/mapCategorias';
 import CriarCategoria from './modalcriarcategoria';
+import axios from 'axios';
 
-const ListItemCategorias = ({ categorysData }) => {
+const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCategoria }) => {
     const [openModal, setOpenModal] = useState(false);
     const [openModalAdd, setOpenModalAdd] = useState(false);
 
@@ -21,8 +22,6 @@ const ListItemCategorias = ({ categorysData }) => {
 
     const token = localStorage.getItem('user');
     const idUser = localStorage.getItem('userId');
-
-
 
 
     const handleClickOpen = (categoria) => {
@@ -53,6 +52,7 @@ const ListItemCategorias = ({ categorysData }) => {
         setOpenModalAdd(false);
     };
 
+
     const addCategoria = async (nomeCategoria) => {
         try {
             const response = await AdicionarCategoriaAXIOS(nomeCategoria, actualIcon, tipoCategoria, idUser, token);
@@ -66,20 +66,32 @@ const ListItemCategorias = ({ categorysData }) => {
     const editarCategoria = async (nomeCategoria) => {
         try {
             const response = await EditarCategoriaAXIOS(idCategoria, nomeCategoria, actualIcon, tipoCategoria, idUser, token);
+            atualizarNavegador(idCategoria, actualIcon, nomeCategoria)
             console.log(response.data);
         } catch (error) {
             console.error("Erro ao editar a categoria", error);
         }
     };
 
-    const deletarCategoria = async () => {
+
+    const URL = "http://localhost:8080/api/"
+
+    const deletarCategoria = () => {
+
         try {
-            const response = await DeletarCategoriaAXIOS(idCategoria, tipoCategoria, idUser, token);
-            console.log(response.data);
+            axios.delete(`${URL}category/${idCategoria}`, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            });
+
+            onRemoverCategoria(idCategoria)
         } catch (error) {
-            console.error("Erro ao excluir a categoria", error);
+            console.error('Erro ao remover ', error);
         }
-    };
+    }
+
+    console.log(categorysData)
 
     return (
         <>
@@ -88,7 +100,7 @@ const ListItemCategorias = ({ categorysData }) => {
                     <React.Fragment key={index}>
                         <ListItem alignItems="flex-start" button onClick={() => handleClickOpen(categoria)}>
                             <Grid style={{ marginTop: '10px', marginLeft: '0px' }}>
-                                {categoria.id === idCategoria && <IconeComponent iconId={actualIcon} />}
+                                {categoria.idCon && <IconeComponent iconId={categoria.idCon} />}
                             </Grid>
                             <ListItemText style={{ marginLeft: '5px', marginTop: '20px' }}>
                                 {categoria && <div>{categoria.nome}</div>}

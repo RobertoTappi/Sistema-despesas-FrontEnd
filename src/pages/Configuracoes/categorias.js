@@ -53,7 +53,6 @@ function Categorias() {
                         Authorization: 'Bearer ' + token
                     }
                 });
-
                 setCategorysData(response.data);
             } catch (error) {
                 console.error('Erro ao buscar dados:', error);
@@ -75,6 +74,34 @@ function Categorias() {
             navigate('/configuracoes/categorias');
         }
     };
+
+    const atualizarNavegador = (categoryId, idCon, nome) => {
+        const categoriaEncontrada = categorysData.find(category => category.id === categoryId)
+        categoriaEncontrada.idCon = idCon
+        categoriaEncontrada.nome = nome
+
+        if (categoriaEncontrada) {
+            setCategorysData((prevCategorys) => {
+                const index = prevCategorys.findIndex((category) => category.id === categoryId);
+
+                if (index !== -1) {
+                    const newCategory = [...prevCategorys];
+                    newCategory[index] = categoriaEncontrada;
+                    return newCategory;
+                }
+                return prevCategorys;
+            });
+        }
+    }
+
+    const onRemoverCategoria = (idCategoria) => {
+        setCategorysData((prevCategorysData) =>
+            prevCategorysData.filter((categoria) => categoria.id !== idCategoria)
+        );
+
+    }
+
+    console.log(categorysData)
 
     return (
         <div>
@@ -128,13 +155,13 @@ function Categorias() {
                             <Grid style={{ minHeight: '500px' }}>
                                 {value === 0 && (
                                     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "RECEITA")} />
+                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "RECEITA")} atualizarNavegador={atualizarNavegador} onRemoverCategoria={onRemoverCategoria} />
                                     </List>
                                 )}
 
                                 {value === 1 && (
                                     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "DESPESA")} />
+                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "DESPESA")} atualizarNavegador={atualizarNavegador} onRemoverCategoria={onRemoverCategoria} />
                                     </List>
                                 )}
                             </Grid>
