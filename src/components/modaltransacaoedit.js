@@ -13,7 +13,7 @@ const URL = "http://localhost:8080/api/"
 const btnStyleSalvar = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 const btnStyleFechar = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
 
-const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTransacao,}) =>{
+const ModalEditTransa = ({open,dados,tipo, onClose, onAtualizarTrasacao,onRemoverTransacao,}) =>{
     const token = localStorage.getItem('user');
     const idUser = localStorage.getItem('userId')
     const [openModal, setOpenModal] = useState(false);
@@ -87,6 +87,10 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
 
       setSelectedRadioValue(dados && dados.type)
       setFormLabelTitle(`Editar - ${dados && dados.type}`);
+      if(tipo){
+        setSelectedRadioValue(tipo)
+        setFormLabelTitle(`Adicionar nova ${tipo}`);
+      }
       setDescricao(dados &&dados.descricao)
       setIdCategory(dados &&dados.idCategory)
       
@@ -212,6 +216,8 @@ const ModalEditTransa = ({open,dados, onClose, onAtualizarTrasacao,onRemoverTran
     const handleParcelaChange = (event) => {
       setSelectedParcela(event.target.value);
     };
+
+ 
     
  
 

@@ -6,6 +6,8 @@ import TransacaoModalDespesa from '../../components/modaltransacaodespesa.js'
 import TransacaoModalReceita from '../../components/modaltransacaoreceita.js'
 import AcessoRapido from '../../components/modalacessorapido.js';
 import DashBoardGastosMensais from '../../components/dashboardmensal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Estilos
 
 const transacaoStyle = { display: 'flex', gap: '70px', justifyContent: 'center'}
@@ -69,16 +71,17 @@ const Principal = () => {
           return new Date(parseInt(ano, 10), parseInt(mes, 10) - 1, parseInt(dia, 10));
         };
           const dataAtual = new Date();
-
+        debugger;
           const transacoesDoMesAtual = response.data.filter(transacao => {
             const partesData = transacao.creationDate.split('/');
             const dataDaTransacao = converterStringParaData(transacao.creationDate);
           
             // Verificar se a data da transação está no mesmo mês e ano e não é no futuro
             return (
+              !transacao.isPaga &&
               dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
-              dataDaTransacao.getMonth() === dataAtual.getMonth() &&
-              dataDaTransacao.getDate() >= dataAtual.getDate()
+              dataDaTransacao.getMonth() === dataAtual.getMonth() 
+
             );
           });
           
@@ -138,8 +141,54 @@ const atualizarTransacao = (novaTransacao) => {
     });
   }
 }
+const isPagaTransacao = (transacaoId) => {
+  
+  const Transacao = transactionData.find((transacao) => transacao.id === transacaoId);
+  const data= {
+    idTransaction:Transacao.id,
+    idUser: idUser,
+    valor:Transacao.valor,
+    idCategory: Transacao.idCategory,
+    descricao: Transacao.descricao,
+    idAccount: Transacao.idAccount,
+    isPaga: true,
+    dataTransacao:Transacao.creationDate,
+    tipoTransacao: Transacao.type,
+    account:{
+        id: Transacao.idAccount,
+    }
+  }
+
+
+  try {
+      const response = axios.put(URL + 'transaction/alteraTransacao',data, {
+        headers: {
+          Authorization: 'Bearer ' + token
+        }
+      });
+
+      toast.success('Conta paga com sucesso!', {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        });
+
+        setTransaction((prevTransactions) =>
+        prevTransactions.filter((transacao) => transacao.id !== transacaoId)
+        ); 
+
+    } catch (error) {
+      console.error('Erro ao buscar dados: accounts', error);
+    }
+}
 
 const removerTransacao = (transacaoId) => {
+
   setTransaction((prevTransactions) =>
     prevTransactions.filter((transacao) => transacao.id !== transacaoId)
   );
@@ -147,13 +196,14 @@ const removerTransacao = (transacaoId) => {
 
 return (
   <Grid>
+     <ToastContainer />
     <NavBar></NavBar>
 
     <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} transacitons={transactionData} userName={dadosUser} ></AcessoRapido>
 
     <Grid style={transacaoStyle}>
-      <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")}></TransacaoModalReceita>
-      <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")}></TransacaoModalDespesa>
+      <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")} isPagaTransacao={isPagaTransacao}></TransacaoModalReceita>
+      <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} isPagaTransacao={isPagaTransacao}></TransacaoModalDespesa>
     </Grid>
 
     <Grid>

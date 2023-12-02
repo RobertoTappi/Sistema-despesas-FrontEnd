@@ -14,11 +14,12 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     const [amount, setAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('pt-BR'));
     const typeTransaction = tipo
-    const [selectedAccount, setSelectedAccount] = useState(accounts && accounts.find(account => account.name === 'Conta Principal').id || '');
+    const [selectedAccount, setSelectedAccount] = useState();
     const [category, setCategory] = useState('');
 
     const idUser = localStorage.getItem('userId');
     const token = localStorage.getItem('user');
+
 
     let btnStyle;
     if (tipo === "RECEITA") {
