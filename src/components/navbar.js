@@ -66,7 +66,7 @@ function NavBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
 
-          {/* Tela cheia */}
+          {/* MOBILE */}
           <CurrencyExchangeIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
@@ -117,16 +117,21 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+              <Button
+                key={page}
+                onClick={() => handlePages(page)}
+                sx={{ my: 2, color: 'black', display: 'block', textAlign: "center" }}
+              >
+                {page}
+              </Button>
+            ))}
+             
             </Menu>
           </Box>
 
 
 
-          {/* Mobile */}
+          {/* TELA CHEIA */}
           <CurrencyExchangeIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"

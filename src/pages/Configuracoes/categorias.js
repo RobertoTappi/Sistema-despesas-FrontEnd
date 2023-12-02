@@ -19,6 +19,7 @@ import axios from 'axios';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import ListItemCategorias from '../../components/listcategorias';
+import CriarCategoria from '../../components/modalcriarcategoria';
 
 // Estilos
 const paperStyle = {
@@ -34,7 +35,7 @@ const drawerWidth = 240;
 function Categorias() {
     const navigate = useNavigate();
 
-    const [categorysData, setCategorysData] = useState(null);
+    const [categorysData, setCategorysData] = useState([]);
     const [receitas, setReceitas] = useState([]);
     const [despesas, setDespesas] = useState([]);
 
@@ -62,16 +63,6 @@ function Categorias() {
         obterCategorys();
     }, []);
 
-    useEffect(() => {
-        
-        if (categorysData) {
-            const receitasFiltradas = categorysData.filter(category => category.tipo === 'RECEITA');
-            const despesasFiltradas = categorysData.filter(category => category.tipo === 'DESPESA');
-
-            setReceitas(receitasFiltradas);
-            setDespesas(despesasFiltradas);
-        }
-    }, [categorysData]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -134,20 +125,16 @@ function Categorias() {
                                 </Tabs>
                             </Box>
 
-                            <Grid>
+                            <Grid style={{ minHeight: '500px' }}>
                                 {value === 0 && (
                                     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                                        {receitas.map((receitas, index) => (
-                                            <ListItemCategorias key={index} categorysData={categorysData} categoryReceita={receitas} />
-                                        ))}
+                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "RECEITA")} />
                                     </List>
                                 )}
 
                                 {value === 1 && (
                                     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                                        {despesas.map((despesas, index) => (
-                                            <ListItemCategorias key={index} categorysData={categorysData} categoryDespesa={despesas} />
-                                        ))}
+                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "DESPESA")} />
                                     </List>
                                 )}
                             </Grid>

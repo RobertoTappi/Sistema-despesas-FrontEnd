@@ -22,45 +22,53 @@ const newIconStyle = {
     justifyContent: 'center',
 }
 
-const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, deletarCategoria, editarCategoria, actualIcon }) => {
+const btnStyle = {
+    width: '80%',
+    margin: '0 auto'
+}
+
+const buttonGridStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '15px'
+}
+
+const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
     const [openModal, setOpenModal] = useState(false)
-    const [editedName, setEditedName] = useState()
+    const [editedName, setEditedName] = useState('')
     const [selectedIcon, setSelectedIcon] = useState(null)
 
 
     useEffect(() => {
         setOpenModal(open);
-        setEditedName(handleActualName && handleActualName)
-        setSelectedIcon(actualIcon)
     }, [open])
 
-    const closeDialog = () => {
-        onClose();
+    const openDialog = () => {
+        setOpenModal(true)
     }
+
+    const closeDialog = () => {
+        setOpenModal(false);
+        setEditedName('');
+        setSelectedIcon(null);
+    };
 
     const handleChangeName = (event) => {
         setEditedName(event.target.value)
     }
 
     const handleIconClick = (iconId) => {
-        setSelectedIcon(iconId)
         handleIconChange(iconId)
+        setSelectedIcon(iconId)
     }
-
-    const handleSave = () => {
-        handleIconChange(selectedIcon)
-        editarCategoria(editedName)
-        onClose()
-    }
-
 
     const handleCancel = () => {
-        onClose()
+        closeDialog()
     }
 
-    const handleExcluir = () => {
-        deletarCategoria()
-        onClose()
+    const handleSave = () => { 
+        addCategoria(editedName)
+        closeDialog()
     }
 
     const renderSelectedIcon = () => {
@@ -68,11 +76,12 @@ const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, de
             const iconeEncontrado = mapeamentoDeIconesDespesa.find((icone) => icone.id === selectedIcon);
 
             if (iconeEncontrado) {
+
                 return (
                     <div style={{ fontSize: '1px' }}>
                         {iconeEncontrado.icone}
                     </div>
-                )
+                );
             }
         }
 
@@ -81,6 +90,13 @@ const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, de
 
     return (
         <div>
+            <div>
+                <Grid style={buttonGridStyle}>
+                    <Button variant="contained" color="success" style={btnStyle} onClick={openDialog}>
+                        Adicionar categoria
+                    </Button>
+                </Grid>
+            </div>
             <Dialog open={openModal} onClose={closeDialog} fullWidth maxWidth="sm">
                 <DialogContent>
                     <Stack spacing={2}>
@@ -110,8 +126,9 @@ const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, de
                                     {(index + 1) % 7 === 0 && <Grid item xs={12} />}
                                 </React.Fragment>
                             ))}
-                            <Button variant="contained" style={{ backgroundColor: 'green', minWidth: '150px' }} onClick={handleSave}>Editar categoria</Button>
-                            <Button variant="contained" style={{ backgroundColor: '#f44336', marginLeft: '30px', minWidth: '150px' }} onClick={handleExcluir}>Excluir</Button>
+                            <Button color="primary" variant="contained" onClick={handleSave}>
+                                Criar categoria
+                            </Button>
                         </Grid>
                     </Stack>
                 </DialogContent>
@@ -120,4 +137,4 @@ const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, de
     );
 };
 
-export default EditarCategoria;
+export default CriarCategoria;
