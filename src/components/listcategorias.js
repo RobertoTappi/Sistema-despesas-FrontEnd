@@ -11,7 +11,7 @@ import IconeComponent from '../util/mapCategorias';
 import CriarCategoria from './modalcriarcategoria';
 import axios from 'axios';
 
-const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCategoria }) => {
+const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCategoria, tipoCategoriaPai, createItemListaNavegador }) => {
     const [openModal, setOpenModal] = useState(false);
     const [openModalAdd, setOpenModalAdd] = useState(false);
 
@@ -55,7 +55,8 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
 
     const addCategoria = async (nomeCategoria) => {
         try {
-            const response = await AdicionarCategoriaAXIOS(nomeCategoria, actualIcon, tipoCategoria, idUser, token);
+            const response = await AdicionarCategoriaAXIOS(nomeCategoria, actualIcon, tipoCategoriaPai, idUser, token);
+            createItemListaNavegador(response.data)
             console.log(response.data);
         } catch (error) {
             console.error("Erro ao adicionar a categoria", error);
@@ -65,7 +66,7 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
 
     const editarCategoria = async (nomeCategoria) => {
         try {
-            const response = await EditarCategoriaAXIOS(idCategoria, nomeCategoria, actualIcon, tipoCategoria, idUser, token);
+            const response = await EditarCategoriaAXIOS(idCategoria, nomeCategoria, actualIcon, tipoCategoriaPai, idUser, token);
             atualizarNavegador(idCategoria, actualIcon, nomeCategoria)
             console.log(response.data);
         } catch (error) {

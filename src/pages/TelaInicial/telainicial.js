@@ -8,6 +8,7 @@ import AcessoRapido from '../../components/modalacessorapido.js';
 import DashBoardGastosMensais from '../../components/dashboardmensal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 // Estilos
 
 const transacaoStyle = { display: 'flex', gap: '70px', justifyContent: 'center'}

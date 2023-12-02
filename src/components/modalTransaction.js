@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { CurrencyInput } from 'react-currency-mask';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { mapeamentoDeIconesDespesa } from "../util/mapCategorias";
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) => {
 
@@ -29,6 +30,12 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         btnStyle = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
     }
 
+    let btnStyleAcesso;
+    if (tipo === "RECEITA") {
+        btnStyleAcesso = { backgroundColor: '#04AA6D', color: 'white', fontSize: '36px', padding: '15px 15px', borderRadius: '50%' }
+    } else {
+        btnStyleAcesso = { backgroundColor: '#f44336', color: 'white', fontSize: '36px', padding: '15px 15px', borderRadius: '50%' }
+    }
 
 
     function retornaValor(dados) {
@@ -60,7 +67,6 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         setErrorAccount(false)
         setMsgAjudaCategoria("")
         setErrorCategoria(false)
-        
         openchange(false);
     };
 
@@ -78,15 +84,15 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     const filteredDespesaCategorys = useMemo(() => {
         return categorys ? categorys.filter(category => category.tipo === 'DESPESA') : [];
     }, [categorys]);
-    
+
     const filteredReceitaCategorys = useMemo(() => {
         return categorys ? categorys.filter(category => category.tipo === 'RECEITA') : [];
     }, [categorys]);
-    
+
     const handleChangeCategory = (event) => {
         setCategory(event.target.value);
         setErrorCategoria(false)
-        
+
     };
 
     const textFieldDescRef = useRef(null);
@@ -117,7 +123,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             setSelectedAccount('')
             setCategory('')
             setShowParcelasSelect(false)
-            
+
             closepopup();
         }
     };
@@ -220,12 +226,12 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             </div>
         </MenuItem>
     );
-
+    
     return (
-        <div style={{ margin: '10px' }}>
-            <Button onClick={functionopenpopup} color="primary" variant="contained" style={btnStyle}>
+        <div style={{ margin: '5px' }}>
+            <AddBoxIcon onClick={functionopenpopup} color="primary" variant="contained" style={btnStyleAcesso}>
                 Adicionar {tipo === "RECEITA" ? "Receita" : "Despesa"}
-            </Button>
+            </AddBoxIcon>
             <Dialog open={open} onClose={closepopup} fullWidth maxWidth="sm" >
                 <DialogContent>
                     <Stack spacing={2} margin={2}>
@@ -295,7 +301,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
                                     </FormControl>
                                 </Box>
                             </Grid>
-                            
+
                             <Grid item xs={12} sm={6}>
                                 <Box sx={{ maxWidth: 230 }}>
                                     <FormControl fullWidth>

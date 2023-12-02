@@ -7,6 +7,7 @@ import { mask } from 'remask'
 import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
 
 
+
 const btnStyleSalvar = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 const btnStyleFechar = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
 

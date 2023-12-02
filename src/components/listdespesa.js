@@ -3,7 +3,6 @@ import { ListItem, Dialog, Button, DialogContent, Icon } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ModalEditTransa from './modaltransacaoedit';
@@ -12,6 +11,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import IconeComponent, { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
+
 
 function retornaValor(dados) {
   if (dados && dados != null && dados != undefined) {
