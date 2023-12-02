@@ -7,23 +7,36 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ModalEditTransa from "./modaltransacaoedit";
-
+import Tooltip from '@mui/material/Tooltip';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 function retornaValor(dados) {
   if (dados && dados != null && dados != undefined) {
     return dados.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }
 }
 
-const handleClickOpen = () =>{
-    
-}
 
-const ListItensTransacoes = ({dados,categoryName}) => {
-    debugger;
+const ListItensTransacoes = ({dados,categoryName,isPagaTransacao}) => {
+    debugger
+  const handleClickOpen = () =>{
+    
+  }
+  
+  const hadleIsPaga = () =>{
+    isPagaTransacao(dados.id,true)
+  }
+
+  const hadleIsNotPaga = () =>{
+    isPagaTransacao(dados.id,false)
+  }
   return (
     <>
+      <Box  display="flex"
+            justifyContent="space-between"
+            alignItems="flex-start">
       <ListItem button onClick={handleClickOpen}
-        style={{ display: 'flex', alignItems: 'center',maxHeight:'50px',height:'100%',justifyContent: 'space-between' }}
+        style={{  alignItems: 'center',maxHeight:'50px',height:'100%',justifyContent: 'space-between',width:"95%" }}
       >
         <ListItemAvatar>
           <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
@@ -40,6 +53,26 @@ const ListItensTransacoes = ({dados,categoryName}) => {
             }
         />
       </ListItem>
+      <Box>
+        {!dados.isPaga ? (
+          <Tooltip title="Marcar como pago" arrow>
+            <ThumbDownIcon
+              style={{ display: 'inline', fontSize: '28px', marginTop: '25px', marginRight: '20px', color: 'red' }}
+              onClick={hadleIsPaga}
+            />
+          </Tooltip>
+        ):(
+          <Tooltip title="Marcar como nao pago" arrow>
+          <ThumbUpIcon
+            style={{ display: 'inline', fontSize: '28px', marginTop: '25px', marginRight: '20px', color: 'green' }}
+            onClick={hadleIsNotPaga}
+          />
+        </Tooltip>
+
+        )}
+
+      </Box>
+      </Box>
     </>
   );
 };
