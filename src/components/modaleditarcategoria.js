@@ -22,7 +22,7 @@ const newIconStyle = {
     justifyContent: 'center',
 }
 
-const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, deletarCategoria, editarCategoria, actualIcon }) => {
+const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, deletarCategoria, editarCategoria, actualIcon, atualizarNavegador }) => {
     const [openModal, setOpenModal] = useState(false)
     const [editedName, setEditedName] = useState()
     const [selectedIcon, setSelectedIcon] = useState(null)
@@ -49,7 +49,7 @@ const EditarCategoria = ({ open, onClose, handleActualName, handleIconChange, de
 
     const handleSave = () => {
         handleIconChange(selectedIcon)
-        editarCategoria(editedName)
+        editarCategoria(editedName, selectedIcon)
         onClose()
     }
 

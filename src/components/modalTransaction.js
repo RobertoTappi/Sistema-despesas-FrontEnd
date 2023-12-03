@@ -1,21 +1,22 @@
-import React, { useEffect, useState,useRef } from "react";
-import { Button,IconButton,FormControlLabel,Checkbox,Typography, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
+import { Button, IconButton, FormControlLabel, Checkbox, Typography, Dialog, Grid, DialogContent, Stack, TextField, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { TransactionAXIOS } from '../services/enviarTransacao';
 import { mask } from 'remask'
 import { useMemo } from "react";
 import { CurrencyInput } from 'react-currency-mask';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { mapeamentoDeIconesDespesa } from "../util/mapCategorias";
 
 const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) => {
-
 
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState(0);
     const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('pt-BR'));
     const typeTransaction = tipo
-    const [selectedAccount, setSelectedAccount] = useState();
+    const [selectedAccount, setSelectedAccount] = useState('');
     const [category, setCategory] = useState('');
+
 
     const idUser = localStorage.getItem('userId');
     const token = localStorage.getItem('user');
@@ -28,17 +29,10 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         btnStyle = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
     }
 
-    
-        //  if (accounts) {
-        //     const contaEncontrada = accounts.find(account => account.name === 'Conta Principal') || null
-        //     if (contaEncontrada) {
-        //         setSelectedAccount(contaEncontrada.id)
-        //     }
-        // }
-    
 
-    function retornaValor(dados){
-        if(dados && dados !=null && dados!=undefined){
+
+    function retornaValor(dados) {
+        if (dados && dados != null && dados != undefined) {
             return dados.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
         }
     }
@@ -48,6 +42,25 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     };
 
     const closepopup = () => {
+        setDescription('')
+        setAmount(0)
+        setSelectedDate(new Date().toLocaleDateString('pt-BR'))
+        setSelectedAccount('')
+        setCategory('')
+        setShowParcelasSelect(false)
+        setSelectedParcela(2)
+
+        setMsgAudaAjudaDa("")
+        setErrorData(false)
+        setMsgAjudaD("")
+        setErrorDesc(false)
+        setMsgAjudaV("")
+        setErrorValor(false)
+        setMsgAjudaAccount('')
+        setErrorAccount(false)
+        setMsgAjudaCategoria("")
+        setErrorCategoria(false)
+        
         openchange(false);
     };
 
@@ -56,41 +69,55 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         const pattern = ['99/99/9999']
         setSelectedDate(mask(value, pattern));
     }
-    // adsaddsadsa
+
     const handleChange = (event) => {
         setSelectedAccount(event.target.value);
+        setErrorAccount(false)
     };
 
     const filteredDespesaCategorys = useMemo(() => {
         return categorys ? categorys.filter(category => category.tipo === 'DESPESA') : [];
     }, [categorys]);
-
+    
     const filteredReceitaCategorys = useMemo(() => {
         return categorys ? categorys.filter(category => category.tipo === 'RECEITA') : [];
     }, [categorys]);
-
+    
     const handleChangeCategory = (event) => {
         setCategory(event.target.value);
+        setErrorCategoria(false)
+        
     };
 
     const textFieldDescRef = useRef(null);
     const textFieldValorRef = useRef(null);
     const textFieldDataRef = useRef(null);
+    const textFieldAccountRef = useRef(null)
+    const textFieldCategoriaRef = useRef(null)
+
     const [msgAJudaDesc, setMsgAjudaD] = useState('')
     const [msgAJudaValor, setMsgAjudaV] = useState('')
     const [msgAJudaData, setMsgAudaAjudaDa] = useState('')
+    const [msgAjudaAccount, setMsgAjudaAccount] = useState('')
+    const [msgAjudaCategoria, setMsgAjudaCategoria] = useState('')
+
     const [errorDesc, setErrorDesc] = useState(false)
     const [errorValor, setErrorValor] = useState(false)
     const [errorData, setErrorData] = useState(false)
+    const [errorAccount, setErrorAccount] = useState(false)
+    const [errorCategoria, setErrorCategoria] = useState(false)
 
     function handleTransaction() {
         if (validarForm()) {
             cadastrarTransacao();
-            //Limpando valores
-            setSelectedDate(null)
-            setAmount(null)
-            setDescription(null)
-            //fechando
+
+            setDescription('')
+            setAmount(0)
+            setSelectedDate(new Date().toLocaleDateString('pt-BR'))
+            setSelectedAccount('')
+            setCategory('')
+            setShowParcelasSelect(false)
+            
             closepopup();
         }
     };
@@ -106,7 +133,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             setMsgAudaAjudaDa("Data inválida")
             setErrorData(true)
             textFieldDataRef.current.focus()
-        } else if (amount === 0) {
+        } else if (amount === 0 || amount === '') {
             setMsgAudaAjudaDa("")
             setErrorData(false)
             setMsgAjudaD("")
@@ -114,9 +141,31 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             setMsgAjudaV("Valor não pode ser 0 ou nulo")
             setErrorValor(true)
             textFieldValorRef.current.focus()
-        } else {
+        } else if (selectedAccount === '') {
+            setMsgAudaAjudaDa("")
+            setErrorData(false)
+            setMsgAjudaD("")
+            setErrorDesc(false)
             setMsgAjudaV("")
             setErrorValor(false)
+            setMsgAjudaAccount('Selecione uma conta')
+            setErrorAccount(true)
+            textFieldAccountRef.current.focus()
+        } else if (category == 0) {
+            setMsgAudaAjudaDa("")
+            setErrorData(false)
+            setMsgAjudaD("")
+            setErrorDesc(false)
+            setMsgAjudaV("")
+            setErrorValor(false)
+            setMsgAjudaAccount('')
+            setErrorAccount(false)
+            setMsgAjudaCategoria("Selecione uma categoria")
+            setErrorCategoria(true)
+            textFieldCategoriaRef.current.focus()
+        } else {
+            setMsgAjudaCategoria("")
+            setErrorCategoria(false)
             return true
         }
     }
@@ -124,7 +173,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     async function cadastrarTransacao() {
         console.error("erro ao cadastrar transação fora");
         try {
-            const response = await TransactionAXIOS(idUser, amount,category, description, selectedDate, typeTransaction, selectedAccount,showParcelasSelect,selectedParcela, token);
+            const response = await TransactionAXIOS(idUser, amount, category, description, selectedDate, typeTransaction, selectedAccount, showParcelasSelect, selectedParcela, token);
 
             onAdicionarTransacao(response.data);
 
@@ -135,15 +184,42 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
 
     const [showParcelasSelect, setShowParcelasSelect] = useState(false);
     const [selectedParcela, setSelectedParcela] = useState(2);
-  
+
     const handleCheckboxChange = () => {
-      setShowParcelasSelect(!showParcelasSelect);
-    };
-  
-    const handleParcelaChange = (event) => {
-      setSelectedParcela(event.target.value);
+        setShowParcelasSelect(!showParcelasSelect);
     };
 
+    const handleParcelaChange = (event) => {
+        setSelectedParcela(event.target.value);
+    };
+
+
+    const renderIcon = (categoryId) => {
+        const categoriaAssociada = categorys.find(categoria => categoria.id === categoryId);
+
+        if (categoriaAssociada) {
+            const iconeEncontrado = mapeamentoDeIconesDespesa.find(icone => icone.id === categoriaAssociada.idCon);
+
+            if (iconeEncontrado) {
+                return (
+                    <div style={{ fontSize: '1px', marginRight: '8px' }}>
+                        {iconeEncontrado.icone}
+                    </div>
+                );
+            }
+        }
+
+        return null;
+    };
+
+    const renderCategoryMenuItem = (category) => (
+        <MenuItem value={category.id} key={category.id}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                {renderIcon(category.id)}
+                {category.nome}
+            </div>
+        </MenuItem>
+    );
 
     return (
         <div style={{ margin: '10px' }}>
@@ -195,101 +271,100 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
                             </Grid>
                         </Grid>
 
-                <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                    <Box sx={{ maxWidth: 230 }}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Conta</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={selectedAccount}
-                        label="Conta"
-                        onChange={handleChange}
-                        >
-                        {accounts && accounts.map((account) => (
-                            <MenuItem value={account.id} key={account.id}>
-                            {account.name}
-                            </MenuItem>
-                        ))}
-                        </Select>
-                    </FormControl>
-                    </Box>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <Box sx={{ maxWidth: 230 }}>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={category}
-                        label="Categoria"
-                        onChange={handleChangeCategory}
-                        >
-                        {tipo === 'RECEITA' ? (
-                            filteredReceitaCategorys.map((category) => (
-                            <MenuItem value={category.id} key={category.id}>
-                                {category.nome}
-                            </MenuItem>
-                            ))
-                        ) : (
-                            filteredDespesaCategorys.map((category) => (
-                            <MenuItem value={category.id} key={category.id}>
-                                {category.nome}
-                            </MenuItem>
-                            ))
-                        )}
-                        </Select>
-                    </FormControl>
-                    </Box>
-                </Grid>
-                </Grid>
-                <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6} md={4}>
-                <FormControlLabel
-                    sx={{ maxWidth: 120 }}
-                    value="start"
-                    control={<Checkbox
-                        checked={showParcelasSelect}
-                        onChange={handleCheckboxChange}
-                        inputProps={{ 'aria-label': 'controlled' }} />}
-                    label="Parcelado?"
-                    labelPlacement="start"
-                />
-            </Grid>
-            <Grid item xs={12} sm={6} md={8}>
-                {showParcelasSelect && (
-                    <div>
-                        <FormControl fullWidth>
-                            <InputLabel id="parcela-select-label">Parcelas</InputLabel>
-                            <Select
-                                labelId="parcela-select-label"
-                                id="parcela-select"
-                                value={selectedParcela}
-                                label="Parcelas"
-                                onChange={handleParcelaChange}
-                            >
-                                {[ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((parcela) => (
-                                    <MenuItem value={parcela} key={parcela}>
-                                        {parcela}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <Typography>{`${selectedParcela}x valor por parcela ${retornaValor(amount/selectedParcela)}`}</Typography>
-                    </div>
-                )}
-            </Grid>
-        </Grid>
-                
-                <Button onClick={handleTransaction} color="primary" variant="contained" style={btnStyle}>
-                    Adicionar {tipo === 'RECEITA' ? 'Receita' : 'Despesa'}
-                </Button>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <Box sx={{ maxWidth: 230 }}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Conta</InputLabel>
+                                        <Select
+                                            error={errorAccount}
+                                            helperText={msgAjudaAccount}
+                                            inputRef={textFieldAccountRef}
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={selectedAccount}
+                                            label="Conta"
+                                            onChange={handleChange}
+                                        >
+                                            {accounts && accounts.map((account) => (
+                                                <MenuItem value={account.id} key={account.id}>
+                                                    {account.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+                            </Grid>
+                            
+                            <Grid item xs={12} sm={6}>
+                                <Box sx={{ maxWidth: 230 }}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
+                                        <Select
+                                            error={errorCategoria}
+                                            helperText={msgAjudaCategoria}
+                                            inputRef={textFieldCategoriaRef}
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={category}
+                                            label="Categoria"
+                                            onChange={handleChangeCategory}
+                                        >
+                                            {tipo === 'RECEITA' ? (
+                                                filteredReceitaCategorys.map(renderCategoryMenuItem)
+                                            ) : (
+                                                filteredDespesaCategorys.map(renderCategoryMenuItem)
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} sm={6} md={4}>
+                                <FormControlLabel
+                                    sx={{ maxWidth: 120 }}
+                                    value="start"
+                                    control={<Checkbox
+                                        checked={showParcelasSelect}
+                                        onChange={handleCheckboxChange}
+                                        inputProps={{ 'aria-label': 'controlled' }} />}
+                                    label="Parcelado?"
+                                    labelPlacement="start"
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={8}>
+                                {showParcelasSelect && (
+                                    <div>
+                                        <FormControl fullWidth>
+                                            <InputLabel id="parcela-select-label">Parcelas</InputLabel>
+                                            <Select
+                                                labelId="parcela-select-label"
+                                                id="parcela-select"
+                                                value={selectedParcela}
+                                                label="Parcelas"
+                                                onChange={handleParcelaChange}
+                                            >
+                                                {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((parcela) => (
+                                                    <MenuItem value={parcela} key={parcela}>
+                                                        {parcela}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <Typography>{`${selectedParcela}x valor por parcela ${retornaValor(amount / selectedParcela)}`}</Typography>
+                                    </div>
+                                )}
+                            </Grid>
+                        </Grid>
 
-            </Stack>
-            </DialogContent>
-        </Dialog>
+                        <Button onClick={handleTransaction} color="primary" variant="contained" style={btnStyle}>
+                            Adicionar {tipo === 'RECEITA' ? 'Receita' : 'Despesa'}
+                        </Button>
+
+                    </Stack>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
