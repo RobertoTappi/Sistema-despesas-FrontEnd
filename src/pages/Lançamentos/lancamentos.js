@@ -1,177 +1,562 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
 import axios from "axios";
-import { Paper, Grid, Container , Button } from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { Paper, Grid, Container, Button, Menu } from "@mui/material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ModalEditTransa from "../../components/modaltransacaoedit";
+import ModalPaiListTransa from "../../components/modalpailisttransa";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import RelatorioPDF from "../../util/pdf";
 
-const URL = "http://localhost:8080/api/"
+const URL = "http://localhost:8080/api/";
 
 const paperStyle = {
-    padding: '10px',
-    minHeight: '1100px',
-    maxWidth: '1200px',
-    margin: '20px auto',
-    borderRadius: '10px'
+  minHeight: "1100px",
+  maxWidth: "1200px",
+  margin: "10px auto",
+  borderRadius: "20px",
 };
 const headerStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '20px',
+  borderRadius: "20px",
+  maxHeight: "110px",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
 };
 
+const styleFontRelatorio = {
+  fontSize: "20px"
+}
+
+const Lancamentos = () => {
+  const token = localStorage.getItem("user");
+  const idUser = localStorage.getItem("userId");
+  const [transactionData, setTransaction] = useState([]);
+  const [accountsData, setAccounts] = useState(null)
+  const [meseano,setMesAno] = useState(null)
+  const [TransacoesPorDia,setTransacoesDay] = useState({})
+  const [CategoryData , setCategoryData] = useState([])
+  const [transacaoParaRelatorio, setTransacaoRelatorio] = useState([]);
+  const [showRelatorio, setShowRelatorio] = useState(false);
+  const [transacaoParaRelatorioNotEffect, setTransacaoRelatorioNotEffect] = useState([]);
+  const displayMonth = () => {
+    return `${monthNames[currentMonth]} ${currentYear}`;
+  };
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const handleNextMonth = () => {
+    setCurrentMonth((prevMonth) => {
+      if (prevMonth === 11) {
+        setCurrentYear((prevYear) => prevYear + 1);
+        return 0; 
+      }
+      return prevMonth + 1;
+    });
+  };
+  
+  const handlePreviousMonth = () => {
+    setCurrentMonth((prevMonth) => {
+      const newMonth = prevMonth === 0 ? 11 : prevMonth - 1;
+      const newYear = prevMonth === 0 ? currentYear - 1 : currentYear;
+  
+      setCurrentYear(newYear);
+  
+      return newMonth;
+    });
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowRight") {
+        handleNextMonth();
+      } else if (event.key === "ArrowLeft") {
+        handlePreviousMonth();
+      }
+    };
 
 
-const Lancamentos =() =>{
+    document.addEventListener("keydown", handleKeyDown);
 
-    // Coisas relacionadas a requisicoes 30-79
-    const token = localStorage.getItem('user');
-    const idUser = localStorage.getItem('userId')
-    const [transactionData, setTransaction] = useState([])
 
-    useEffect(()=>{
-        const obterTransacoes = async () => {
-            try {
-              const response = await axios.get(URL + 'transaction/getTransacoes/' + idUser, {
-                headers: {
-                  Authorization: 'Bearer ' + token
-                }
-              });
-              const converterStringParaData = (dataString) => {
-                const [dia, mes, ano] = dataString.split('/');
-                return new Date(parseInt(ano, 10), parseInt(mes, 10) - 1, parseInt(dia, 10));
-              };
-                const dataAtual = new Date();
-      
-                const transacoesDoMesAtual = response.data.filter(transacao => {
-                  const partesData = transacao.creationDate.split('/');
-                  const dataDaTransacao = converterStringParaData(transacao.creationDate);
-                
-                  // Verificar se a data da transação está no mesmo mês e ano e não é no futuro
-                  return (
-                    dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
-                    dataDaTransacao.getMonth() === dataAtual.getMonth() &&
-                    dataAtual.getDate() > dataDaTransacao.getDate()
-                  );
-                });
-                
-      
-                transacoesDoMesAtual.sort((a, b) => {
-                  const dataA = converterStringParaData(a.creationDate)
-                  const dataB = converterStringParaData(b.creationDate)
-                  return dataA - dataB;
-                });
-                setTransaction(transacoesDoMesAtual);
-              
-              
-              
-            } catch (error) {
-              console.error('Erro ao buscar dados:', error);
-            }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNextMonth, handlePreviousMonth]);
+
+  useEffect(() => {
+    
+    const dataAtual = new Date();
+    setMesAno((dataAtual.getMonth()+1)+"/"+dataAtual.getFullYear())
+
+    const obterTransacoes = async () => {
+      try {
+        const response = await axios.get(URL + "transaction/getTransacoes/" + idUser, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+
+        const transacoesPorData = response.data;
+
+
+        const transacoes2023 = transacoesPorData.filter(transacao => {
+          const ano = transacao.creationDate.split('/')[2];
+          return ano === currentYear.toString();
+        });
+        setTransacaoRelatorio(transacoes2023.filter(transacao => {
+          const [dia, mes, ano] = transacao.creationDate.split('/');
+          return parseInt(mes, 10) === currentMonth + 1 && parseInt(ano, 10) === currentYear;
+        }));
+
+
+        transacoes2023.forEach(transacao => {
+          const [dia, mes, ano] = transacao.creationDate.split('/');
+          const chave = `${dia}/${mes}`;
+
+          if (!transacoesPorData[chave]) {
+            transacoesPorData[chave] = [];
           }
 
-          obterTransacoes()
-        
+          transacoesPorData[chave].push(transacao);
+        });
 
-    },[idUser,token])
     
 
-
-
-    //SELEC DATA E FORMAT DATA PARA TELA 84-120
-    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-
-    const handleNextMonth = () => {
-        setCurrentMonth((prevMonth) => {
-            if (prevMonth === 11) {
-                // Se o próximo mês for janeiro, incrementa o ano também
-                setCurrentYear((prevYear) => prevYear + 1);
-            }
-            return (prevMonth + 1) % 12;
+        const transacoesFiltradas = transacoesPorData.filter(transacao => {
+          const [dia, mes, ano] = transacao.creationDate.split('/');
+          return parseInt(mes, 10) === currentMonth + 1 && parseInt(ano, 10) === currentYear;
         });
-    };
-    
-    const handlePreviousMonth = () => {
-        setCurrentMonth((prevMonth) => {
-            if (prevMonth === 0) {
-                // Se o mês anterior for dezembro, decrementa o ano também
-                setCurrentYear((prevYear) => prevYear - 1);
-            }
-            return (prevMonth - 1 + 12) % 12;
+
+        const transacoesPorDia = {};
+        transacoesFiltradas.forEach(transacao => {
+          const [dia, mes] = transacao.creationDate.split('/');
+          const chave = `${dia}/${mes}`;
+
+          if (!transacoesPorDia[chave]) {
+            transacoesPorDia[chave] = [];
+          }
+
+          transacoesPorDia[chave].push(transacao);
         });
+
+        console.log(transacoesPorDia)
+
+        const arrayDePares = Object.entries(transacoesPorDia);
+        const ordenado = arrayDePares.sort(([dataA], [dataB]) => {
+
+          const [diaA, mesA] = dataA.split('/');
+          const [diaB, mesB] = dataB.split('/');
+          const dataFormatadaA = `${mesA}${diaA.padStart(2, '0')}`;
+          const dataFormatadaB = `${mesB}${diaB.padStart(2, '0')}`;
+
+          return dataFormatadaA - dataFormatadaB;
+        });
+
+        const arrayOrdenado = Object.fromEntries(ordenado);
+
+        console.log("test"+JSON.stringify(transacoesPorDia))
+        setTransacoesDay(arrayOrdenado);
+
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
     };
 
-    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const obterAccounts = async () => {
+      try {
+        const response = await axios.get(URL + 'account/findAllAccounts/' + idUser, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        console.log("data accounts",{response})
+        setAccounts(response.data);
 
-    const monthNames = [
-        "Janeiro", "Fevereiro", "Março",
-        "Abril", "Maio", "Junho", "Julho",
-        "Agosto", "Setembro", "Outubro",
-        "Novembro", "Dezembro"
-    ];
-
-    const displayMonth = () => {
-        return `${monthNames[currentMonth]} ${currentYear}`;
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
     };
+    const obterCategory = async () => {
+      try {
+        const response = await axios.get(URL + 'category/' + idUser, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
+        setCategoryData(response.data);
+        console.log("category accounts",{response})
 
-    //ABRIR MODAL E FECHAR MODAL 120-130
-    const [openModal, setOpenModal] = useState(false);
-
-    const handleClickOpen = () => {
-      setOpenModal(true);
-    };
-  
-    const handleClose = () => {
-      setOpenModal(false);
-    };
-
-    const removerTransacao = (transacaoId) => {
-        setTransaction((prevTransactions) =>
-          prevTransactions.filter((transacao) => transacao.id !== transacaoId)
-        );
-      };
-
-    const atualizarTransacao = (novaTransacao) => {
-        if(novaTransacao){
-            setTransaction((prevTransactions) => {
-            const index = prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
-
-            if (index !== -1) {
-                const newTransactions = [...prevTransactions];
-
-
-                newTransactions[index] = novaTransacao;
-                return newTransactions;
-            }
-            return prevTransactions;
-            });
-        }
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
     }
 
-    
-    return (
-        <Grid>
-            <NavBar />
-            <Container>
-                <Paper elevation={10} style={paperStyle}>
-                    <Grid container direction="column" spacing={2}>
-                        <div style={headerStyle}>
-                            <ArrowBackIosIcon style={{fontSize: '32px',marginLeft: '415px',color:'#1976D2'}} onClick={handlePreviousMonth} />
-                            <h1>{displayMonth()}</h1>
-                            <ArrowForwardIosIcon style={{fontSize: '32px',marginRight: '415px',color:'#1976D2'}} onClick={handleNextMonth}/>
-                        </div>
-                        <div>
-                        <AddCircleIcon onClick={handleClickOpen} style={{fontSize:'55px',marginLeft: '20px',color:'#1976D2',marginTop:'-200px'}}></AddCircleIcon>
-                        </div>
-                        <ModalEditTransa onRemoverTransacao={removerTransacao} open={openModal} dados={transactionData} onClose={handleClose} onAtualizarTrasacao={atualizarTransacao}></ModalEditTransa>
-                    </Grid>
-                </Paper>
-            </Container>
-        </Grid>
+    obterCategory();
+    obterAccounts();
+    obterTransacoes();
+  }, [idUser, token,meseano,currentMonth, currentYear]);
+
+
+  
+
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março",
+    "Abril", "Maio", "Junho", "Julho",
+    "Agosto", "Setembro", "Outubro",
+    "Novembro", "Dezembro",
+  ];
+
+
+
+  const [openModal, setOpenModal] = useState(false);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [tipoOpenModal, setTipoOpenModal] = useState(null);
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleClickReceita = () => {
+    setOpenModal(true);
+    setTipoOpenModal("RECEITA");
+    handleCloseUserMenu();
+  };
+
+  const handleClickDespesa = () => {
+    setOpenModal(true);
+    setTipoOpenModal("DESPESA");
+    handleCloseUserMenu();
+  };
+
+  const handleClose = () => {
+    setTipoOpenModal(null);
+    setOpenModal(false);
+  };
+
+  const removerTransacao = (transacaoId) => {
+    setTransaction((prevTransactions) =>
+      prevTransactions.filter((transacao) => transacao.id !== transacaoId)
     );
+  };
+
+  const isPagaTransacao = (transacaoId , attTrue) => {
+
+    let foundTransaction;
+    
+    for (const dia in TransacoesPorDia) {
+      foundTransaction = TransacoesPorDia[dia].find(
+        (transacao) => transacao.id === transacaoId
+      );
+  
+      if (foundTransaction) {
+        break; 
+      }
+    }
+  
+    if (!foundTransaction) {
+      console.error("Transaction not found");
+      return;
+    }
+      
+    const data = {
+      idTransaction: foundTransaction.id,
+      idUser: idUser,
+      valor: foundTransaction.valor,
+      idCategory: foundTransaction.idCategory,
+      descricao: foundTransaction.descricao,
+      idAccount: foundTransaction.idAccount,
+      isPaga: attTrue,
+      dataTransacao: foundTransaction.creationDate,
+      tipoTransacao: foundTransaction.type,
+      account: {
+        id: foundTransaction.idAccount,
+      },
+    };
+  
+    try {
+      const response = axios.put(URL + 'transaction/alteraTransacao', data, {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
+      });
+      
+        if(attTrue){
+          toast.success('Conta paga com sucesso!', {
+            position: "bottom-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }else{
+          toast.success('Conta marcada como nao paga com sucesso!', {
+            position: "bottom-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }
+
+      setTransacoesDay((prevTransacoesPorDia) => {
+        const novoTransacoesPorDia = { ...prevTransacoesPorDia };
+      
+        for (const dia in novoTransacoesPorDia) {
+          novoTransacoesPorDia[dia] = novoTransacoesPorDia[dia].map((transacao) => {
+            if (transacao.id === transacaoId) {
+
+              return { ...transacao, isPaga: attTrue };
+            }
+            return transacao;
+          });
+        }
+      
+        return novoTransacoesPorDia;
+      });
+      
+
+
+    } catch (error) {
+      console.error('Erro ao buscar dados: accounts', error);
+    }
+  };
+
+
+  const atualizarTransacao = (novaTransacao) => {
+    if (novaTransacao) {
+      debugger
+      setTransacoesDay((prevTransactions) => {
+
+        const { creationDate, id } = novaTransacao;
+
+        const [diaFormat,mesFormat] = creationDate.split("/")
+
+        const transactionsForDate = prevTransactions[diaFormat+'/'+mesFormat] || [];
+
+        const index = transactionsForDate.findIndex((transacao) => transacao.id === id);
+  
+        if (index !== -1) {
+
+          const newTransactions = [...transactionsForDate];
+          newTransactions[index] = novaTransacao;
+          return {
+            ...prevTransactions,
+            [creationDate]: newTransactions,
+          };
+        }
+  
+        return prevTransactions;
+      });
+    }
+  };
+
+  const adicionarTransacao = (novaTransacao) => {
+    debugger;
+    if (novaTransacao) {
+      setTransacoesDay((prevTransactions) => {
+        const { creationDate } = novaTransacao;
+  
+
+        const [diaFormat, mesFormat] = creationDate.split("/");
+
+        const transactionsForDate = prevTransactions[diaFormat+'/'+mesFormat] || [];
+
+        const newTransactions = [...transactionsForDate, novaTransacao];
+  
+        return {
+          ...prevTransactions,
+          [diaFormat+'/'+mesFormat]: newTransactions,
+        };
+      });
+    }
+  };
+
+  // const removerTransacaoe = () =>{
+  //       setTransacoesDay((prevTransacoesPorDia) => {
+  //       const novoTransacoesPorDia = { ...prevTransacoesPorDia };
+  
+  //       for (const dia in novoTransacoesPorDia) {
+  //         novoTransacoesPorDia[dia] = novoTransacoesPorDia[dia].filter(
+  //           (transacao) => transacao.id !== transacaoId
+  //         );
+  //       }
+  
+  //       return novoTransacoesPorDia;
+  //     });
+  // }
+
+  function retornaValor(dados) {
+    if (dados && dados != null && dados != undefined) {
+      return dados.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    }
+  }
+
+  const obterReceitaMensal = () => {
+
+    let totalReceita = 0;
+  
+    for (const dia in TransacoesPorDia) {
+      TransacoesPorDia[dia].forEach((transacao) => {
+        // Filtra apenas as transações do tipo RECEITA
+        if (transacao.type === 'RECEITA') {
+          totalReceita += transacao.valor;
+        }
+      });
+    }
+  
+    console.log('Total Receita Mensal:', totalReceita);
+    return totalReceita;
+  };
+
+  const obterDespesaMensal = () => {
+    let totalReceita = 0;
+  
+    for (const dia in TransacoesPorDia) {
+      TransacoesPorDia[dia].forEach((transacao) => {
+
+        if (transacao.type === 'DESPESA') {
+          totalReceita -= transacao.valor;
+        }
+      });
+    }
+  
+    console.log('Total Receita Mensal:', totalReceita);
+    return totalReceita;
+  }
+
+
+  const handleGerarPDF = () => {
+    setShowRelatorio(true);
+
+    setTransacaoRelatorioNotEffect(transacaoParaRelatorio)
+
+  };
+  
+  const saldoTotal = obterReceitaMensal() + obterDespesaMensal()
+  console.log("saldo ",saldoTotal)
+
+  return (
+    <Grid>
+      <ToastContainer />
+      <NavBar />
+      <Container>
+        <Paper elevation={10} style={paperStyle}>
+          <Grid container>
+            <div style={{ ...headerStyle, width: "100%", borderBottom: '1px solid black',borderRadius: "0 0 5px 5px"}}>
+              <h1 style={{ textAlign: "center", maxWidth: "100%", width: "100%" }}>
+                <ArrowBackIosIcon
+                  style={{ fontSize: "25px", color: "#1976D2" }}
+                  onClick={handlePreviousMonth}
+                />
+                {displayMonth()}
+                <ArrowForwardIosIcon
+                  style={{ fontSize: "25px", color: "#1976D2", marginLeft: "7px" }}
+                  onClick={handleNextMonth}
+                />
+              </h1>
+            </div>
+            <div style={{ marginBottom: "20px", marginTop: "-30px" }}>
+              <AddCircleIcon
+                onClick={handleOpenUserMenu}
+                style={{ fontSize: "55px",color: "#1976D2", marginTop: "-200px" }}
+              ></AddCircleIcon>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "right",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "right",
+                  horizontal: "left",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <Button onClick={handleClickReceita}>Receita</Button>
+                <Button onClick={handleClickDespesa}>Despesa</Button>
+              </Menu>
+            </div>
+            <Grid style={{ maxWidth: "100%", width: "100%", margin: "auto 1px" }}>
+                {Object.keys( TransacoesPorDia && TransacoesPorDia).map((dia) => (
+                    <ModalPaiListTransa
+                      day={dia}
+                      accountsData={accountsData}
+                      transactions={TransacoesPorDia[dia]}
+                      isPagaTransacao={isPagaTransacao}
+                      categoryList={CategoryData}
+                    />
+                  ))}
+            </Grid>
+            <Grid
+      container
+      style={{
+        maxWidth: '100%',
+        width: '100%',
+        margin: 'auto 1px',
+        display: 'flex',
+        justifyContent: 'space-between', 
+        flexDirection: 'row-reverse', 
+      }}
+    >
+
+      <Grid style={{ width: '400px', height: '150px' }}>
+        <Grid>
+          <Grid style={{ ...styleFontRelatorio, marginTop: '15px' }}>
+            Receita mensal: {retornaValor(obterReceitaMensal())}
+          </Grid>
+          <Grid style={{ ...styleFontRelatorio, marginTop: '15px' }}>
+            Despesa Mensal: {retornaValor(obterDespesaMensal())}
+          </Grid>
+          <Grid style={{ ...styleFontRelatorio, marginTop: '20px' }}>
+            Saldo Total : {(obterReceitaMensal()) + (obterDespesaMensal()) < 0 ?
+              <h4 style={{ color: 'red', display: 'inline' }}>{retornaValor((obterReceitaMensal()) + (obterDespesaMensal()))}</h4> :
+              <h4 style={{ color: 'green', display: 'inline' }}>{retornaValor((obterReceitaMensal()) + (obterDespesaMensal()))}</h4>
+            }
+          </Grid>
+        </Grid>
+      </Grid>
+
+
+      <Grid>
+        <Button variant="contained" style={{ fontSize:  '1rem', padding: '15px',marginTop:'40px',marginLeft:'15px' }} onClick={handleGerarPDF}>Gerar relatorio</Button>
+        {showRelatorio && <RelatorioPDF transacaoData={transacaoParaRelatorioNotEffect && transacaoParaRelatorioNotEffect} />}
+      </Grid>
+    </Grid>
+            <ModalEditTransa
+              onRemoverTransacao={removerTransacao}
+              tipo={tipoOpenModal}
+              open={openModal}
+              dados={transactionData}
+              onClose={handleClose}
+              onAtualizarTrasacao={atualizarTransacao}
+              criarTransacaoPai={adicionarTransacao}
+              isLancamento={true}
+            ></ModalEditTransa>
+          </Grid>
+        </Paper>
+      </Container>
+    </Grid>
+  );
 };
 
 export default Lancamentos;

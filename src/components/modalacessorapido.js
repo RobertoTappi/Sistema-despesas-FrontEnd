@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import { Paper, Grid, Container,Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Paper, Grid, Container, Button } from '@mui/material';
 import ModalTransaction from './modalTransaction';
 
 
@@ -52,34 +52,35 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, 
                     <Grid item>
                         <h2 style={saudacaoStyle}>{saudacao(userName && userName.name)}</h2>
                     </Grid>
-                    <Grid id="values">
+                    <Grid id="values" style={{ marginBottom: '15px' }}>
                         <div style={wrapperStyle}>
                             <Paper elevation={5} style={itemStyle}>
-                                <h3>Receita mensal</h3>
-                                <p>{(transacitons && transacitons
-                                    .filter(transacao => transacao.type === 'RECEITA')
-                                    .reduce((soma, transacao) => soma + transacao.valor, 0)
-                                    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })) || Number('0').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} 
+                                <h3 style={{ fontSize: '20px', }}>Receita mensal</h3>
+                                <p style={{ color: 'green', fontSize: '26px', fontWeight: 'bolder' }}>
+                                    {(transacitons && transacitons
+                                        .filter(transacao => transacao.type === 'RECEITA')
+                                        .reduce((soma, transacao) => soma + transacao.valor, 0)
+                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })) || Number('0').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </p>
                             </Paper>
 
                             <Paper elevation={5} style={itemStyle}>
-                                <h3>Despesa mensal</h3>
-                                <p>
-                                {(transacitons && transacitons
-                                    .filter(transacao => transacao.type === 'DESPESA')
-                                    .reduce((soma, transacao) => soma + transacao.valor, 0)
-                                    .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })) || Number('0').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} 
+                                <h3 style={{ fontSize: '20px', }}>Despesa mensal</h3>
+                                <p style={{ color: 'red', fontSize: '26px', fontWeight: 'bolder' }}>
+                                    {(transacitons && transacitons
+                                        .filter(transacao => transacao.type === 'DESPESA')
+                                        .reduce((soma, transacao) => soma + transacao.valor, 0)
+                                        .toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })) || Number('0').toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </p>
                             </Paper>
                         </div>
                     </Grid>
 
-                    <Grid>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>          
+                    <Grid style={{ display: 'flex', justifyContent: 'space-around', marginLeft: '15px' }}>
+
                         <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
                         <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
-                    </div>
+
                     </Grid>
                 </Grid>
             </Paper>

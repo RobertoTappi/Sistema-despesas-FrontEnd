@@ -8,6 +8,7 @@ import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
 import { TransactionAXIOS } from '../services/enviarTransacao';
 
 
+
 const btnStyleSalvar = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 const btnStyleFechar = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
 

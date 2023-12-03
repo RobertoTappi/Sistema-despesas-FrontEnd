@@ -1,17 +1,14 @@
-import React from 'react'
-import { Paper, Grid } from '@mui/material'
-import List from '@mui/material/List';
+import React from 'react';
+import { Paper, Grid, List } from '@mui/material';
 import ListItemDespesa from './listdespesa';
 
+const TransacaoModalReceita = ({ props, onAtualizarTrasacao, onRemoverTransacao, isPagaTransacao, categorysData }) => {
+    const transactionData = props;
 
-const TransacaoModalReceita = ({ props, onAtualizarTrasacao, onRemoverTransacao,isPagaTransacao, categorysData }) => {
-    const transactionData = props
+    const paperStyle = { padding: '20px', maxHeight: '500px', width: 500, borderRadius: '10px' };
 
-    const paperStyle = { padding: '20px', minHeight: '25vh', width: 500, borderRadius: '10px' }
+    console.log(transactionData);
 
-    console.log(transactionData)
-    
- 
     return (
         <Paper elevation={10} style={paperStyle}>
             <Grid align='center'>
