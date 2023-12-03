@@ -26,6 +26,7 @@ const Principal = () => {
   const [categorysData, setCategory] = useState(null)
   const [dadosUser, setDadosUser] = useState(null)
   const [accountTransaction, setAccountTransaction] = useState(null)
+  const [accountTransactionGeral, setAccountTransactionGeral] = useState(null)
 
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
@@ -103,7 +104,6 @@ const Principal = () => {
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
-      console.log(obterTransacoes)
     };
 
     const obterDadosUser = async () => {
@@ -121,7 +121,6 @@ const Principal = () => {
     };
 
     async function obterSaldoContas() {
-
       try {
         const response = await BuscarTransacoesAXIOS(idUser, token);
         console.log(response.data)
@@ -131,12 +130,32 @@ const Principal = () => {
         console.error("erro ao obter o saldo");
       }
     }
+
     obterDadosUser();
     obterCategory();
-    obterTransacoes();
     obterAccounts();
     obterSaldoContas();
+    obterTransacoes();
   }, []);
+
+  const calcularSaldoTotal = () => {
+    let saldoTotal = 0;
+
+    if (accountTransaction && accountTransaction.length > 0) {
+      accountTransaction.forEach((account) => {
+        if (account.transactions && account.transactions.length > 0) {
+          account.transactions.forEach((transaction) => {
+            if (transaction.isPaga) {
+              saldoTotal += transaction.type === 'RECEITA' ? transaction.valor : -transaction.valor;
+            }
+          });
+        }
+      });
+    }
+    return saldoTotal;
+  };
+  
+  const saldoGeral = calcularSaldoTotal();
 
   const adicionarTransacao = (novaTransacao) => {
     setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
@@ -200,11 +219,11 @@ const Principal = () => {
 
       let contas;
 
-      for(const conta of accountTransaction) {
-        contas = conta.transactions = conta.transactions.map((transacao) =>{
-          if(transacao.id === transacaoId) {
-            return {...transacao, ...data};
-          } 
+      for (const conta of accountTransaction) {
+        contas = conta.transactions = conta.transactions.map((transacao) => {
+          if (transacao.id === transacaoId) {
+            return { ...transacao, ...data };
+          }
 
           return transacao
         })
@@ -224,12 +243,13 @@ const Principal = () => {
   };
 
 
+
   return (
     <Grid>
       <ToastContainer />
       <NavBar></NavBar>
 
-      <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} transacitons={transactionData} userName={dadosUser} ></AcessoRapido>
+      <AcessoRapido onAdicionarTransacao={adicionarTransacao} accounts={accountsData} category={categorysData} transacitons={transactionData} userName={dadosUser} saldoTotal={saldoGeral}></AcessoRapido>
 
       <Grid style={displayGrid}>
 

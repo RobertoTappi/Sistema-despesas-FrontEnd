@@ -47,11 +47,10 @@ const ListSaldo = ({ accounts, transacoes }) => {
             .reduce((total, transaction) => total + transaction.valor, 0)
         : 0
 
-
         setSaldo(despesaTotal - receitaTotal)
-
     },[transacoes])
 
+   
     // const atualizarNavegador = (accountId, saldoNovo) => {
     //     const saldoAlterado = saldo.find(saldo => account.id === accountId)
     //     saldoAlterado.saldo = saldoNovo

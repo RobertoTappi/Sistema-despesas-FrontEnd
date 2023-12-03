@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Paper, Grid, Container, Button } from '@mui/material';
 import ModalTransaction from './modalTransaction';
 import calcularSaldoGeral from './saldogeral';
+import { useEffect } from 'react';
 
 
 // Estilos
@@ -85,7 +86,8 @@ const btnStyleDespesa = { backgroundColor: '#f44336', fontSize: '14px', padding:
 
 
 
-const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, userName }) => {
+const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, userName, saldoTotal }) => {
+
 
     return (
         <Container>
@@ -122,7 +124,7 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, 
                                 <h3 style={{ fontSize: '17px', margin: '5px' }}>Saldo Atual</h3>
 
                                 <p style={{ color: 'black', fontSize: '21px', fontWeight: 'bolder', margin: '5px' }}>
-                                    {/* {calcularSaldoGeral().toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} */}
+                                    {saldoTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </p>
 
                             </Paper>
