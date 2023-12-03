@@ -17,7 +17,7 @@ const TransacaoModalDespesa = ({ props, onAtualizarTrasacao, onRemoverTransacao,
             <Grid style={{ width: '100%', maxWidth: '100%', marginLeft: '-13px' }}>
                 <List sx={{ width: '105%', maxWidth: '105%', bgcolor: 'background.paper' }}>
                     {transactionData && transactionData.map((transactionData, index) => (
-                        <ListItemDespesa onRemoverTransacao={onRemoverTransacao} onAtualizarTrasacao={onAtualizarTrasacao} index={index} dados={transactionData} isPagaTransacao={isPagaTransacao} category={categorysData} categorysData={categorysData.find(category => category.id === transactionData.idCategory)} />
+                        <ListItemDespesa onRemoverTransacao={onRemoverTransacao} onAtualizarTrasacao={onAtualizarTrasacao} index={index} dados={transactionData} isPagaTransacao={isPagaTransacao} category={categorysData} categorysData={ categorysData && categorysData.find(category => category.id === transactionData.idCategory)} />
                     ))}
                 </List>
             </Grid>

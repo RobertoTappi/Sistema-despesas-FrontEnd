@@ -10,6 +10,8 @@ import ModalEditTransa from "./modaltransacaoedit";
 import Tooltip from '@mui/material/Tooltip';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import IconeComponent, { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
+
 function retornaValor(dados) {
   if (dados && dados != null && dados != undefined) {
     return dados.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -17,8 +19,22 @@ function retornaValor(dados) {
 }
 
 
-const ListItensTransacoes = ({dados,categoryName,isPagaTransacao}) => {
-    debugger
+
+
+
+
+
+
+const ListItensTransacoes = ({dados,categoryName,isPagaTransacao,categoryList}) => {
+
+
+  let styleMonetario;
+  if(dados.type === 'RECEITA'){
+    styleMonetario = {margin:'5px', height: '100%', width: '200px', marginRight: '-10px',color:'green'}
+  }else{
+    styleMonetario = {margin:'5px', height: '100%', width: '200px', marginRight: '-10px',color:'red'}
+  }
+   
   const handleClickOpen = () =>{
     
   }
@@ -30,6 +46,26 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao}) => {
   const hadleIsNotPaga = () =>{
     isPagaTransacao(dados.id,false)
   }
+
+  const renderSelectedIcon = () => {
+    const categoriaAssociada = categoryList
+    
+    if (categoriaAssociada) {
+      const relacaoCategoriaEtransacao = categoriaAssociada.find(category => category.id === dados.idCategory);
+      const iconeEncontrado = mapeamentoDeIconesDespesa.find(icone => icone.id === relacaoCategoriaEtransacao.idCon);
+
+      if (iconeEncontrado) {
+        return (
+          <div style={{ fontSize: '1px' }}>
+            {iconeEncontrado.icone}
+          </div>
+        );
+      }
+    }
+    return null;
+  };
+
+  
   return (
     <>
       <Box  display="flex"
@@ -39,7 +75,7 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao}) => {
         style={{  alignItems: 'center',maxHeight:'50px',height:'100%',justifyContent: 'space-between',width:"95%" }}
       >
         <ListItemAvatar>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+           {renderSelectedIcon()} 
         </ListItemAvatar>
         <ListItemText
           primary={
@@ -47,7 +83,9 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao}) => {
             <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div style={{margin:'5px', height: '100%', width: '400px',  }}>{dados && dados.descricao}</div>
                 <div style={{margin:'5px', height: '100%', width: '200px', margin:'auto' }}>{categoryName}</div>
-                <div style={{margin:'5px', height: '100%', width: '200px', marginRight: '-10px', }}>{retornaValor(dados.valor)}</div>
+                <div style={styleMonetario}>{
+                dados.type === 'RECEITA' ? retornaValor(dados.valor) : retornaValor(-dados.valor)
+              }</div>
             </div>
             </> 
             }
@@ -57,14 +95,14 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao}) => {
         {!dados.isPaga ? (
           <Tooltip title="Marcar como pago" arrow>
             <ThumbDownIcon
-              style={{ display: 'inline', fontSize: '28px', marginTop: '25px', marginRight: '20px', color: 'red' }}
+              style={{ display: 'inline', fontSize: '28px', marginTop: '15px', marginRight: '20px', color: 'red' }}
               onClick={hadleIsPaga}
             />
           </Tooltip>
         ):(
           <Tooltip title="Marcar como nao pago" arrow>
           <ThumbUpIcon
-            style={{ display: 'inline', fontSize: '28px', marginTop: '25px', marginRight: '20px', color: 'green' }}
+            style={{ display: 'inline', fontSize: '28px', marginTop: '15px', marginRight: '20px', color: 'green' }}
             onClick={hadleIsNotPaga}
           />
         </Tooltip>

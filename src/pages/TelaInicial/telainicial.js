@@ -127,7 +127,7 @@ const adicionarTransacao = (novaTransacao) => {
 const atualizarTransacao = (novaTransacao) => {
   if(novaTransacao){
     setTransaction((prevTransactions) => {
-      const index = prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
+      const index =  prevTransactions && prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
 
       if (index !== -1) {
         const newTransactions = [...prevTransactions];
@@ -142,7 +142,7 @@ const atualizarTransacao = (novaTransacao) => {
 }
 const isPagaTransacao = (transacaoId) => {
   
-  const Transacao = transactionData.find((transacao) => transacao.id === transacaoId);
+  const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
   const data= {
     idTransaction:Transacao.id,
     idUser: idUser,

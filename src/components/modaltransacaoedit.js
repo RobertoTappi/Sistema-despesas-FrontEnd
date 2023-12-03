@@ -5,6 +5,7 @@ import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { mask } from 'remask'
 import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
+import { TransactionAXIOS } from '../services/enviarTransacao';
 
 
 const btnStyleSalvar = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
@@ -20,7 +21,7 @@ function retornaValor(dados) {
   }
 }
 
-const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRemoverTransacao, categorys }) => {
+const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRemoverTransacao, categorys, isLancamento ,criarTransacaoPai}) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [descricao, setDescricao] = useState('');
@@ -119,6 +120,7 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
   const handleSave = () => {
     try {
       if (validarForm()) {
+        if(!isLancamento){
         atualizarTransacao()
         onAtualizarTrasacao({
           creationDate: selectedDate,
@@ -130,6 +132,10 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
           valor: amount
         });
         onClose();
+      }else{
+        criarTransacao()
+        onClose();
+      }
       }
 
     } catch (error) {
@@ -177,20 +183,37 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
     setSelectedDate(mask(value, pattern));
   }
 
+  const criarTransacao = async () =>{
+
+    try {
+        const response = await TransactionAXIOS(idUser, amount, category, descricao, selectedDate, selectedRadioValue,
+           selectedAccount, showParcelasSelect, selectedParcela, token);
+        
+           criarTransacaoPai(response.data);
+
+    } catch (error) {
+        console.error("erro ao cadastrar transação", error);
+    }
+  }
+
+
+
+
+
   const atualizarTransacao = () => {
+    debugger
     const data = {
       idTransaction: dados.id,
       idUser: idUser,
       valor: amount,
       idCategory: category ? category.id : null,
       descricao: descricao,
-      idAccount: selectedAccount.id,
+      idAccount: selectedAccount,
       dataTransacao: selectedDate,
       tipoTransacao: selectedRadioValue,
       account: {
-        id: selectedAccount.id,
+        id: selectedAccount,
       }
-
     }
     try {
 
