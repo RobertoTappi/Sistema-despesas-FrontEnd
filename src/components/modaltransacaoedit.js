@@ -202,7 +202,6 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
 
 
   const atualizarTransacao = () => {
-    debugger
     const data = {
       idTransaction: dados.id,
       idUser: idUser,

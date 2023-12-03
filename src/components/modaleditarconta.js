@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogContent, Stack, Grid } from '@mui/material';
+import { Button, Dialog, DialogContent, Stack, Grid, Typography, TextField } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { useEffect } from 'react';
 import { DeletarContaAXIOS } from '../services/deletarConta';
+import { useRef } from 'react';
+import { EditarContaAXIOS } from '../services/editarConta';
 
 const iconStyle = {
     display: 'flex',
@@ -40,6 +42,9 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
     const closeDialog = () => {
         onClose()
         setEditing(false)
+        setEditedName(actualName)
+        setErrorNomeAcc(false);
+        setMsgAjudaNomeAcc('')
     }
 
     const handleEdit = () => {
@@ -49,17 +54,27 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
     const handleCancelEdit = () => {
         setEditedName(actualName)
         setEditing(false)
+        setErrorNomeAcc(false);
+        setMsgAjudaNomeAcc('');
     }
 
     const handleChangeName = (event) => {
         setEditedName(event.target.value)
+        setErrorNomeAcc(false);
+        setMsgAjudaNomeAcc('');
     }
 
     const handleSave = () => {
-        setActualName(editedName)
-        setEditing(false)
-        handleActualName(editedName)
-    }
+        if (validarForm()) {
+            setActualName(editedName);
+            setEditing(false);
+            handleActualName(editedName);
+            editarConta()
+            onClose()
+        } else {
+            setErrorNomeAcc(true);
+        }
+    };
 
     const handleSaldoStyle = () => {
         return saldo < 0 ? { color: 'red' } : { color: 'green' };
@@ -87,6 +102,30 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
         }
     }
 
+    const [msgAjudaNomeAcc, setMsgAjudaNomeAcc] = useState('')
+    const [errorNomeAcc, setErrorNomeAcc] = useState(false)
+
+    const validarForm = () => {
+        if (editedName === '') {
+            setErrorNomeAcc(true);
+            setMsgAjudaNomeAcc("Insira um nome válido");
+        } else {
+            setErrorNomeAcc(false);
+            setMsgAjudaNomeAcc('');
+            return true;
+        }
+    };
+
+    async function editarConta() {
+        try {
+            const response = await EditarContaAXIOS(idAccount, editedName, token)
+            console.log(response.data)
+
+        } catch (error) {
+            console.error("erro ao obter o saldo");
+        }
+    }
+
     return (
         <div>
             <Dialog open={openModal} onClose={closeDialog} fullWidth maxWidth="sm">
@@ -95,22 +134,25 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
                         <AccountBoxIcon style={{ minWidth: '80px', minHeight: '80px' }} />
                     </Grid>
                     <Stack spacing={2}>
-                        <h3 style={{ maxHeight: '30px' }}>
+                        <h3 style={{ alignItems: 'center', maxHeight: '30px' }}>
                             Nome da conta:{' '}
                             {editing ? (
-                                <input
-                                    style={{ minHeight: '27px', fontSize: '18px' }}
+                                <TextField
+                                    size="small"
+                                    style={{ minWidth: '60%' }}
+                                    variant="outlined"
                                     value={editedName}
                                     onChange={handleChangeName}
-                                    variant="outlined"
+                                    error={errorNomeAcc}
+                                    helperText={msgAjudaNomeAcc}
                                 />
                             ) : (
                                 <span style={{ fontWeight: 'normal' }}>{editedName}</span>
                             )}
                         </h3>
 
-                        <h3 style={{ marginTop: '25px' }}>Saldo: 
-                            <span style={{ fontWeight: 'bold', ...handleSaldoStyle() }}> 
+                        <h3 style={{ marginTop: '25px' }}>Saldo:
+                            <span style={{ fontWeight: 'bold', ...handleSaldoStyle() }}>
                                 {formatarSaldo(saldo)}
                             </span>
                         </h3>

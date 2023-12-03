@@ -8,7 +8,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import { FormControl, InputLabel, OutlinedInput} from '@mui/material';
+import { FormControl, InputLabel, OutlinedInput } from '@mui/material';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -65,7 +65,7 @@ const Login = () => {
     const avatarStyle = { backgroundColor: 'green', height: 100, width: 100 }
     const iconStyle = { height: 70, width: 70 }
     const buttonStyle = { height: 50 }
-    const typographyStyle = { margin: '10px 0px' }
+    const typographyStyle = { marginTop: '20px' }
 
     // Password
     const [showPassword, setShowPassword] = useState(false);
@@ -78,20 +78,27 @@ const Login = () => {
 
 
     const validarFormulario = () => {
-        var emailValido = validarEmail(email)
-        var senhaValida = password.length > 3;
-        var formularioValido = emailValido && senhaValida;
-        if(!emailValido){
+
+        const result = validarEmail(email)
+
+        const senhaValida = password.length < 3;
+
+        const formularioValido = result && senhaValida;
+
+
+        if (!result) {
             setErrorEmail(true);
             setEmailErrorText('Email invalido!')
             textFieldEmailRef.current.focus();
-        }else if(!senhaValida){
+
+        } else if (!senhaValida) {
+            setErrorPassword(true);
+            setPasswordErrorText('Senha inválida, menos de 4 caracteres!')
             setErrorEmail(false);
             setEmailErrorText('')
-            setErrorPassword(true);
-            setPasswordErrorText('Senha invalida menos de 4 caracteres')
             textFieldPasswordRef.current.focus();
-        }else{
+
+        } else {
             setErrorEmail(false);
             setEmailErrorText('')
             setErrorPassword(false);
@@ -101,11 +108,11 @@ const Login = () => {
     }
 
     const handleLogin = () => {
-        
+
         if (validarFormulario()) {
             logar()
         } else {
-            notify("Preencha corretamente Email/Senha", true)
+            notify("Preencha corretamente email/senha", true)
         }
     }
 
@@ -116,22 +123,22 @@ const Login = () => {
             notify("Login realizado com sucesso", false)
             setCookie();
             const token = response.data.token;
-            localStorage.setItem("user",token)
+            localStorage.setItem("user", token)
             const idUser = response.data.id;
-            localStorage.setItem("userId",idUser)
+            localStorage.setItem("userId", idUser)
             setTimeout(() => {
                 navigate('/home')
-              }, "1200");
+            }, "1200");
             setMostrarCircular(true);
         } else if (response.status === 400) {
-            if(response.status === 'Email nao cadastrado no sistema'){
+            if (response.status === 'Email não cadastrado no sistema!') {
                 notify(response.data.mensagem, true)
                 textFieldEmailRef.current.focus();
             }
-            else if(response.data.erro === 'Bad credentials'){
-                notify('Senha errada por favor digite novamente', true)
+            else if (response.data.erro === 'Bad credentials') {
+                notify('Senha errada, por favor digite novamente!', true)
                 textFieldPasswordRef.current.focus();
-            }else{
+            } else {
                 notify(response.data.mensagem, true)
             }
         }
@@ -149,7 +156,7 @@ const Login = () => {
     //   useEffect(() => {
 
     //     document.body.addEventListener('keydown', handleKeyDown);
-    
+
     //     return () => {
     //       document.body.removeEventListener('keydown', handleKeyDown);
     //     };
@@ -176,18 +183,18 @@ const Login = () => {
 
     useEffect(() => {
         const checkTokenValidity = async () => {
-          try {
-            await axios.post("http://localhost:8080/api/user/validIsToken", { token });
-            setIsValidToken(true);
-          } catch (error) {
-            setIsValidToken(false);
-          }
+            try {
+                await axios.post("http://localhost:8080/api/user/validIsToken", { token });
+                setIsValidToken(true);
+            } catch (error) {
+                setIsValidToken(false);
+            }
         };
         checkTokenValidity();
-      }, [token]);
+    }, [token]);
 
     if (isValidToken === false) {
-        return(<Grid>
+        return (<Grid>
             <ToastContainer />
             <Paper elevation={10} style={paperStyle}>
                 <Grid align='center' marginTop={10}>
@@ -198,7 +205,7 @@ const Login = () => {
                 <Grid>
                     <TextField
                         inputRef={textFieldEmailRef}
-                        label='Email' 
+                        label='Email'
                         placeholder='Digite seu email'
                         fullWidth required
                         value={email}
@@ -209,31 +216,31 @@ const Login = () => {
                 </Grid>
 
                 <Grid marginTop={4}>
-                   <FormControl fullWidth required variant="outlined">
+                    <FormControl fullWidth required variant="outlined">
 
-                    <InputLabel
-                        htmlFor="outlined-adornment-password">Password</InputLabel>
-                    <OutlinedInput
-                        inputRef={textFieldPasswordRef}
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        error={errorPassword}
-                        onChange={handleTextPasswordChange}
-                        helperText={errorPasswordText}
-                        endAdornment={
+                        <InputLabel
+                            htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                            inputRef={textFieldPasswordRef}
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            error={errorPassword}
+                            onChange={handleTextPasswordChange}
+                            helperText={errorPasswordText}
+                            endAdornment={
 
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    edge="end">
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Password" />
-                </FormControl>
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Password" />
+                    </FormControl>
                 </Grid>
 
                 <Grid marginTop={2}>
@@ -248,12 +255,12 @@ const Login = () => {
                 </Grid>
 
                 <Grid>
-                    <Typography>
+                    <Typography style={{marginTop: '5px'}}>
                         <Link href="/RecuperarSenha">
                             Esqueci minha senha
                         </Link>
                     </Typography>
-                    <Typography style={typographyStyle}> Ainda não possui conta?
+                    <Typography style={typographyStyle}> Ainda não possui conta? {' '}
                         <Link href="/cadastro">
                             Faça o cadastro!
                         </Link>
@@ -268,10 +275,10 @@ const Login = () => {
                 </Grid>
             </Paper>
         </Grid>
-    )
+        )
     } else if (isValidToken) {
-            window.location.href = '/home';
-    } 
+        window.location.href = '/home';
+    }
 }
 
 export default Login

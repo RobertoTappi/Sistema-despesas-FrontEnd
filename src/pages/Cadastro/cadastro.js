@@ -89,56 +89,39 @@ const Cadastro = () => {
     // Validações
     const handleNameChange = (e) => {
         setName(e.target.value);
-
-        const result = name.includes(' ')
-
-        if (!result) {
-            setErrorName(true);
-            setNameErrorText('Insira nome e sobrenome!');
-        } else {
-            setErrorName(false);
-            setNameErrorText(false);
-        }
-        validateForm()
     }
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-
-        const result = validarEmail(email);
-
-        if (!result) {
-            setErrorEmail(true);
-            setEmailErrorText('E-mail invalido!');
-        } else {
-            setErrorEmail(false);
-            setEmailErrorText(false);
-        }
-        validateForm()
     }
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-
-        if (num < 50) {
-            setErrorPassword(true);
-            setPasswordErrorText('Senha deve ser OK!')
-        } else {
-            setErrorPassword(false);
-            setPasswordErrorText(false)
-        }
-        validateForm()
     }
 
     const validateForm = () => {
-        var validName = name.includes(' ')
-        var validEmail = validarEmail(email)
-        var validPassword = (num >= 50);
 
-        var validForm = validName && validEmail && validPassword;
-        setIsButtonDisabled(!validForm);
+        const result = validarEmail(email);
 
-        return validForm;
+        if (name.length <= 3) {
+            setErrorName(true);
+            setNameErrorText('Insira um nome maior!');
+        } else if (!result){
+            setErrorEmail(true);
+            setEmailErrorText('E-mail invalido!');
+            setErrorName(false);
+            setNameErrorText(false);
+        } else if (password.length <= 8) {
+            setErrorPassword(true);
+            setPasswordErrorText('Senha deve ser OK!')
+            setErrorEmail(false);
+            setEmailErrorText(false);
+        } else {
+            setErrorPassword(false);
+            setPasswordErrorText(false)
+            return true
+        }
+
     }
 
     const handleRegister = () => {
@@ -155,122 +138,120 @@ const Cadastro = () => {
 
         if (response.status === 200) {
             notify("Cadastro realizado com sucesso", false)
-            
+
             const token = response.data.token;
-            localStorage.setItem('user',token)
+            localStorage.setItem('user', token)
 
             const idUser = response.data.id
-            localStorage.setItem('userId',idUser)
-            
+            localStorage.setItem('userId', idUser)
+
             setTimeout(() => {
                 navigate('/home')
-              }, "2100");
+            }, "2100");
 
         } else if (response.status === 400) {
             notify(response.data.mensagem, true)
         }
     }
 
-return (
-    <Grid style={displayFlex}>
-        <ToastContainer />
+    return (
+        <Grid style={displayFlex}>
+            <ToastContainer />
 
-        <Paper elevation={10} style={paperStyle}>
+            <Paper elevation={10} style={paperStyle}>
+                <Grid align='center' marginTop='10px'>
+                    <Avatar style={avatarListStyle}>
+                        <AppRegistrationIcon style={iconListStyle}></AppRegistrationIcon>
+                    </Avatar>
+                    <h1>Cadastrar conta</h1>
+                </Grid>
 
-            <Grid align='center' marginTop='10px'>
-                <Avatar style={avatarListStyle}>
-                    <AppRegistrationIcon style={iconListStyle}></AppRegistrationIcon>
-                </Avatar>
-                <h1>Cadastrar conta</h1>
-            </Grid>
+                <Grid marginTop='35px'>
+                    <TextField
+                        type='text'
+                        label='Nome completo:'
+                        placeholder='Insira seu nome'
+                        value={name}
+                        onChange={handleNameChange}
+                        error={errorName}
+                        helperText={errorNameText}
+                        fullWidth required
+                    >
+                    </TextField>
+                </Grid>
 
-            <Grid marginTop='35px'>
-                <TextField
-                    type='text'
-                    label='Nome completo:'
-                    placeholder='Insira seu nome'
-                    value={name}
-                    onChange={handleNameChange}
-                    error={errorName}
-                    helperText={errorNameText}
-                    fullWidth required
-                >
-                </TextField>
-            </Grid>
+                <Grid marginTop='35px'>
+                    <TextField
+                        type='text'
+                        label='E-mail:'
+                        placeholder='Insira seu e-mail'
+                        value={email}
+                        onChange={handleEmailChange}
+                        error={errorEmail}
+                        helperText={errorEmailText}
+                        fullWidth required>
+                    </TextField>
+                </Grid>
 
-            <Grid marginTop='35px'>
-                <TextField
-                    type='text'
-                    label='E-mail:'
-                    placeholder='Insira seu e-mail'
-                    value={email}
-                    onChange={handleEmailChange}
-                    error={errorEmail}
-                    helperText={errorEmailText}
-                    fullWidth required>
-                </TextField>
-            </Grid>
+                <Grid marginTop='35px'>
+                    <FormControl fullWidth required variant="outlined">
 
-            <Grid marginTop='35px'>
-                <FormControl fullWidth required variant="outlined">
+                        <InputLabel
+                            htmlFor="outlined-adornment-password">Password</InputLabel>
+                        <OutlinedInput
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={handlePasswordChange}
+                            error={errorPassword}
+                            helperText={errorPasswordText}
+                            endAdornment={
 
-                    <InputLabel
-                        htmlFor="outlined-adornment-password">Password</InputLabel>
-                    <OutlinedInput
-                        type={showPassword ? "text" : "password"}
-                        value={password}
-                        onChange={handlePasswordChange}
-                        error={errorPassword}
-                        helperText={errorPasswordText}
-                        endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end">
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Password" />
 
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleClickShowPassword}
-                                    onMouseDown={handleMouseDownPassword}
-                                    edge="end">
-                                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Password" />
+                    </FormControl>
 
-                </FormControl>
+                    <FormHelperText error={errorPassword}>
+                        <PasswordStrenghMeter
+                            password={password}
+                            style={passwordBar} />
+                        {errorPasswordText}
+                    </FormHelperText>
 
-                <FormHelperText error={errorPassword}>
-                    <PasswordStrenghMeter
-                        password={password}
-                        style={passwordBar} />
-                    {errorPasswordText}
-                </FormHelperText>
+                </Grid>
 
-            </Grid>
+                <Grid marginTop='20px'>
+                    <Button
+                        variant="contained"
+                        type='submit'
+                        color='primary'
+                        fullWidth
+                        style={buttonStyle}
+                        onClick={handleRegister}
+                    >CADASTRAR</Button>
+                </Grid>
 
-            <Grid marginTop='20px'>
-                <Button
-                    variant="contained"
-                    type='submit'
-                    color='primary'
-                    fullWidth
-                    style={buttonStyle}
-                    onClick={handleRegister}
-                    disabled={(errorPassword || errorEmail) || isButtonDisabled}
-                >CADASTRAR</Button>
-            </Grid>
+                <Grid marginTop='10px'>
 
-            <Grid marginTop='10px'>
+                    <Typography>Já possui cadastro?
+                        <Link href="/" marginLeft='5px'>
+                            Clique aqui!
+                        </Link>
+                    </Typography>
 
-                <Typography>Já possui cadastro?
-                    <Link href="/" marginLeft='5px'>
-                        Clique aqui!
-                    </Link>
-                </Typography>
-
-            </Grid>
-        </Paper>
-    </Grid>
-);
+                </Grid>
+            </Paper>
+        </Grid>
+    );
 }
 
 

@@ -4,12 +4,13 @@ import { Paper, Container, Typography, Grid } from '@mui/material';
 
 // Estilos
 const paperStyle = {
+  margin: '0px',
   padding: '20px',
-  minHeight: '300px',
+  minHeight: '15vh',
+  minWidth: '500px',
   maxWidth: '500px',
-  margin: '20px 0px auto', // Removendo a margem superior e inferior
   borderRadius: '10px',
-  textAlign: 'center', 
+  textAlign: 'center',
 };
 
 const labelStyle = {
@@ -18,6 +19,8 @@ const labelStyle = {
 
 const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
   console.log("Dashboard", gastosMensais);
+
+  const total = gastosMensais.reduce((acc, gasto) => acc + gasto.valor, 0);
 
   const formatChartData = () => {
     const consolidatedData = {};
@@ -43,27 +46,33 @@ const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
     return Object.values(consolidatedData);
   };
 
-  const total = gastosMensais.reduce((acc, gasto) => acc + gasto.valor, 0);
-
   return (
     <Container>
       <Paper elevation={10} style={paperStyle}>
-        <Typography variant="h6">Maiores gastos do mês atual</Typography>
+        <h2>Maiores gastos do mês atual</h2>
         <Grid container justifyContent="center" alignItems="center">
-          <div style={labelStyle}>
-            <Typography variant="body2"></Typography>
-          </div>
-          <PieChart
-            series={[
-              {
-                data: formatChartData(),
-              },
-            ]}
-            width={600}
-            height={250}
-            label={({ dataEntry }) => dataEntry.label} // Personaliza a posição do rótulo
-            labelPosition={65} // Ajuste a posição da label para ficar abaixo do gráfico
-          />
+          {gastosMensais.length > 0 ? (
+            <>
+              <div style={labelStyle}>
+                <Typography variant="body2"></Typography>
+              </div>
+              <PieChart
+                series={[
+                  {
+                    data: formatChartData(),
+                  },
+                ]}
+                width={600}
+                height={250}
+                label={({ dataEntry }) => dataEntry.label} 
+                labelPosition={105}
+              />
+            </>
+          ) : (
+            <Typography variant="body2" textAlign='center' marginTop='10px' fontSize='16px'>
+              Você não possui <span style={{ fontWeight: 'bolder' }}>gastos</span>!
+            </Typography>
+          )}
         </Grid>
       </Paper>
     </Container>

@@ -32,9 +32,9 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
 
     let btnStyleAcesso;
     if (tipo === "RECEITA") {
-        btnStyleAcesso = { backgroundColor: '#04AA6D', color: 'white', fontSize: '36px', padding: '15px 15px', borderRadius: '50%' }
+        btnStyleAcesso = { backgroundColor: 'green', color: 'white', fontSize: '28px', padding: '15px 15px', borderRadius: '50%' }
     } else {
-        btnStyleAcesso = { backgroundColor: '#f44336', color: 'white', fontSize: '36px', padding: '15px 15px', borderRadius: '50%' }
+        btnStyleAcesso = { backgroundColor: 'red', color: 'white', fontSize: '28px', padding: '15px 15px', borderRadius: '50%' }
     }
 
 
@@ -65,8 +65,6 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
         setErrorValor(false)
         setMsgAjudaAccount('')
         setErrorAccount(false)
-        setMsgAjudaCategoria("")
-        setErrorCategoria(false)
         openchange(false);
     };
 
@@ -91,7 +89,6 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
 
     const handleChangeCategory = (event) => {
         setCategory(event.target.value);
-        setErrorCategoria(false)
 
     };
 
@@ -99,19 +96,16 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     const textFieldValorRef = useRef(null);
     const textFieldDataRef = useRef(null);
     const textFieldAccountRef = useRef(null)
-    const textFieldCategoriaRef = useRef(null)
 
     const [msgAJudaDesc, setMsgAjudaD] = useState('')
     const [msgAJudaValor, setMsgAjudaV] = useState('')
     const [msgAJudaData, setMsgAudaAjudaDa] = useState('')
     const [msgAjudaAccount, setMsgAjudaAccount] = useState('')
-    const [msgAjudaCategoria, setMsgAjudaCategoria] = useState('')
 
     const [errorDesc, setErrorDesc] = useState(false)
     const [errorValor, setErrorValor] = useState(false)
     const [errorData, setErrorData] = useState(false)
     const [errorAccount, setErrorAccount] = useState(false)
-    const [errorCategoria, setErrorCategoria] = useState(false)
 
     function handleTransaction() {
         if (validarForm()) {
@@ -157,21 +151,9 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             setMsgAjudaAccount('Selecione uma conta')
             setErrorAccount(true)
             textFieldAccountRef.current.focus()
-        } else if (category == 0) {
-            setMsgAudaAjudaDa("")
-            setErrorData(false)
-            setMsgAjudaD("")
-            setErrorDesc(false)
-            setMsgAjudaV("")
-            setErrorValor(false)
+        } else {
             setMsgAjudaAccount('')
             setErrorAccount(false)
-            setMsgAjudaCategoria("Selecione uma categoria")
-            setErrorCategoria(true)
-            textFieldCategoriaRef.current.focus()
-        } else {
-            setMsgAjudaCategoria("")
-            setErrorCategoria(false)
             return true
         }
     }
@@ -307,9 +289,6 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Categoria</InputLabel>
                                         <Select
-                                            error={errorCategoria}
-                                            helperText={msgAjudaCategoria}
-                                            inputRef={textFieldCategoriaRef}
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
                                             value={category}

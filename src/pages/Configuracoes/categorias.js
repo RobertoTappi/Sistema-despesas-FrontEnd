@@ -77,7 +77,6 @@ function Categorias() {
 
 
     const createItemListaNavegador = (novaTransacao) => {
-        debugger
         setCategorysData((prevCategorys) => [...prevCategorys, novaTransacao]);
     }
 
@@ -161,13 +160,13 @@ function Categorias() {
                             <Grid style={{ minHeight: '500px' }}>
                                 {value === 0 && (
                                     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "RECEITA")} atualizarNavegador={atualizarNavegador} tipoCategoriaPai={"RECEITA"} onRemoverCategoria={onRemoverCategoria} createItemListaNavegador={createItemListaNavegador} />
+                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "RECEITA" && category.nome !== "Outras receitas")} atualizarNavegador={atualizarNavegador} tipoCategoriaPai={"RECEITA"} onRemoverCategoria={onRemoverCategoria} createItemListaNavegador={createItemListaNavegador} />
                                     </List>
                                 )}
 
                                 {value === 1 && (
                                     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "DESPESA")} atualizarNavegador={atualizarNavegador} tipoCategoriaPai={"DESPESA"}  onRemoverCategoria={onRemoverCategoria} createItemListaNavegador={createItemListaNavegador}  />
+                                        <ListItemCategorias categorysData={categorysData && categorysData.filter(category => category.tipo === "DESPESA" && category.nome !== "Outros")} atualizarNavegador={atualizarNavegador} tipoCategoriaPai={"DESPESA"}  onRemoverCategoria={onRemoverCategoria} createItemListaNavegador={createItemListaNavegador}  />
                                     </List>
                                 )}
                             </Grid>
