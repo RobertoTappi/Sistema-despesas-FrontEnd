@@ -68,7 +68,7 @@ const Principal = () => {
             Authorization: 'Bearer ' + token
           }
         });
-      
+
         const converterStringParaData = (dataString) => {
           const [dia, mes, ano] = dataString.split('/');
           return new Date(parseInt(ano, 10), parseInt(mes, 10) - 1, parseInt(dia, 10));
@@ -128,42 +128,24 @@ const Principal = () => {
     setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
   };
 
-const atualizarTransacao = (novaTransacao) => {
-  debugger
-  if(novaTransacao){
-    setTransaction((prevTransactions) => {
-      const index =  prevTransactions && prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
+  const atualizarTransacao = (novaTransacao) => {
+    debugger
+    if (novaTransacao) {
+      setTransaction((prevTransactions) => {
+        const index = prevTransactions && prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
 
         if (index !== -1) {
           const newTransactions = [...prevTransactions];
 
 
-        newTransactions[index] = novaTransacao;
-        return newTransactions;
-      }
-      return prevTransactions;
-    });
-  }
-}
-const isPagaTransacao = (transacaoId) => {
-  const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
-  const data= {
-    idTransaction:Transacao.id,
-    idUser: idUser,
-    valor:Transacao.valor,
-    idCategory: Transacao.idCategory,
-    descricao: Transacao.descricao,
-    idAccount: Transacao.idAccount,
-    isPaga: true,
-    dataTransacao:Transacao.creationDate,
-    tipoTransacao: Transacao.type,
-    account:{
-        id: Transacao.idAccount,
+          newTransactions[index] = novaTransacao;
+          return newTransactions;
+        }
+        return prevTransactions;
+      });
     }
   }
-
   const isPagaTransacao = (transacaoId) => {
-
     const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
     const data = {
       idTransaction: Transacao.id,
@@ -180,41 +162,59 @@ const isPagaTransacao = (transacaoId) => {
       }
     }
 
+    const isPagaTransacao = (transacaoId) => {
 
-    try {
-      const response = axios.put(URL + 'transaction/alteraTransacao', data, {
-        headers: {
-          Authorization: 'Bearer ' + token
+      const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
+      const data = {
+        idTransaction: Transacao.id,
+        idUser: idUser,
+        valor: Transacao.valor,
+        idCategory: Transacao.idCategory,
+        descricao: Transacao.descricao,
+        idAccount: Transacao.idAccount,
+        isPaga: true,
+        dataTransacao: Transacao.creationDate,
+        tipoTransacao: Transacao.type,
+        account: {
+          id: Transacao.idAccount,
         }
-      });
+      }
 
-      toast.success('Conta paga com sucesso!', {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
 
-      setTransaction((prevTransactions) =>
-        prevTransactions.filter((transacao) => transacao.id !== transacaoId)
-      );
+      try {
+        const response = axios.put(URL + 'transaction/alteraTransacao', data, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        });
 
-    } catch (error) {
-      console.error('Erro ao buscar dados: accounts', error);
+        toast.success('Conta paga com sucesso!', {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+
+        setTransaction((prevTransactions) =>
+          prevTransactions.filter((transacao) => transacao.id !== transacaoId)
+        );
+
+      } catch (error) {
+        console.error('Erro ao buscar dados: accounts', error);
+      }
     }
   }
-
-const removerTransacao = (transacaoId) => {
-  debugger
-  setTransaction((prevTransactions) =>
-    prevTransactions.filter((transacao) => transacao.id !== transacaoId)
-  );
-};
-
+  
+  const removerTransacao = (transacaoId) => {
+    debugger
+    setTransaction((prevTransactions) =>
+      prevTransactions.filter((transacao) => transacao.id !== transacaoId)
+    );
+  };
 
   return (
     <Grid>
@@ -246,5 +246,4 @@ const removerTransacao = (transacaoId) => {
     </Grid>
   )
 }
-
 export default Principal;
