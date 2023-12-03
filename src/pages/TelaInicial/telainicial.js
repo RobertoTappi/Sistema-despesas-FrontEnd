@@ -194,6 +194,9 @@ const removerTransacao = (transacaoId) => {
   );
 };
 
+
+
+
 return (
   <Grid>
      <ToastContainer />
@@ -203,7 +206,7 @@ return (
 
     <Grid style={transacaoStyle}>
       <TransacaoModalReceita onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "RECEITA")} isPagaTransacao={isPagaTransacao}></TransacaoModalReceita>
-      <TransacaoModalDespesa onRemoverTransacao={removerTransacao}onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} isPagaTransacao={isPagaTransacao}></TransacaoModalDespesa>
+      <TransacaoModalDespesa onRemoverTransacao={removerTransacao} onAtualizarTrasacao={atualizarTransacao} props={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} isPagaTransacao={isPagaTransacao}></TransacaoModalDespesa>
     </Grid>
 
     <Grid>

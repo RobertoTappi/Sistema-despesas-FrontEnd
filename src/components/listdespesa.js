@@ -34,8 +34,7 @@ const ListItemDespesa = ({ dados, index,onAtualizarTrasacao,onRemoverTransacao,i
     };
 
     const hadleIsPaga = () =>{
-
-        isPagaTransacao(dados.id)
+      isPagaTransacao(dados.id)
     }
 
 

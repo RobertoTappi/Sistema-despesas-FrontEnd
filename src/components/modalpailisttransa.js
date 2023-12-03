@@ -23,7 +23,7 @@ const segundaDivStyle = {
 
 };
 
-const ModalPaiListTransa = ({ day, transactions,accountsData }) => {
+const ModalPaiListTransa = ({IsTransacaoNotPaga, day, transactions,accountsData,isPagaTransacao }) => {
     debugger;
   return (
     <Grid container style={divPaiStyle}>
@@ -32,7 +32,7 @@ const ModalPaiListTransa = ({ day, transactions,accountsData }) => {
       </Grid>
       <Grid item style={segundaDivStyle}>
         {transactions.map((transaction, index) => (
-          <ListItensTransacoes key={index} dados={transaction} categoryName={ accountsData &&(accountsData && accountsData.find(account => account.id === transaction.idAccount)).name} />
+          <ListItensTransacoes key={index} dados={transaction} categoryName={ accountsData &&(accountsData && accountsData.find(account => account.id === transaction.idAccount)).name} isPagaTransacao={isPagaTransacao}/>
         ))}
       </Grid>
     </Grid>
