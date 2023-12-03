@@ -26,28 +26,26 @@ export const GridSaldo = ({ children }) => {
 
 
 const ListSaldo = ({ accounts, transacoes }) => {
-
     const [saldo, setSaldo] = useState(0);
-    const [transacoesData, setTransacoesData] = useState(0);
-
-    console.log(saldo)
 
     useEffect(() => {
-        setTransacoesData(transacoes && transacoes.transactions)
 
-        const receitaTotal = transacoesData
-        ? transacoesData
+        const transacoesARRAY = transacoes && transacoes.transactions
+
+        const receitaTotal = transacoesARRAY
+        ? transacoesARRAY
             .filter(transaction => transaction.type === 'RECEITA' && transaction.isPaga === true)
             .reduce((total, transaction) => total + transaction.valor, 0)
         : 0
         
-        const despesaTotal = transacoesData
-        ? transacoesData
+        const despesaTotal = transacoesARRAY
+        ? transacoesARRAY
             .filter(transaction => transaction.type === 'DESPESA' && transaction.isPaga === true)
             .reduce((total, transaction) => total + transaction.valor, 0)
         : 0
 
-        setSaldo(despesaTotal - receitaTotal)
+        setSaldo(receitaTotal - despesaTotal)
+
     },[transacoes])
 
    

@@ -188,7 +188,6 @@ const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemover
   }
 
   const removerTransaction = async () => {
-
     try {
        await axios.delete(`${URL}transaction/remTransacao/${dados.id}`, {
         headers: {
