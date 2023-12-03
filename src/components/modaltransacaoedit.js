@@ -23,7 +23,7 @@ function retornaValor(dados) {
 }
 
 const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemoverTransacao, categorys,}) => {
-  debugger
+  
   const [descricao, setDescricao] = useState('');
   const [amount, setAmount] = useState(0)
   const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('pt-BR'));
@@ -126,7 +126,6 @@ const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemover
   }
 
   const handleChangeCategory = (event) => {
-    debugger
     const categoryEncontrada = categorysData.find(category => category.id === event.target.value);
     setCategoryUnico(categoryEncontrada.id)
   };
@@ -180,7 +179,7 @@ const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemover
           Authorization: 'Bearer ' + token
         }
       }); 
-      debugger
+  
       onAtualizarTrasacao(response.data);
       
     } catch (error) {
@@ -196,7 +195,7 @@ const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemover
           Authorization: 'Bearer ' + token
         }
       });
-      debugger;
+
     } catch (error) {
       console.error('Erro ao remover ', error);
     }

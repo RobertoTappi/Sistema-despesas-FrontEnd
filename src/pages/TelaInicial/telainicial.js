@@ -9,6 +9,7 @@ import DashBoardGastosMensais from '../../components/dashboardmensal';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ListSaldo, { GridSaldo } from '../../components/listsaldo.js';
+import { BuscarTransacoesAXIOS } from '../../services/buscarTransacoes.js';
 
 // Estilos
 const transacaoStyle = { display: 'flex', gap: '50px', flexDirection: 'column', alignItems: 'center', marginLeft: '20px', marginRight: '20px' }
@@ -24,6 +25,7 @@ const Principal = () => {
   const [transactionData, setTransaction] = useState([])
   const [categorysData, setCategory] = useState(null)
   const [dadosUser, setDadosUser] = useState(null)
+  const [accountTransaction, setAccountTransaction] = useState(null)
 
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
@@ -118,10 +120,22 @@ const Principal = () => {
       }
     };
 
+    async function obterSaldoContas() {
+
+      try {
+        const response = await BuscarTransacoesAXIOS(idUser, token);
+        console.log(response.data)
+        setAccountTransaction(response.data)
+
+      } catch (error) {
+        console.error("erro ao obter o saldo");
+      }
+    }
     obterDadosUser();
     obterCategory();
     obterTransacoes();
     obterAccounts();
+    obterSaldoContas();
   }, []);
 
   const adicionarTransacao = (novaTransacao) => {
@@ -129,7 +143,7 @@ const Principal = () => {
   };
 
   const atualizarTransacao = (novaTransacao) => {
-    debugger
+
     if (novaTransacao) {
       setTransaction((prevTransactions) => {
         const index = prevTransactions && prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
@@ -145,6 +159,7 @@ const Principal = () => {
       });
     }
   }
+
   const isPagaTransacao = (transacaoId) => {
     const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
     const data = {
@@ -161,60 +176,53 @@ const Principal = () => {
         id: Transacao.idAccount,
       }
     }
-
-    const isPagaTransacao = (transacaoId) => {
-
-      const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
-      const data = {
-        idTransaction: Transacao.id,
-        idUser: idUser,
-        valor: Transacao.valor,
-        idCategory: Transacao.idCategory,
-        descricao: Transacao.descricao,
-        idAccount: Transacao.idAccount,
-        isPaga: true,
-        dataTransacao: Transacao.creationDate,
-        tipoTransacao: Transacao.type,
-        account: {
-          id: Transacao.idAccount,
+    try {
+      const response = axios.put(URL + 'transaction/alteraTransacao', data, {
+        headers: {
+          Authorization: 'Bearer ' + token
         }
+      });
+
+      toast.success('Conta paga com sucesso!', {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+
+      setTransaction((prevTransactions) =>
+        prevTransactions.filter((transacao) => transacao.id !== transacaoId)
+      );
+
+      let contas;
+
+      for(const conta of accountTransaction) {
+        contas = conta.transactions = conta.transactions.map((transacao) =>{
+          if(transacao.id === transacaoId) {
+            return {...transacao, ...data};
+          } 
+
+          return transacao
+        })
       }
 
+      setAccountTransaction(contas)
 
-      try {
-        const response = axios.put(URL + 'transaction/alteraTransacao', data, {
-          headers: {
-            Authorization: 'Bearer ' + token
-          }
-        });
-
-        toast.success('Conta paga com sucesso!', {
-          position: "bottom-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-
-        setTransaction((prevTransactions) =>
-          prevTransactions.filter((transacao) => transacao.id !== transacaoId)
-        );
-
-      } catch (error) {
-        console.error('Erro ao buscar dados: accounts', error);
-      }
+    } catch (error) {
+      console.error('Erro ao buscar dados: accounts', error);
     }
   }
-  
+
   const removerTransacao = (transacaoId) => {
-    debugger
     setTransaction((prevTransactions) =>
       prevTransactions.filter((transacao) => transacao.id !== transacaoId)
     );
   };
+
 
   return (
     <Grid>
@@ -229,7 +237,7 @@ const Principal = () => {
 
           <GridSaldo>
             {accountsData && accountsData.map((accountsData, index) => (
-              <ListSaldo index={index} accounts={accountsData} />
+              <ListSaldo index={index} accounts={accountsData} transacoes={accountTransaction && accountTransaction.find((account) => account.id === accountsData.id)} />
             ))}
           </GridSaldo>
 
