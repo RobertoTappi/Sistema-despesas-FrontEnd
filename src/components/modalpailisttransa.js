@@ -23,16 +23,16 @@ const segundaDivStyle = {
 
 };
 
-const ModalPaiListTransa = ({IsTransacaoNotPaga, day, transactions,accountsData,isPagaTransacao,categoryList }) => {
+const ModalPaiListTransa = ({onAtualizarTrasacao,onRemoverTransacao, day, transactions,accountsData,isPagaTransacao,categoryList }) => {
  
   return (
     <Grid container style={divPaiStyle}>
       <Grid item style={numeroStyle}>
-        <Typography variant="h4">{day.split("/")[0]}</Typography>
+        <Typography variant="h4">{day && day.split("/")[0]}</Typography>
       </Grid>
       <Grid item style={segundaDivStyle}>
         {transactions.map((transaction, index) => (
-          <ListItensTransacoes categoryList={categoryList} key={index} dados={transaction} categoryName={ accountsData &&(accountsData && accountsData.find(account => account.id === transaction.idAccount)).name} isPagaTransacao={isPagaTransacao}/>
+          <ListItensTransacoes onAtualizarTrasacao={onAtualizarTrasacao} onRemoverTransacao={onRemoverTransacao} categoryList={categoryList} key={index} dados={transaction} categoryName={ accountsData &&(accountsData && accountsData.find(account => account.id === transaction.idAccount)).name} isPagaTransacao={isPagaTransacao}/>
         ))}
       </Grid>
     </Grid>

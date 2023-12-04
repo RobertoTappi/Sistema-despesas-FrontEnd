@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { ListItem, Dialog, Button, DialogContent } from "@mui/material";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
@@ -25,7 +25,7 @@ function retornaValor(dados) {
 
 
 
-const ListItensTransacoes = ({dados,categoryName,isPagaTransacao,categoryList}) => {
+const ListItensTransacoes = ({dados,categoryName,isPagaTransacao,categoryList,onRemoverTransacao,onAtualizarTrasacao}) => {
 
 
   let styleMonetario;
@@ -34,10 +34,7 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao,categoryList}) 
   }else{
     styleMonetario = {margin:'5px', height: '100%', width: '200px', marginRight: '-10px',color:'red'}
   }
-   
-  const handleClickOpen = () =>{
-    
-  }
+
   
   const hadleIsPaga = () =>{
     isPagaTransacao(dados.id,true)
@@ -52,17 +49,30 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao,categoryList}) 
     
     if (categoriaAssociada) {
       const relacaoCategoriaEtransacao = categoriaAssociada.find(category => category.id === dados.idCategory);
-      const iconeEncontrado = mapeamentoDeIconesDespesa.find(icone => icone.id === relacaoCategoriaEtransacao.idCon);
-
-      if (iconeEncontrado) {
-        return (
-          <div style={{ fontSize: '1px' }}>
-            {iconeEncontrado.icone}
-          </div>
-        );
+      if(relacaoCategoriaEtransacao){
+        const iconeEncontrado = mapeamentoDeIconesDespesa.find(icone => icone.id === relacaoCategoriaEtransacao.idCon);
+        if (iconeEncontrado) {
+          return (
+            <div style={{ fontSize: '1px' }}>
+              {iconeEncontrado.icone}
+            </div>
+          );
+        }
       }
     }
     return null;
+  };
+
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState(null)
+
+
+  const handleClickOpen = () => {
+    setOpenModal(true);
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
   };
 
   
@@ -111,6 +121,14 @@ const ListItensTransacoes = ({dados,categoryName,isPagaTransacao,categoryList}) 
 
       </Box>
       </Box>
+      <ModalEditTransa
+        onRemoverTransacao={onRemoverTransacao}
+        open={openModal}
+        dados={dados}
+        onClose={handleClose}
+        onAtualizarTrasacao={onAtualizarTrasacao}
+        categorys={categoryList}
+      />
     </>
   );
 };

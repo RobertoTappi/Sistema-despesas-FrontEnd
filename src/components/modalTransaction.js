@@ -8,7 +8,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { mapeamentoDeIconesDespesa } from "../util/mapCategorias";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 
-const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) => {
+const ModalTransaction = ({ style,tipo, accounts, onAdicionarTransacao, categorys }) => {
 
     const [open, openchange] = useState(false);
     const [description, setDescription] = useState('');
@@ -22,7 +22,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
     const idUser = localStorage.getItem('userId');
     const token = localStorage.getItem('user');
 
-
+    
     let btnStyle;
     if (tipo === "RECEITA") {
         btnStyle = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
@@ -127,13 +127,33 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             closepopup();
         }
     };
+    function validarData(dataStr) {
+        const partes = dataStr.split('/');
+        
+
+        if (partes.length !== 3) {
+            return false;
+        }
+    
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1;
+        const ano = parseInt(partes[2], 10);
+
+        const data = new Date(ano, mes, dia);
+
+        return (
+            data.getFullYear() === ano &&
+            data.getMonth() === mes &&
+            data.getDate() === dia
+        );
+    }
 
     const validarForm = () => {
         if (description === null || description.length < 1) {
             setMsgAjudaD("Descrição não pode ser nula")
             setErrorDesc(true)
             textFieldDescRef.current.focus()
-        } else if (selectedDate.length !== 10) {
+        } else if (!validarData(selectedDate)) {
             setMsgAjudaD("")
             setErrorDesc(false)
             setMsgAudaAjudaDa("Data inválida")
@@ -157,7 +177,7 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             setMsgAjudaAccount('Selecione uma conta')
             setErrorAccount(true)
             textFieldAccountRef.current.focus()
-        } else if (category == 0) {
+        } else {
             setMsgAudaAjudaDa("")
             setErrorData(false)
             setMsgAjudaD("")
@@ -166,10 +186,6 @@ const ModalTransaction = ({ tipo, accounts, onAdicionarTransacao, categorys }) =
             setErrorValor(false)
             setMsgAjudaAccount('')
             setErrorAccount(false)
-            setMsgAjudaCategoria("Selecione uma categoria")
-            setErrorCategoria(true)
-            textFieldCategoriaRef.current.focus()
-        } else {
             setMsgAjudaCategoria("")
             setErrorCategoria(false)
             return true

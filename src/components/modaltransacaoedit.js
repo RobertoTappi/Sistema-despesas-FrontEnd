@@ -22,12 +22,11 @@ function retornaValor(dados) {
   }
 }
 
-const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRemoverTransacao, categorys, isLancamento ,criarTransacaoPai}) => {
-
-  const [openModal, setOpenModal] = useState(false);
+const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemoverTransacao, categorys,}) => {
+  debugger
   const [descricao, setDescricao] = useState('');
-  const [amount, setAmount] = useState(null)
-  const [selectedDate, setSelectedDate] = useState('');
+  const [amount, setAmount] = useState(0)
+  const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('pt-BR'));
   const [selectedAccount, setSelectedAccount] = useState('');
   const [category, setCategoryUnico] = useState('');
 
@@ -39,69 +38,64 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
 
+  const [selectedRadioValue, setSelectedRadioValue] = useState('');
+  const [formLabelTitle, setFormLabelTitle] = useState('Editar');
+  const [showParcelasSelect, setShowParcelasSelect] = useState(false);
+  const [selectedParcela, setSelectedParcela] = useState(2);
+
   useEffect(() => {
-
-    const obterAccounts = async () => {
-
+    const fetchData = async () => {
       try {
-        const response = await axios.get(URL + 'account/findAllAccounts/' + idUser, {
-          headers: {
-            Authorization: 'Bearer ' + token
-          }
-        });
-        setAccounts(response.data);
-
-      } catch (error) {
-        console.error('Erro ao buscar dados: accounts', error);
-      }
-    };
-
-    const obterCategory = async () => {
-      try {
-        const response = await axios.get(URL + 'category/' + idUser, {
-          headers: {
-            Authorization: 'Bearer ' + token
-          }
-        });
-        setCategory(response.data);
-
+        const [accountsResponse, categoryResponse] = await Promise.all([
+          axios.get(URL + 'account/findAllAccounts/' + idUser, {
+            headers: {
+              Authorization: 'Bearer ' + token
+            }
+          }),
+          axios.get(URL + 'category/' + idUser, {
+            headers: {
+              Authorization: 'Bearer ' + token
+            }
+          }),
+        ]);
+  
+        setAccounts(accountsResponse.data);
+        setCategory(categoryResponse.data);
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
-    }
-    obterCategory()
-    obterAccounts()
+    };
+  
+      fetchData();
+      atualizarDados()
 
-    if (accountsData) {
-      const contaEncontrada = accountsData.find(account => account.id === dados.idAccount);
-      if (contaEncontrada) {
-        setSelectedAccount(contaEncontrada);
+  }, [idUser,token,open]);
+
+
+  const atualizarDados = ()=>{
+      setAmount(dados && dados.valor)
+      setSelectedDate(dados && dados.creationDate)
+    
+      setSelectedRadioValue(dados && dados.type)
+      setFormLabelTitle(`Editar - ${dados && dados.type}`);
+      setCategoryUnico(idCategory)
+      setDescricao(dados && dados.descricao)
+      setIdCategory(dados && dados.idCategory)
+
+      if (accountsData) {
+        const contaEncontrada = accountsData.find(account => account.id === dados.idAccount);
+        if (contaEncontrada) {
+          setSelectedAccount(contaEncontrada.id);
+        }
       }
-    }
-    if (categorysData) {
-      const categoryEncontrada = categorysData.find(category => category.id === dados.idCategory);
-      if (categoryEncontrada) {
-        setCategoryUnico(categoryEncontrada)
+      if (categorysData) {
+        const categoryEncontrada = categorysData.find(category => category.id === dados.idCategory);
+        if (categoryEncontrada) {
+          setCategoryUnico(categoryEncontrada.id)
+        }
       }
-    }
+  }
 
-    setOpenModal(open);
-    setAmount(dados && dados.valor)
-    setSelectedDate(dados && dados.creationDate)
-
-    setSelectedRadioValue(dados && dados.type)
-    setFormLabelTitle(`Editar - ${dados && dados.type}`);
-    setCategoryUnico(idCategory)
-
-    if (tipo) {
-      setSelectedRadioValue(tipo)
-      setFormLabelTitle(`Adicionar nova ${tipo}`);
-    }
-
-    setDescricao(dados && dados.descricao)
-    setIdCategory(dados && dados.idCategory)
-
-  }, [open]);
 
   const handleClose = () => {
     setMsgAudaAjudaDa("")
@@ -118,43 +112,28 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
     onClose();
   };
 
-  const handleSave = () => {
-    try {
+   const handleSave = async () => {
       if (validarForm()) {
-        if(!isLancamento){
-        atualizarTransacao()
-        onAtualizarTrasacao({
-          creationDate: selectedDate,
-          descricao: descricao,
-          id: dados.id,
-          idAccount: selectedAccount.id,
-          idCategory: category ? category.id : null,
-          type: selectedRadioValue,
-          valor: amount
-        });
-        onClose();
-      }else{
-        criarTransacao()
-        onClose();
+          await atualizarTransacao()
+          handleClose()
       }
-      }
-
-    } catch (error) {
-      console.log(error)
     }
-  }
+  
+
 
   const handleDesc = (e) => {
     setDescricao(e.target.value)
   }
 
   const handleChangeCategory = (event) => {
+    debugger
     const categoryEncontrada = categorysData.find(category => category.id === event.target.value);
-    setCategoryUnico(categoryEncontrada)
+    setCategoryUnico(categoryEncontrada.id)
   };
+
   const handleChange = (event) => {
     setSelectedAccount(event.target.value);
-  };
+  };                
 
   const filteredDespesaCategorys = useMemo(() => {
     return categorys ? categorys.filter(category => category.tipo === 'DESPESA') : [];
@@ -165,15 +144,12 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
   }, [categorys]);
 
 
-  const [selectedRadioValue, setSelectedRadioValue] = useState('');
-  const [formLabelTitle, setFormLabelTitle] = useState('Editar');
 
   const handleRadioChange = (event) => {
     if (selectedRadioValue !== event.target.value) {
       setCategoryUnico(null)
     }
     const selectedValue = event.target.value;
-
     setSelectedRadioValue(selectedValue);
     setFormLabelTitle(`Editar - ${selectedValue}`);
   };
@@ -184,30 +160,12 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
     setSelectedDate(mask(value, pattern));
   }
 
-  const criarTransacao = async () =>{
-
-    try {
-        const response = await TransactionAXIOS(idUser, amount, category, descricao, selectedDate, selectedRadioValue,
-           selectedAccount, showParcelasSelect, selectedParcela, token);
-        
-           criarTransacaoPai(response.data);
-
-    } catch (error) {
-        console.error("erro ao cadastrar transação", error);
-    }
-  }
-
-
-
-
-
-  const atualizarTransacao = () => {
-    debugger
+  const atualizarTransacao = async() => {
     const data = {
       idTransaction: dados.id,
       idUser: idUser,
       valor: amount,
-      idCategory: category ? category.id : null,
+      idCategory: category ? category : null,
       descricao: descricao,
       idAccount: selectedAccount,
       dataTransacao: selectedDate,
@@ -217,45 +175,39 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
       }
     }
     try {
-
-      const response = axios.put(URL + 'transaction/alteraTransacao', data, {
+      const response = await axios.put(URL + 'transaction/alteraTransacao', data, {
         headers: {
           Authorization: 'Bearer ' + token
         }
-      });
+      }); 
+      debugger
+      onAtualizarTrasacao(response.data);
+      
     } catch (error) {
       console.error('Erro ao buscar dados: accounts', error);
     }
   }
 
-  const removerTransaction = () => {
+  const removerTransaction = async () => {
 
     try {
-      axios.delete(`${URL}transaction/remTransacao/${dados.id}`, {
+       await axios.delete(`${URL}transaction/remTransacao/${dados.id}`, {
         headers: {
           Authorization: 'Bearer ' + token
         }
       });
+      debugger;
     } catch (error) {
       console.error('Erro ao remover ', error);
     }
   }
 
-  const onClickRemove = () => {
-    removerTransaction()
+   const onClickRemove = async () => {
+     await removerTransaction()
     onRemoverTransacao(dados.id)
+    onClose()
   }
 
-  const [showParcelasSelect, setShowParcelasSelect] = useState(false);
-  const [selectedParcela, setSelectedParcela] = useState(1);
-
-  const handleCheckboxChange = () => {
-    setShowParcelasSelect(!showParcelasSelect);
-  };
-
-  const handleParcelaChange = (event) => {
-    setSelectedParcela(event.target.value);
-  };
 
 
   const renderIcon = (categoryId) => {
@@ -303,12 +255,34 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
   const [errorAccount, setErrorAccount] = useState(false)
   const [errorCategoria, setErrorCategoria] = useState(false)
 
+  function validarData(dataStr) {
+      if(dataStr === undefined){
+        return false
+      }
+    const partes = dataStr &&  dataStr.split('/');
+    
+    if (partes.length !== 3) {
+        return false;
+    }
+
+    const dia = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1;
+    const ano = parseInt(partes[2], 10);
+
+    const data = new Date(ano, mes, dia);
+
+    return (
+        data.getFullYear() === ano &&
+        data.getMonth() === mes &&
+        data.getDate() === dia
+    );
+}
   const validarForm = () => {
-    if (descricao === null || descricao.length < 1) {
+    if (!(descricao && descricao.trim().length > 0)) {
       setMsgAjudaD("Descrição não pode ser nula")
       setErrorDesc(true)
       textFieldDescRef.current.focus()
-    } else if (selectedDate.length !== 10) {
+    } else if (!validarData(selectedDate && selectedDate)) {
       setMsgAjudaD("")
       setErrorDesc(false)
       setMsgAudaAjudaDa("Data inválida")
@@ -332,19 +306,7 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
       setMsgAjudaAccount('Selecione uma conta')
       setErrorAccount(true)
       textFieldAccountRef.current.focus()
-    } else if (category == 0) {
-      setMsgAudaAjudaDa("")
-      setErrorData(false)
-      setMsgAjudaD("")
-      setErrorDesc(false)
-      setMsgAjudaV("")
-      setErrorValor(false)
-      setMsgAjudaAccount('')
-      setErrorAccount(false)
-      setMsgAjudaCategoria("Selecione uma categoria")
-      setErrorCategoria(true)
-      textFieldCategoriaRef.current.focus()
-    } else {
+    }else {
       setMsgAudaAjudaDa("")
       setErrorData(false)
       setMsgAjudaD("")
@@ -360,15 +322,15 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
   }
 
 
+
   return (
-    <Dialog open={openModal} onClose={handleClose} fullWidth maxWidth="sm" padding="20px">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" padding="20px">
       <DialogContent style={{ padding: '20px', textAlign: 'center', minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <FormControl>
           <FormLabel id="demo-row-radio-buttons-group-label">
             <h4>{formLabelTitle}</h4>
           </FormLabel>
-
-          <RadioGroup
+            <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
@@ -378,7 +340,6 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
             <FormControlLabel value="RECEITA" control={<Radio />} label="Receita" />
             <FormControlLabel value="DESPESA" control={<Radio />} label="Despesa" />
           </RadioGroup>
-
         </FormControl>
 
         <Grid container spacing={2} justifyContent="center" alignItems="center">
@@ -414,6 +375,7 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
                       type="text"
                       label="Valor" />}
                 />
+
               </Grid>
 
               <Grid item xs={6}>
@@ -430,6 +392,7 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
                   onChange={handleDate}
                   InputLabelProps={{ shrink: true }}
                 />
+
               </Grid>
             </Grid>
           </Grid>
@@ -466,11 +429,11 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
                 inputRef={textFieldCategoriaRef}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={category ? category.id : ''}
+                value={category ? category : ''}
                 label="Categoria"
                 onChange={handleChangeCategory}
               >
-                {tipo === 'RECEITA' ? (
+                {selectedRadioValue === 'RECEITA' ? (
                   filteredReceitaCategorys.map(renderCategoryMenuItem)
                 ) : (
                   filteredDespesaCategorys.map(renderCategoryMenuItem)
@@ -478,54 +441,19 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
               </Select>
             </FormControl>
           </Grid>
+          {dados.idTransacaoPai  ? ( <div></div>
 
-          <IconButton
+          ):(
+            <IconButton
             style={{ position: 'absolute', top: 0, right: 0, color: '#f44336' }}
             onClick={onClickRemove}
           > <DeleteIcon />
           </IconButton>
-        </Grid>
+          )}
 
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6} md={4} margin='35px 0px'>
-            <FormControlLabel
-              sx={{ maxWidth: 120 }}
-              value="start"
-              control={<Checkbox
-                checked={showParcelasSelect}
-                onChange={handleCheckboxChange}
-                inputProps={{ 'aria-label': 'controlled' }} />}
-              label="Parcelado?"
-              labelPlacement="start"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={8}>
-            {showParcelasSelect && (
-              <div>
-                <FormControl fullWidth>
-                  <InputLabel id="parcela-select-label">Parcelas</InputLabel>
-                  <Select
-                    labelId="parcela-select-label"
-                    id="parcela-select"
-                    value={selectedParcela}
-                    label="Parcelas"
-                    onChange={handleParcelaChange}
-                  >
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((parcela) => (
-                      <MenuItem value={parcela} key={parcela}>
-                        {parcela}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Typography>{`${selectedParcela}x valor por parcela ${retornaValor(amount / selectedParcela)}`}</Typography>
-              </div>
-            )}
-          </Grid>
         </Grid>
-
         <Grid item xs={12}>
-          <Grid container spacing={2} justifyContent="center">
+          <Grid container spacing={2} justifyContent="center" style={{marginTop:'20px'}}>
             <Grid item>
               <Button onClick={handleSave} color="primary" variant="contained" style={btnStyleSalvar}>
                 Salvar
@@ -539,7 +467,6 @@ const ModalEditTransa = ({ open, dados, tipo, onClose, onAtualizarTrasacao, onRe
           </Grid>
         </Grid>
       </DialogContent>
-
     </Dialog>
   );
 

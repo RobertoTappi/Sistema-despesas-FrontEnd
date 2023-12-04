@@ -126,6 +126,7 @@ const adicionarTransacao = (novaTransacao) => {
 };
 
 const atualizarTransacao = (novaTransacao) => {
+  debugger
   if(novaTransacao){
     setTransaction((prevTransactions) => {
       const index =  prevTransactions && prevTransactions.findIndex((transacao) => transacao.id === novaTransacao.id);
@@ -142,7 +143,6 @@ const atualizarTransacao = (novaTransacao) => {
   }
 }
 const isPagaTransacao = (transacaoId) => {
-  
   const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
   const data= {
     idTransaction:Transacao.id,
@@ -188,7 +188,7 @@ const isPagaTransacao = (transacaoId) => {
 }
 
 const removerTransacao = (transacaoId) => {
-
+  debugger
   setTransaction((prevTransactions) =>
     prevTransactions.filter((transacao) => transacao.id !== transacaoId)
   );

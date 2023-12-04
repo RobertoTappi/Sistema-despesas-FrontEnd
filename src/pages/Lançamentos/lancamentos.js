@@ -4,12 +4,12 @@ import axios from "axios";
 import { Paper, Grid, Container, Button, Menu } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import ModalEditTransa from "../../components/modaltransacaoedit";
+
 import ModalPaiListTransa from "../../components/modalpailisttransa";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import RelatorioPDF from "../../util/pdf";
+import ModalTransaction from "../../components/modalTransaction";
 
 const URL = "http://localhost:8080/api/";
 
@@ -77,15 +77,13 @@ const Lancamentos = () => {
         handlePreviousMonth();
       }
     };
-
-
     document.addEventListener("keydown", handleKeyDown);
 
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleNextMonth, handlePreviousMonth]);
+  }, [handleNextMonth, handlePreviousMonth,]);
 
   useEffect(() => {
     
@@ -105,17 +103,17 @@ const Lancamentos = () => {
 
 
         const transacoes2023 = transacoesPorData.filter(transacao => {
-          const ano = transacao.creationDate.split('/')[2];
+          const ano = transacao && transacao.creationDate.split('/')[2];
           return ano === currentYear.toString();
         });
         setTransacaoRelatorio(transacoes2023.filter(transacao => {
-          const [dia, mes, ano] = transacao.creationDate.split('/');
+          const [dia, mes, ano] = transacao && transacao.creationDate.split('/');
           return parseInt(mes, 10) === currentMonth + 1 && parseInt(ano, 10) === currentYear;
         }));
 
 
         transacoes2023.forEach(transacao => {
-          const [dia, mes, ano] = transacao.creationDate.split('/');
+          const [dia, mes, ano] = transacao && transacao.creationDate.split('/');
           const chave = `${dia}/${mes}`;
 
           if (!transacoesPorData[chave]) {
@@ -128,13 +126,13 @@ const Lancamentos = () => {
     
 
         const transacoesFiltradas = transacoesPorData.filter(transacao => {
-          const [dia, mes, ano] = transacao.creationDate.split('/');
+          const [dia, mes, ano] = transacao && transacao.creationDate.split('/');
           return parseInt(mes, 10) === currentMonth + 1 && parseInt(ano, 10) === currentYear;
         });
 
         const transacoesPorDia = {};
         transacoesFiltradas.forEach(transacao => {
-          const [dia, mes] = transacao.creationDate.split('/');
+          const [dia, mes] = transacao && transacao.creationDate.split('/');
           const chave = `${dia}/${mes}`;
 
           if (!transacoesPorDia[chave]) {
@@ -149,8 +147,8 @@ const Lancamentos = () => {
         const arrayDePares = Object.entries(transacoesPorDia);
         const ordenado = arrayDePares.sort(([dataA], [dataB]) => {
 
-          const [diaA, mesA] = dataA.split('/');
-          const [diaB, mesB] = dataB.split('/');
+          const [diaA, mesA] = dataA && dataA.split('/');
+          const [diaB, mesB] =  dataB && dataB.split('/');
           const dataFormatadaA = `${mesA}${diaA.padStart(2, '0')}`;
           const dataFormatadaB = `${mesB}${diaB.padStart(2, '0')}`;
 
@@ -202,7 +200,6 @@ const Lancamentos = () => {
   }, [idUser, token,meseano,currentMonth, currentYear]);
 
 
-  
 
 
   const monthNames = [
@@ -214,40 +211,36 @@ const Lancamentos = () => {
 
 
 
-  const [openModal, setOpenModal] = useState(false);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [tipoOpenModal, setTipoOpenModal] = useState(null);
+  // const [openModal, setOpenModal] = useState(false);
+  // const [anchorElUser, setAnchorElUser] = React.useState(null);
+  // const [tipoOpenModal, setTipoOpenModal] = useState(null);
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  // const handleCloseUserMenu = () => {
+  //   setAnchorElUser(null);
+  // };
 
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  // const handleOpenUserMenu = (event) => {
+  //   setAnchorElUser(event.currentTarget);
+  // };
 
-  const handleClickReceita = () => {
-    setOpenModal(true);
-    setTipoOpenModal("RECEITA");
-    handleCloseUserMenu();
-  };
+  // const handleClickReceita = () => {
+  //   setOpenModal(true);
+  //   setTipoOpenModal("RECEITA");
+  //   handleCloseUserMenu();
+  // };
 
-  const handleClickDespesa = () => {
-    setOpenModal(true);
-    setTipoOpenModal("DESPESA");
-    handleCloseUserMenu();
-  };
+  // const handleClickDespesa = () => {
+  //   setOpenModal(true);
+  //   setTipoOpenModal("DESPESA");
+  //   handleCloseUserMenu();
+  // };
 
-  const handleClose = () => {
-    setTipoOpenModal(null);
-    setOpenModal(false);
-  };
+  // const handleClose = () => {
+  //   setTipoOpenModal(null);
+  //   setOpenModal(false);
+  // };
 
-  const removerTransacao = (transacaoId) => {
-    setTransaction((prevTransactions) =>
-      prevTransactions.filter((transacao) => transacao.id !== transacaoId)
-    );
-  };
+
 
   const isPagaTransacao = (transacaoId , attTrue) => {
 
@@ -338,64 +331,152 @@ const Lancamentos = () => {
   };
 
 
+  
+
   const atualizarTransacao = (novaTransacao) => {
-    if (novaTransacao) {
-      debugger
-      setTransacoesDay((prevTransactions) => {
-
-        const { creationDate, id } = novaTransacao;
-
-        const [diaFormat,mesFormat] = creationDate.split("/")
-
-        const transactionsForDate = prevTransactions[diaFormat+'/'+mesFormat] || [];
-
-        const index = transactionsForDate.findIndex((transacao) => transacao.id === id);
-  
-        if (index !== -1) {
-
-          const newTransactions = [...transactionsForDate];
-          newTransactions[index] = novaTransacao;
-          return {
-            ...prevTransactions,
-            [creationDate]: newTransactions,
-          };
-        }
-  
-        return prevTransactions;
-      });
-    }
-  };
-
-  const adicionarTransacao = (novaTransacao) => {
+    // novaTransacao.idCategory 
     debugger;
     if (novaTransacao) {
       setTransacoesDay((prevTransactions) => {
-        const { creationDate } = novaTransacao;
+        const { id } = novaTransacao;
   
-
-        const [diaFormat, mesFormat] = creationDate.split("/");
-
-        const transactionsForDate = prevTransactions[diaFormat+'/'+mesFormat] || [];
-
-        const newTransactions = [...transactionsForDate, novaTransacao];
+        // Percorre todos os dias/meses para encontrar a transação com o ID correspondente
+        for (const diaMes in prevTransactions) {
+          const [diaFormatAntigo, mesFormatAntigo] = diaMes && diaMes.split("/");
+          
+          const transacoesDoDia = prevTransactions[diaMes];
+          
+          const index = transacoesDoDia.findIndex((transacao) => transacao.id === id);
+          
+          if (index !== -1) {
+            // Encontrou a transação com o ID correspondente
+            const transacaoAntiga = transacoesDoDia[index];
+            
+            // Remove a transação antiga do bloco antigo
+            prevTransactions[diaMes] = transacoesDoDia.filter((transacao) => transacao.id !== id);
+            
+            // Remove o bloco antigo se estiver vazio
+            if (prevTransactions[diaMes].length === 0) {
+              delete prevTransactions[diaMes];
+            }
   
-        return {
-          ...prevTransactions,
-          [diaFormat+'/'+mesFormat]: newTransactions,
-        };
+            // Adiciona a nova transação ao bloco novo
+            const [diaFormatNovo, mesFormatNovo] = novaTransacao && novaTransacao.creationDate.split("/");
+            
+            if (!prevTransactions[diaFormatNovo + '/' + mesFormatNovo]) {
+              prevTransactions[diaFormatNovo + '/' + mesFormatNovo] = [];
+            }
+            prevTransactions[diaFormatNovo + '/' + mesFormatNovo].push(novaTransacao);
+  
+            // Ordena as transações do bloco novo
+            const arrayDePares = Object.entries(prevTransactions);
+            const ordenado = arrayDePares.sort(([dataA], [dataB]) => {
+              const [diaA, mesA] = dataA && dataA.split('/');
+              const [diaB, mesB] = dataB && dataB.split('/');
+              const dataFormatadaA = `${mesA}${diaA.padStart(2, '0')}`;
+              const dataFormatadaB = `${mesB}${diaB.padStart(2, '0')}`;
+    
+              return dataFormatadaA - dataFormatadaB;
+            });
+    
+            // Retorna a lista ordenada
+            return Object.fromEntries(ordenado);
+          }
+        }
+  
+        return { ...prevTransactions };
       });
     }
   };
+    
+  
 
-  // const removerTransacaoe = () =>{
+  const adicionarTransacao = (novaTransacao) => {
+    if (novaTransacao) {
+      setTransacoesDay((prevTransactions) => {
+        const { creationDate } = novaTransacao;
+        const [diaFormat, mesFormat] = creationDate && creationDate.split("/");
+  
+        let updatedTransactions;
+  
+        if (prevTransactions[diaFormat + '/' + mesFormat]) {
+          updatedTransactions = {
+            ...prevTransactions,
+            [diaFormat + '/' + mesFormat]: [
+              ...(prevTransactions[diaFormat + '/' + mesFormat] || []),
+              novaTransacao,
+            ],
+          };
+        } else {
+          const arrayDePares = Object.entries({
+            ...prevTransactions,
+            [diaFormat + '/' + mesFormat]: [novaTransacao],
+          });
+  
+          const ordenado = arrayDePares.sort(([dataA], [dataB]) => {
+            const [diaA, mesA] = dataA &&dataA.split('/');
+            const [diaB, mesB] = dataB &&dataB.split('/');
+            const dataFormatadaA = `${mesA}${diaA.padStart(2, '0')}`;
+            const dataFormatadaB = `${mesB}${diaB.padStart(2, '0')}`;
+  
+            return dataFormatadaA - dataFormatadaB;
+          });
+  
+          updatedTransactions = Object.fromEntries(ordenado);
+        }
+  
+        return updatedTransactions;
+      });
+    }
+  };
+  
+  const removerTransacao = (transacaoId) => {
+    debugger;
+    setTransacoesDay((prevTransacoesPorDia) => {
+      const novoTransacoesPorDia = { ...prevTransacoesPorDia };
+  
+      // Itera sobre as chaves do objeto e remove a transação do bloco
+      for (const dia in novoTransacoesPorDia) {
+        novoTransacoesPorDia[dia] = novoTransacoesPorDia[dia].filter(
+          (transacao) => transacao.id !== transacaoId
+        );
+      }
+  
+      // Remove os blocos que ficaram vazios após a remoção
+      const blocosNaoVazios = Object.entries(novoTransacoesPorDia)
+        .filter(([_, transacoes]) => transacoes.length > 0)
+        .reduce((acc, [dia, transacoes]) => {
+          acc[dia] = transacoes;
+          return acc;
+        }, {});
+  
+      // Ordena novamente o objeto com base nas chaves
+      const arrayDePares = Object.entries(blocosNaoVazios).sort(([dataA], [dataB]) => {
+        const [diaA, mesA] = dataA.split('/');
+        const [diaB, mesB] = dataB.split('/');
+        const dataFormatadaA = `${mesA}${diaA.padStart(2, '0')}`;
+        const dataFormatadaB = `${mesB}${diaB.padStart(2, '0')}`;
+  
+        return dataFormatadaA - dataFormatadaB;
+      });
+  
+      const updatedTransactions = Object.fromEntries(arrayDePares);
+  
+      return updatedTransactions;
+    });
+  };
+  
+
+  // const removerTransacao = (transacaoId) =>{
+  //       debugger;
   //       setTransacoesDay((prevTransacoesPorDia) => {
   //       const novoTransacoesPorDia = { ...prevTransacoesPorDia };
   
-  //       for (const dia in novoTransacoesPorDia) {
-  //         novoTransacoesPorDia[dia] = novoTransacoesPorDia[dia].filter(
-  //           (transacao) => transacao.id !== transacaoId
-  //         );
-  //       }
+  //       // for (const dia in novoTransacoesPorDia) {
+  //       //   novoTransacoesPorDia[dia] = novoTransacoesPorDia[dia].filter(
+  //       //     (transacao) => transacao.id !== transacaoId
+  //       //   );
+  //       // }
   
   //       return novoTransacoesPorDia;
   //     });
@@ -471,30 +552,13 @@ const Lancamentos = () => {
                 />
               </h1>
             </div>
-            <div style={{ marginBottom: "20px", marginTop: "-30px" }}>
-              <AddCircleIcon
-                onClick={handleOpenUserMenu}
-                style={{ fontSize: "55px",color: "#1976D2", marginTop: "-200px" }}
-              ></AddCircleIcon>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "right",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "right",
-                  horizontal: "left",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                <Button onClick={handleClickReceita}>Receita</Button>
-                <Button onClick={handleClickDespesa}>Despesa</Button>
-              </Menu>
+            <div style={{ marginBottom: "5px", marginTop: "-80px",display:'flex',flexDirection:'row'}}>
+                <div >
+                <ModalTransaction style={true} tipo={"RECEITA"} onAdicionarTransacao={adicionarTransacao} accounts={accountsData} categorys={CategoryData}></ModalTransaction>
+                </div>
+                <div style={{marginLeft:'10px'}}>
+                <ModalTransaction style={true} tipo={"DESPESA"} onAdicionarTransacao={adicionarTransacao} accounts={accountsData} categorys={CategoryData}></ModalTransaction>
+                </div>
             </div>
             <Grid style={{ maxWidth: "100%", width: "100%", margin: "auto 1px" }}>
                 {Object.keys( TransacoesPorDia && TransacoesPorDia).map((dia) => (
@@ -504,6 +568,8 @@ const Lancamentos = () => {
                       transactions={TransacoesPorDia[dia]}
                       isPagaTransacao={isPagaTransacao}
                       categoryList={CategoryData}
+                      onAtualizarTrasacao={atualizarTransacao}
+                      onRemoverTransacao={removerTransacao}
                     />
                   ))}
             </Grid>
@@ -542,16 +608,6 @@ const Lancamentos = () => {
         {showRelatorio && <RelatorioPDF transacaoData={transacaoParaRelatorioNotEffect && transacaoParaRelatorioNotEffect} />}
       </Grid>
     </Grid>
-            <ModalEditTransa
-              onRemoverTransacao={removerTransacao}
-              tipo={tipoOpenModal}
-              open={openModal}
-              dados={transactionData}
-              onClose={handleClose}
-              onAtualizarTrasacao={atualizarTransacao}
-              criarTransacaoPai={adicionarTransacao}
-              isLancamento={true}
-            ></ModalEditTransa>
           </Grid>
         </Paper>
       </Container>

@@ -10,6 +10,7 @@ const paperStyle = {
     maxWidth: '1200px',
     margin: '20px auto',
     borderRadius: '10px'
+
 };
 
 const saudacaoStyle = { fontSize: '25px', marginBottom: "30px", marginLeft: "15px" };
@@ -75,12 +76,9 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, 
                             </Paper>
                         </div>
                     </Grid>
-
                     <Grid style={{ display: 'flex', justifyContent: 'space-around', marginLeft: '15px' }}>
-
                         <ModalTransaction tipo={"RECEITA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
                         <ModalTransaction tipo={"DESPESA"} onAdicionarTransacao={onAdicionarTransacao} accounts={accounts} categorys={category}></ModalTransaction>
-
                     </Grid>
                 </Grid>
             </Paper>

@@ -5,7 +5,7 @@ import ListItemDespesa from './listdespesa';
 const TransacaoModalReceita = ({ props, onAtualizarTrasacao, onRemoverTransacao, isPagaTransacao, categorysData }) => {
     const transactionData = props;
 
-    const paperStyle = { padding: '20px', maxHeight: '500px', width: 500, borderRadius: '10px' };
+    const paperStyle = { padding: '20px',  width: 500, borderRadius: '10px' };
 
     console.log(transactionData);
 
