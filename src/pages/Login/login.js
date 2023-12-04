@@ -147,8 +147,8 @@ const Login = () => {
 
     const setCookie = () => {
         if (checked) {
-            document.cookie = "myusrname=" + email + ";path=http://localhost:3000/";
-            document.cookie = "mypswd=" + password + ";path=http://localhost:3000/";
+            document.cookie = "myusrname=" + email + ";path=https://coincontrol-387d4.web.app/";
+            document.cookie = "mypswd=" + password + ";path=https://coincontrol-387d4.web.app/";
         }
     }
 
@@ -166,7 +166,7 @@ const Login = () => {
     useEffect(() => {
         const checkTokenValidity = async () => {
             try {
-                await axios.post("http://localhost:8080/api/user/validIsToken", { token });
+                await axios.post("ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/user/validIsToken", { token });
                 setIsValidToken(true);
             } catch (error) {
                 setIsValidToken(false);

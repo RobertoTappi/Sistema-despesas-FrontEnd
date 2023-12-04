@@ -43,7 +43,7 @@ function Contas() {
 
     const [accountsData, setAccounts] = useState(null)
 
-    const URL = "http://localhost:8080/api/"
+    const URL = "ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/"
     const token = localStorage.getItem('user');
     const idUser = localStorage.getItem('userId')
 

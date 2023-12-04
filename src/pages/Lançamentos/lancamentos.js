@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import RelatorioPDF from "../../util/pdf";
 import ModalTransaction from "../../components/modalTransaction";
 
-const URL = "http://localhost:8080/api/";
+const URL = "ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/";
 
 const paperStyle = {
   minHeight: "1100px",
