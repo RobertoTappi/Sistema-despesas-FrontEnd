@@ -34,8 +34,8 @@ const ListItemDespesa = ({ dados, index, onAtualizarTrasacao, onRemoverTransacao
     setOpenModal(false);
   };
 
-  const hadleIsPaga = () => {
-    isPagaTransacao(dados.id)
+  const hadleIsPaga = async () => {
+     await isPagaTransacao(dados.id)
   }
 
 

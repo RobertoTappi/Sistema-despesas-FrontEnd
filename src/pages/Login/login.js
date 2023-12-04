@@ -81,9 +81,7 @@ const Login = () => {
 
         const result = validarEmail(email)
 
-        const senhaValida = password.length < 3;
-
-        const formularioValido = result && senhaValida;
+        const senhaValida = password.length < 4;
 
 
         if (!result) {
@@ -91,7 +89,7 @@ const Login = () => {
             setEmailErrorText('Email invalido!')
             textFieldEmailRef.current.focus();
 
-        } else if (!senhaValida) {
+        } else if (senhaValida) {
             setErrorPassword(true);
             setPasswordErrorText('Senha inválida, menos de 4 caracteres!')
             setErrorEmail(false);
@@ -103,7 +101,7 @@ const Login = () => {
             setEmailErrorText('')
             setErrorPassword(false);
             setPasswordErrorText('')
-            return formularioValido;
+            return true;
         }
     }
 

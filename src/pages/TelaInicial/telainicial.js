@@ -33,7 +33,7 @@ const Principal = () => {
   const idUser = localStorage.getItem('userId')
   const [isValidToken, setIsValidToken] = useState(null);
 
-  useEffect(() => {
+  useEffect( async () => {
 
     const obterAccounts = async () => {
       try {
@@ -126,12 +126,19 @@ const Principal = () => {
       }
     }
 
-    obterDadosUser();
-    obterCategory();
-    obterAccounts();
-    obterSaldoContas();
-    obterTransacoes();
+    await obterDadosUser();
+    await obterCategory();
+    await obterAccounts();
+    await obterSaldoContas();
+    await obterTransacoes();
   }, []);
+
+  useEffect(()=>{
+    if(accountTransaction){
+      setAccountTransaction(accountTransaction)
+    }
+
+  },useEffect[accountTransaction])
 
   const calcularSaldoTotal = () => {
     let saldoTotal = 0;
@@ -198,21 +205,9 @@ const Principal = () => {
         }
       });
 
-      toast.success('Conta paga com sucesso!', {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-
       setTransaction((prevTransactions) =>
         prevTransactions.filter((transacao) => transacao.id !== transacaoId)
       );
-
 
       let dataAbc = {
         id: Transacao.id,
@@ -226,10 +221,9 @@ const Principal = () => {
         parcelas: Transacao.parcelas,
         idTransacaoPai: Transacao.idTransacaoPai,
         isPaga: true
-
       }
 
-      setAccountTransaction((prevState) =>
+      await setAccountTransaction((prevState) =>
         prevState.map((conta) =>
           conta.id === dataAbc.idAccount
             ? {
@@ -242,6 +236,17 @@ const Principal = () => {
             : conta
         )
       );
+
+      toast.success('Conta paga com sucesso!', {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
 
     } catch (error) {
       console.error('Erro ao buscar dados: accounts', error);
