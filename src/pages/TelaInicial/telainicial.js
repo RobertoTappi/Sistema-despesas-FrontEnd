@@ -28,12 +28,12 @@ const Principal = () => {
   const [dadosUser, setDadosUser] = useState(null)
   const [accountTransaction, setAccountTransaction] = useState(null)
   const [accountTransactionGeral, setAccountTransactionGeral] = useState(null)
-
+  const [transactionDashboard,setTransactionDashboard] = useState([])
   const token = localStorage.getItem('user');
   const idUser = localStorage.getItem('userId')
   const [isValidToken, setIsValidToken] = useState(null);
 
-  useEffect( async () => {
+  useEffect(() => {
 
     const obterAccounts = async () => {
       try {
@@ -88,6 +88,17 @@ const Principal = () => {
           );
         });
 
+        const transacoesDoMeDashBoard = response.data.filter(transacao => {
+          const partesData = transacao.creationDate.split('/');
+          const dataDaTransacao = converterStringParaData(transacao.creationDate);
+
+          return (
+            dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
+            dataDaTransacao.getMonth() === dataAtual.getMonth()
+
+          );
+        });
+        setTransactionDashboard(transacoesDoMeDashBoard);
 
         transacoesDoMesAtual.sort((a, b) => {
           const dataA = converterStringParaData(a.creationDate)
@@ -138,7 +149,7 @@ const Principal = () => {
       setAccountTransaction(accountTransaction)
     }
 
-  },useEffect[accountTransaction])
+  },[accountTransaction])
 
   const calcularSaldoTotal = () => {
     let saldoTotal = 0;
@@ -223,7 +234,7 @@ const Principal = () => {
         isPaga: true
       }
 
-      await setAccountTransaction((prevState) =>
+       setAccountTransaction((prevState) =>
         prevState.map((conta) =>
           conta.id === dataAbc.idAccount
             ? {
@@ -236,6 +247,29 @@ const Principal = () => {
             : conta
         )
       );
+
+      setAccountTransaction((prevState) =>
+  prevState.map((conta) =>
+    conta.id === data.idAccount
+      ? {
+          ...conta,
+          transactions: conta.transactions
+            ? [
+                ...conta.transactions,
+                {
+                  dataAbc
+                },
+              ]
+            : [
+                {
+                  dataAbc
+                },
+              ],
+        }
+      : conta
+  )
+);
+
 
       toast.success('Conta paga com sucesso!', {
         position: "bottom-right",
@@ -278,7 +312,7 @@ const Principal = () => {
             ))}
           </GridSaldo>
 
-          <DashBoardGastosMensais categories={categorysData} gastosMensais={transactionData && transactionData.filter(transaction => transaction.type === "DESPESA")} ></DashBoardGastosMensais>
+          <DashBoardGastosMensais categories={categorysData} gastosMensais={transactionDashboard && transactionDashboard.filter(transaction => transaction.type === "DESPESA")} ></DashBoardGastosMensais>
         </Grid>
 
         <Grid id="Lançamentos" style={transacaoStyle}>
