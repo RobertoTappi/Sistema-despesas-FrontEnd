@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, List, ListItem } from '@mui/material';
+import { Grid, List, ListItem, debounce } from '@mui/material';
 import NavBar from '../../components/navbar';
 import axios from 'axios';
 import TransacaoModalDespesa from '../../components/modaltransacaodespesa.js'
@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ListSaldo, { GridSaldo } from '../../components/listsaldo.js';
 import { BuscarTransacoesAXIOS } from '../../services/buscarTransacoes.js';
+import { DisabledByDefault } from '@mui/icons-material';
 
 // Estilos
 const transacaoStyle = { display: 'flex', gap: '50px', flexDirection: 'column', alignItems: 'center', marginLeft: '20px', marginRight: '20px' }
@@ -81,7 +82,6 @@ const Principal = () => {
           const partesData = transacao.creationDate.split('/');
           const dataDaTransacao = converterStringParaData(transacao.creationDate);
 
-          // Verificar se a data da transação está no mesmo mês e ano e não é no futuro
           return (
             !transacao.isPaga &&
             dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
@@ -138,8 +138,15 @@ const Principal = () => {
     obterSaldoContas();
   }, []);
 
+  useEffect(()=>{
+    if(accountTransaction){
+      setAccountTransaction(accountTransaction)
+    }
+  },[accountTransaction])
+
   const adicionarTransacao = (novaTransacao) => {
     setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
+    
   };
 
   const atualizarTransacao = (novaTransacao) => {
@@ -160,7 +167,7 @@ const Principal = () => {
     }
   }
 
-  const isPagaTransacao = (transacaoId) => {
+  const isPagaTransacao = async (transacaoId) => {
     const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
     const data = {
       idTransaction: Transacao.id,
@@ -177,7 +184,7 @@ const Principal = () => {
       }
     }
     try {
-      const response = axios.put(URL + 'transaction/alteraTransacao', data, {
+      const response = await axios.put(URL + 'transaction/alteraTransacao', data, {
         headers: {
           Authorization: 'Bearer ' + token
         }
@@ -198,20 +205,37 @@ const Principal = () => {
         prevTransactions.filter((transacao) => transacao.id !== transacaoId)
       );
 
-      let contas;
 
-      for(const conta of accountTransaction) {
-        contas = conta.transactions = conta.transactions.map((transacao) =>{
-          if(transacao.id === transacaoId) {
-            return {...transacao, ...data};
-          } 
+      let dataAbc= {
+        id: Transacao.id,
+        valor: Transacao.valor,
+        idCategory: Transacao.idCategory,
+        descricao: Transacao.descricao,
+        creationDate: Transacao.creationDate,
+        type: Transacao.type,
+        idAccount: Transacao.idAccount,
+        recorencia: Transacao.recorencia,
+        parcelas: Transacao.parcelas,
+        idTransacaoPai: Transacao.idTransacaoPai,
+        isPaga: true
 
-          return transacao
-        })
       }
 
-      setAccountTransaction(contas)
-
+      setAccountTransaction((prevState) =>
+      prevState.map((conta) =>
+        conta.id === dataAbc.idAccount
+      ? {
+          ...conta,
+          transactions: [
+            ...conta.transactions,
+            dataAbc
+          ],
+        }
+      : conta
+  )
+);
+    
+          console.log(accountTransaction)
     } catch (error) {
       console.error('Erro ao buscar dados: accounts', error);
     }

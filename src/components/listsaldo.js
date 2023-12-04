@@ -26,49 +26,29 @@ export const GridSaldo = ({ children }) => {
 
 
 const ListSaldo = ({ accounts, transacoes }) => {
-
+    debugger
     const [saldo, setSaldo] = useState(0);
-    const [transacoesData, setTransacoesData] = useState(0);
-
-    console.log(saldo)
 
     useEffect(() => {
-        setTransacoesData(transacoes && transacoes.transactions)
 
-        const receitaTotal = transacoesData
-        ? transacoesData
+        const transacoesARRAY = transacoes && transacoes.transactions
+
+        const receitaTotal = transacoesARRAY
+        ? transacoesARRAY
             .filter(transaction => transaction.type === 'RECEITA' && transaction.isPaga === true)
             .reduce((total, transaction) => total + transaction.valor, 0)
         : 0
         
-        const despesaTotal = transacoesData
-        ? transacoesData
+        const despesaTotal = transacoesARRAY
+        ? transacoesARRAY
             .filter(transaction => transaction.type === 'DESPESA' && transaction.isPaga === true)
             .reduce((total, transaction) => total + transaction.valor, 0)
         : 0
 
 
-        setSaldo(despesaTotal - receitaTotal)
+        setSaldo(receitaTotal - despesaTotal)
 
     },[transacoes])
-
-    // const atualizarNavegador = (accountId, saldoNovo) => {
-    //     const saldoAlterado = saldo.find(saldo => account.id === accountId)
-    //     saldoAlterado.saldo = saldoNovo
-
-    //     if (saldoAlterado) {
-    //         setAccounts((prevSaldo) => {
-    //             const index = prevSaldo.findIndex((saldo) => saldo.id === accountId);
-
-    //             if (index !== -1) {
-    //                 const newCategory = [...prevCategorys];
-    //                 newCategory[index] = categoriaEncontrada;
-    //                 return newCategory;
-    //             }
-    //             return prevCategorys;
-    //         });
-    //     }
-    // }
 
     const handleSaldoStyle = () => {
         return saldo < 0 ? { color: 'red' } : { color: 'green' };
