@@ -7,9 +7,9 @@ import { Grid } from '@mui/material';
 import { DeletarCategoriaAXIOS } from '../services/deletarCategoria';
 import { EditarCategoriaAXIOS } from '../services/editarCategoria';
 import { AdicionarCategoriaAXIOS } from '../services/cadastrarCategoria'
-import IconeComponent from '../util/mapCategorias';
 import CriarCategoria from './modalcriarcategoria';
 import axios from 'axios';
+import IconMap from '../util/mapIcons';
 
 const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCategoria, tipoCategoriaPai, createItemListaNavegador }) => {
     const [openModal, setOpenModal] = useState(false);
@@ -27,7 +27,7 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
     const handleClickOpen = (categoria) => {
         setOpenModal(true);
         setActualName(categoria.nome);
-        setActualIcon(categoria.icon);
+        setActualIcon(categoria.idCon);
         setTipoCategoria(categoria.tipo);
         setIdCategoria(categoria.id);
     };
@@ -92,7 +92,7 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
         }
     }
 
-    console.log(categorysData)
+  
 
     return (
         <>
@@ -100,8 +100,8 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
                 {categorysData.map((categoria, index) => (
                     <React.Fragment key={index}>
                         <ListItem alignItems="flex-start" button onClick={() => handleClickOpen(categoria)}>
-                            <Grid style={{ marginTop: '10px', marginLeft: '0px' }}>
-                                {categoria.idCon && <IconeComponent iconId={categoria.idCon} />}
+                            <Grid style={{ marginTop: '18px', marginLeft: '5px', marginRight: '15px' }}>
+                                {categoria.idCon && <IconMap iconId={categoria.idCon} />}
                             </Grid>
                             <ListItemText style={{ marginLeft: '5px', marginTop: '20px' }}>
                                 {categoria && <div>{categoria.nome}</div>}
@@ -118,6 +118,8 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
                 handleIconChange={handleIconChange}
                 deletarCategoria={deletarCategoria}
                 editarCategoria={editarCategoria}
+                actualName={actualName}
+                actualIcon={actualIcon}
             />
 
             <CriarCategoria

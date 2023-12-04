@@ -56,7 +56,7 @@ export const mapeamentoDeIconesDespesa = [
 ];
 
 
-const IconeComponent = ({ iconId, onClick  }) => {
+const IconeComponent = ({ iconId, onClick }) => {
 
     const iconeEncontrado = mapeamentoDeIconesDespesa.find((icone) => icone.id === iconId)
 

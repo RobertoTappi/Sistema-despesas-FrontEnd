@@ -10,6 +10,7 @@ const ListItemContas = ({ accountsData, removerTransacao }) => {
 
     const [openModal, setOpenModal] = useState(false);
     const [saldo, setSaldo] = useState(0);
+    const [saldoTotal, setSaldoTotal] = useState(0);
     const [actualName, setActualName] = useState(accountsData.name)
 
     const token = localStorage.getItem('user');
@@ -49,6 +50,23 @@ const ListItemContas = ({ accountsData, removerTransacao }) => {
             console.error("erro ao obter o saldo");
         }
     }
+
+    const calcularSaldoGeral = (transactions) => {
+        if (!transactions) {
+            return 0;
+        }
+
+        let totalSaldo = 0;
+
+        transactions.forEach((transaction) => {
+            if (transaction.isPaga == true) {
+                totalSaldo += transaction.valor;
+            }
+        });
+
+        return totalSaldo;
+    };
+
 
     return (
         <>

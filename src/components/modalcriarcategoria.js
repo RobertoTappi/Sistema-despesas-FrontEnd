@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, DialogContent, Stack, Grid, Divider, IconButton } from '@mui/material';
+import { Button, Dialog, DialogContent, Stack, Grid, Divider, IconButton, TextField } from '@mui/material';
 import { mapeamentoDeIconesDespesa } from '../util/mapCategorias';
 import IconeComponent from '../util/mapCategorias';
 import { ArrowBack } from '@mui/icons-material';
@@ -41,6 +41,7 @@ const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
 
     useEffect(() => {
         setOpenModal(open);
+        handleIconClick(1)
     }, [open])
 
     const openDialog = () => {
@@ -48,9 +49,11 @@ const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
     }
 
     const closeDialog = () => {
+        setMsgAjudaNomeCat('')
+        setErrorNomeCat(false)
         setOpenModal(false);
         setEditedName('');
-        setSelectedIcon(null);
+        setSelectedIcon(1);
     };
 
     const handleChangeName = (event) => {
@@ -63,12 +66,19 @@ const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
     }
 
     const handleCancel = () => {
+        setMsgAjudaNomeCat('')
+        setErrorNomeCat(false)
         closeDialog()
     }
 
-    const handleSave = () => { 
-        addCategoria(editedName)
-        closeDialog()
+    const handleSave = () => {
+        if (validarForm()) {
+            handleIconChange(selectedIcon)
+            addCategoria(editedName)
+            setMsgAjudaNomeCat('')
+            setErrorNomeCat(false)
+            closeDialog()
+        }
     }
 
     const renderSelectedIcon = () => {
@@ -87,6 +97,20 @@ const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
 
         return null;
     }
+
+    const [msgAjudaNomeCat, setMsgAjudaNomeCat] = useState('')
+    const [errorNomeCat, setErrorNomeCat] = useState(false)
+
+    const validarForm = () => {
+        if (editedName === '') {
+            setErrorNomeCat(true);
+            setMsgAjudaNomeCat("Insira um nome válido");
+        } else {
+            setErrorNomeCat(false);
+            setMsgAjudaNomeCat('');
+            return true;
+        }
+    };
 
     return (
         <div>
@@ -107,10 +131,17 @@ const CriarCategoria = ({ open, handleIconChange, addCategoria }) => {
                             {selectedIcon !== null && <div style={newIconStyle}>{renderSelectedIcon()}</div>}
                         </Grid>
                         <Grid>
-                            <h3 style={{ maxHeight: '30px' }}>
-                                Nome da categoria: {' '}
-                                <input style={{ minHeight: '27px', fontSize: '18px', minWidth: '65%' }} variant="outlined" value={editedName} onChange={handleChangeName} />
-                            </h3>
+                            <TextField
+                                label="Nome da Categoria"
+                                size="small"
+                                style={{ marginBottom: '5px', fontSize: '18px', minWidth: '60%' }}
+                                variant="outlined"
+                                value={editedName}
+                                fullWidth
+                                onChange={handleChangeName}
+                                error={errorNomeCat}
+                                helperText={msgAjudaNomeCat}
+                            />
                         </Grid>
 
                         <Divider sx={{ my: 1 }} />
