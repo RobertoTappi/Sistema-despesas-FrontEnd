@@ -12,7 +12,7 @@ import { TransactionAXIOS } from '../services/enviarTransacao';
 const btnStyleSalvar = { backgroundColor: '#04AA6D', fontSize: '14px', padding: '10px 23px' }
 const btnStyleFechar = { backgroundColor: '#f44336', fontSize: '14px', padding: '10px 20px' }
 
-const URL = "ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/"
+const URL = "https://deploy-backendcoincontrol.onrender.com/api/"
 
 
 

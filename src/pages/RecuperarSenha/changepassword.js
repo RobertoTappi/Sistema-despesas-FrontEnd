@@ -101,7 +101,7 @@ const ChangePassword = ()=>{
     useEffect(() => {
         const checkTokenValidity = async () => {
           try {
-            await axios.post("ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/user/validIsToken", { token });
+            await axios.post("https://deploy-backendcoincontrol.onrender.com/api/user/validIsToken", { token });
             setIsValidToken(true);
           } catch (error) {
             setIsValidToken(false);

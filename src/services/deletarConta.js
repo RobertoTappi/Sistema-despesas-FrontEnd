@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const URL = "ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/"
+const URL = "https://deploy-backendcoincontrol.onrender.com/api/"
 
 export async function DeletarContaAXIOS(idAccount, token) {
 

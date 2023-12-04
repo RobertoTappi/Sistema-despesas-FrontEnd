@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const URL = "ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/user/login"
+const URL = "https://deploy-backendcoincontrol.onrender.com/api/user/login"
 
 let credenciais = {}
 
@@ -22,7 +22,7 @@ export async function alterarSenha(token,password){
     obj.senha = password
 
     try{
-        const response = await axios.put("http://localhost:8080/api/user/changePassword",obj)
+        const response = await axios.put("https://deploy-backendcoincontrol.onrender.com/api/user/changePassword",obj)
         return response;
     }catch(error){
         return error.response;

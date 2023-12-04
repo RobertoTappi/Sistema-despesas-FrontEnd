@@ -18,7 +18,7 @@ const transacaoStyle = { display: 'flex', gap: '50px', flexDirection: 'column', 
 const displayGrid = { display: 'flex', justifyContent: 'center', marginLeft: '-20px' }
 
 
-const URL = "ec2-3-138-157-251.us-east-2.compute.amazonaws.com:8080/api/"
+const URL = "https://deploy-backendcoincontrol.onrender.com/api/"
 
 
 const Principal = () => {
