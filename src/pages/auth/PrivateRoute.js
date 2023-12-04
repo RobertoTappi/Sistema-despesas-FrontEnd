@@ -12,15 +12,11 @@ const PrivateRoutes = () => {
 
   useEffect(() => {
     const checkTokenValidity = async () => {
-      console.log(token)
       try {
-        console.log(token)
         await axios.post("http://localhost:8080/api/user/validIsToken", { token });
         setIsValidToken(true);
-        console.log("token valido")
       } catch (error) {
         setIsValidToken(false);
-        console.log("token invalido")
       }
     };
 

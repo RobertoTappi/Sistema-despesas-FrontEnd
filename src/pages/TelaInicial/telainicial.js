@@ -42,9 +42,7 @@ const Principal = () => {
             Authorization: 'Bearer ' + token
           }
         });
-        console.log("data accounts", { response })
         setAccounts(response.data);
-        console.log(accountsData)
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
@@ -58,7 +56,6 @@ const Principal = () => {
           }
         });
         setCategory(response.data);
-        console.log("category accounts", { response })
 
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -113,7 +110,6 @@ const Principal = () => {
             Authorization: 'Bearer ' + token
           }
         });
-        console.log("user", response)
         setDadosUser(response.data)
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -123,7 +119,6 @@ const Principal = () => {
     async function obterSaldoContas() {
       try {
         const response = await BuscarTransacoesAXIOS(idUser, token);
-        console.log(response.data)
         setAccountTransaction(response.data)
 
       } catch (error) {
@@ -159,7 +154,7 @@ const Principal = () => {
 
   const adicionarTransacao = (novaTransacao) => {
     setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
-    
+
   };
 
   const atualizarTransacao = (novaTransacao) => {
@@ -218,22 +213,8 @@ const Principal = () => {
         prevTransactions.filter((transacao) => transacao.id !== transacaoId)
       );
 
-      let contas;
 
-      for (const conta of accountTransaction) {
-        contas = conta.transactions = conta.transactions.map((transacao) => {
-          if (transacao.id === transacaoId) {
-            return { ...transacao, ...data };
-          }
-
-          return transacao
-        })
-      }
-
-      setAccountTransaction(contas)
-
-
-      let dataAbc= {
+      let dataAbc = {
         id: Transacao.id,
         valor: Transacao.valor,
         idCategory: Transacao.idCategory,
@@ -249,25 +230,24 @@ const Principal = () => {
       }
 
       setAccountTransaction((prevState) =>
-      prevState.map((conta) =>
-        conta.id === dataAbc.idAccount
-      ? {
-          ...conta,
-          transactions: [
-            ...conta.transactions,
-            dataAbc
-          ],
-        }
-      : conta
-  )
-);
-    
-          console.log(accountTransaction)
+        prevState.map((conta) =>
+          conta.id === dataAbc.idAccount
+            ? {
+              ...conta,
+              transactions: [
+                ...conta.transactions,
+                dataAbc
+              ],
+            }
+            : conta
+        )
+      );
+
     } catch (error) {
       console.error('Erro ao buscar dados: accounts', error);
     }
   }
-
+  
   const removerTransacao = (transacaoId) => {
     setTransaction((prevTransactions) =>
       prevTransactions.filter((transacao) => transacao.id !== transacaoId)

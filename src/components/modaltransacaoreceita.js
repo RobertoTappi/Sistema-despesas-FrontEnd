@@ -7,8 +7,6 @@ const TransacaoModalReceita = ({ props, onAtualizarTrasacao, onRemoverTransacao,
 
     const paperStyle = { padding: '20px', width: 500, minHeight: '15vh', borderRadius: '10px' };
 
-    console.log(transactionData);
-
     return (
         <Paper elevation={10} style={paperStyle}>
             <Grid align='center'>

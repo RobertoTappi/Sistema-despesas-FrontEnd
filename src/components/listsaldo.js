@@ -29,26 +29,25 @@ const ListSaldo = ({ accounts, transacoes }) => {
     const [saldo, setSaldo] = useState(0);
 
     useEffect(() => {
-
-        const transacoesARRAY = transacoes && transacoes.transactions
+        const transacoesARRAY = transacoes && transacoes.transactions;
 
         const receitaTotal = transacoesARRAY
-        ? transacoesARRAY
-            .filter(transaction => transaction.type === 'RECEITA' && transaction.isPaga === true)
-            .reduce((total, transaction) => total + transaction.valor, 0)
-        : 0
-        
+            ? transacoesARRAY
+                .filter(transaction => transaction.type === 'RECEITA' && transaction.isPaga === true)
+                .reduce((total, transaction) => total + transaction.valor, 0)
+            : 0;
+
         const despesaTotal = transacoesARRAY
-        ? transacoesARRAY
-            .filter(transaction => transaction.type === 'DESPESA' && transaction.isPaga === true)
-            .reduce((total, transaction) => total + transaction.valor, 0)
-        : 0
+            ? transacoesARRAY
+                .filter(transaction => transaction.type === 'DESPESA' && transaction.isPaga === true)
+                .reduce((total, transaction) => total + transaction.valor, 0)
+            : 0;
 
-        setSaldo(receitaTotal - despesaTotal)
+        setSaldo(receitaTotal - despesaTotal);
 
-    },[transacoes])
+    }, []);
 
-   
+
     // const atualizarNavegador = (accountId, saldoNovo) => {
     //     const saldoAlterado = saldo.find(saldo => account.id === accountId)
     //     saldoAlterado.saldo = saldoNovo

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Paper, Grid, Container, Button } from '@mui/material';
 import ModalTransaction from './modalTransaction';
-import calcularSaldoGeral from './saldogeral';
 import { useEffect } from 'react';
 
 
@@ -100,7 +99,7 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, 
                     <Grid style={allStyle}>
                         <div style={wrapperStyle}>
                             <Paper elevation={5} style={itemStyle}>
-                                <h3 style={{ fontSize: '17px', margin: '5px' }}>Receita mensal</h3>
+                                <h3 style={{ fontSize: '17px', margin: '5px' }}>A receber</h3>
                                 <p style={{ color: 'green', fontSize: '21px', fontWeight: 'bolder', margin: '5px' }}>
                                     {(transacitons && transacitons
                                         .filter(transacao => transacao.type === 'RECEITA')
@@ -110,7 +109,7 @@ const AcessoRapido = ({ accounts, category, onAdicionarTransacao, transacitons, 
                             </Paper>
 
                             <Paper elevation={5} style={itemStyle}>
-                                <h3 style={{ fontSize: '17px', margin: '5px' }}>Despesa mensal</h3>
+                                <h3 style={{ fontSize: '17px', margin: '5px' }}>A pagar</h3>
 
                                 <p style={{ color: 'red', fontSize: '21px', fontWeight: 'bolder', margin: '5px' }}>
                                     {(transacitons && transacitons

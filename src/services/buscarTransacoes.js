@@ -10,12 +10,9 @@ export async function BuscarTransacoesAXIOS(idUser, token) {
                 Authorization: 'Bearer ' + token
             }
         });
-
-        console.log(response)
         return response
 
     } catch (error) {
-        console.log(error.response)
         return error.response
     }
 };

@@ -20,12 +20,9 @@ export async function EditarCategoriaAXIOS(idCategory, nomeCategory, idIcon, tip
                 Authorization: 'Bearer ' + token
             }
         });
-
-        console.log(response)
         return response
 
     } catch (error) {
-        console.log(error.response)
         return error.response
     }
 };

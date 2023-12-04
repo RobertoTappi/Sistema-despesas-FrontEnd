@@ -106,8 +106,6 @@ function Categorias() {
 
     }
 
-    console.log(categorysData)
-
     return (
         <div>
             <Box sx={{ display: 'flex' }}>

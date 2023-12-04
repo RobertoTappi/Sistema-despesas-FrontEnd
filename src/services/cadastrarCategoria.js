@@ -19,12 +19,9 @@ export async function AdicionarCategoriaAXIOS(nomeCategoria, idIcon, tipoCategor
                 Authorization: 'Bearer ' + token
             }
         });
-        debugger
-        console.log(response)
         return response
 
     } catch (error) {
-        console.log(error.response)
         return error.response
     }
 };

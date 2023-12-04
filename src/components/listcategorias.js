@@ -57,7 +57,6 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
         try {
             const response = await AdicionarCategoriaAXIOS(nomeCategoria, actualIcon, tipoCategoriaPai, idUser, token);
             createItemListaNavegador(response.data)
-            console.log(response.data);
         } catch (error) {
             console.error("Erro ao adicionar a categoria", error);
         }
@@ -68,7 +67,6 @@ const ListItemCategorias = ({ categorysData, atualizarNavegador, onRemoverCatego
         try {
             const response = await EditarCategoriaAXIOS(idCategoria, nomeCategoria, actualIcon, tipoCategoriaPai, idUser, token);
             atualizarNavegador(idCategoria, actualIcon, nomeCategoria)
-            console.log(response.data);
         } catch (error) {
             console.error("Erro ao editar a categoria", error);
         }

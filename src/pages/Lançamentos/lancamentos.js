@@ -142,8 +142,6 @@ const Lancamentos = () => {
           transacoesPorDia[chave].push(transacao);
         });
 
-        console.log(transacoesPorDia)
-
         const arrayDePares = Object.entries(transacoesPorDia);
         const ordenado = arrayDePares.sort(([dataA], [dataB]) => {
 
@@ -157,7 +155,6 @@ const Lancamentos = () => {
 
         const arrayOrdenado = Object.fromEntries(ordenado);
 
-        console.log("test"+JSON.stringify(transacoesPorDia))
         setTransacoesDay(arrayOrdenado);
 
       } catch (error) {
@@ -172,7 +169,6 @@ const Lancamentos = () => {
             Authorization: 'Bearer ' + token
           }
         });
-        console.log("data accounts",{response})
         setAccounts(response.data);
 
       } catch (error) {
@@ -187,7 +183,6 @@ const Lancamentos = () => {
           }
         });
         setCategoryData(response.data);
-        console.log("category accounts",{response})
 
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
@@ -335,7 +330,7 @@ const Lancamentos = () => {
 
   const atualizarTransacao = (novaTransacao) => {
     // novaTransacao.idCategory 
-    debugger;
+
     if (novaTransacao) {
       setTransacoesDay((prevTransactions) => {
         const { id } = novaTransacao;
@@ -431,7 +426,6 @@ const Lancamentos = () => {
   };
   
   const removerTransacao = (transacaoId) => {
-    debugger;
     setTransacoesDay((prevTransacoesPorDia) => {
       const novoTransacoesPorDia = { ...prevTransacoesPorDia };
   
@@ -500,8 +494,6 @@ const Lancamentos = () => {
         }
       });
     }
-  
-    console.log('Total Receita Mensal:', totalReceita);
     return totalReceita;
   };
 
@@ -516,8 +508,6 @@ const Lancamentos = () => {
         }
       });
     }
-  
-    console.log('Total Receita Mensal:', totalReceita);
     return totalReceita;
   }
 
@@ -530,7 +520,6 @@ const Lancamentos = () => {
   };
   
   const saldoTotal = obterReceitaMensal() + obterDespesaMensal()
-  console.log("saldo ",saldoTotal)
 
   return (
     <Grid>

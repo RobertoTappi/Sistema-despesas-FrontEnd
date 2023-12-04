@@ -85,7 +85,6 @@ const ChangePassword = ()=>{
 
     async function AlterarSenhaNaPagina() {
         const response = await alterarSenha(token, password);
-        console.log(response);
         if (response.status === 200) {
             setokPassword(true)
             notify("Senha alterada com sucesso!", false)

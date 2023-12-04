@@ -26,12 +26,9 @@ export async function SaldoAXIOS(idUser, idAccount, token) {
                 Authorization: 'Bearer ' + token
             }
         });
-
-        console.log(response)
         return response
 
     } catch (error) {
-        console.log(error.response)
         return error.response
     }
 };

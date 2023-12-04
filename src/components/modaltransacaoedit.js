@@ -21,7 +21,7 @@ function retornaValor(dados) {
     return dados.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
   }
 }
-
+ 
 const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemoverTransacao, categorys,}) => {
   
   const [descricao, setDescricao] = useState('');
@@ -189,15 +189,16 @@ const ModalEditTransa = ({ open, dados,  onClose, onAtualizarTrasacao, onRemover
 
   const removerTransaction = async () => {
     try {
-       await axios.delete(`${URL}transaction/remTransacao/${dados.id}`, {
+      await axios.delete(`${URL}transaction/remTransacao/${dados.id}`, {
         headers: {
           Authorization: 'Bearer ' + token
         }
       });
-
+      
     } catch (error) {
       console.error('Erro ao remover ', error);
     }
+    debugger
   }
 
    const onClickRemove = async () => {

@@ -118,7 +118,6 @@ const Login = () => {
 
     async function logar() {
         const response = await LoginAXIOS(email, password);
-        console.log(response);
         if (response.status === 200) {
             notify("Login realizado com sucesso", false)
             setCookie();
@@ -144,23 +143,6 @@ const Login = () => {
         }
 
     }
-
-    // const handleKeyDown = (event) => {
-    //     console.log(event.key)
-
-    //     if (event.key === 'Enter') {
-    //         // logar()
-    //     }
-    //   };
-
-    //   useEffect(() => {
-
-    //     document.body.addEventListener('keydown', handleKeyDown);
-
-    //     return () => {
-    //       document.body.removeEventListener('keydown', handleKeyDown);
-    //     };
-    //   }, []); 
 
 
     const setCookie = () => {

@@ -134,7 +134,6 @@ const Cadastro = () => {
 
     async function register() {
         const response = await RegisterAXIOS(email, password, name)
-        console.log(response.status)
 
         if (response.status === 200) {
             notify("Cadastro realizado com sucesso", false)

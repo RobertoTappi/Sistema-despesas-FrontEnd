@@ -73,7 +73,6 @@ const Recuperar = () => {
         setMostrarCircular(true);
 
         const response = await enviarEmailFunction(email);
-        console.log(response)
 
         if (response.status === 200) {
             notify("Email enviado com sucesso", false)

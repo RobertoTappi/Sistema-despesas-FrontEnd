@@ -17,12 +17,9 @@ export async function EditarContaAXIOS(idAcc, nameAcc, token) {
                 Authorization: 'Bearer ' + token
             }
         });
-
-        console.log(response)
         return response
 
     } catch (error) {
-        console.log(error.response)
         return error.response
     }
 };

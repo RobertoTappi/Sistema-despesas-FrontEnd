@@ -92,8 +92,6 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
     async function deletarConta() {
         try {
             const response = await DeletarContaAXIOS(idAccount, token);
-            console.log(response.data)
-
             removerTransacao(idAccount)
             closeDialog()
 
@@ -119,7 +117,6 @@ const EditarConta = ({ accountsData, open, onClose, saldo, handleActualName, rem
     async function editarConta() {
         try {
             const response = await EditarContaAXIOS(idAccount, editedName, token)
-            console.log(response.data)
 
         } catch (error) {
             console.error("erro ao obter o saldo");

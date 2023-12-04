@@ -29,11 +29,9 @@ export async function TransactionAXIOS(idUser, valor, idCategory, descricao, dat
                 Authorization: 'Bearer ' + token
             }
         });
-        console.log(response)
         return response
 
     } catch (error) {
-        console.log(error.response)
         return error.response
     }
 };

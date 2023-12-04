@@ -43,7 +43,6 @@ const CriarConta = ({ addAccount }) => {
     async function AdicionarConta() {
         try {
             const response = await AdicionarContaAXIOS(name, idUser, token);
-            console.log(response.data)
             addAccount(response.data)
         } catch (error) {
             console.error("erro ao obter o saldo");

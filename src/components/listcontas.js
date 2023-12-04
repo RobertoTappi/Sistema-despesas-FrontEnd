@@ -33,7 +33,6 @@ const ListItemContas = ({ accountsData, removerTransacao }) => {
     async function obterSaldo() {
         try {
             const response = await SaldoAXIOS(idUser, idAccount, token);
-            console.log(response.data)
 
             // Tratativa do saldo final
             const receitas = response.data.transactions.filter(transactions => transactions.type === 'RECEITA')

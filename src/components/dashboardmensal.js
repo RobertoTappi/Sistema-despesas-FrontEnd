@@ -18,7 +18,6 @@ const labelStyle = {
 };
 
 const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
-  console.log("Dashboard", gastosMensais);
 
   const total = gastosMensais.reduce((acc, gasto) => acc + gasto.valor, 0);
 
