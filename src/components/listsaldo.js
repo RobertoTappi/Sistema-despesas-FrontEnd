@@ -25,42 +25,32 @@ export const GridSaldo = ({ children }) => {
 }
 
 
-const ListSaldo = ({ accounts }) => {
+const ListSaldo = ({ accounts, transacoes }) => {
 
     const [saldo, setSaldo] = useState(0);
+    const [transacoesData, setTransacoesData] = useState(0);
 
     console.log(saldo)
-    
+
     useEffect(() => {
+        setTransacoesData(transacoes && transacoes.transactions)
 
-        async function obterSaldo() {
+        const receitaTotal = transacoesData
+        ? transacoesData
+            .filter(transaction => transaction.type === 'RECEITA' && transaction.isPaga === true)
+            .reduce((total, transaction) => total + transaction.valor, 0)
+        : 0
+        
+        const despesaTotal = transacoesData
+        ? transacoesData
+            .filter(transaction => transaction.type === 'DESPESA' && transaction.isPaga === true)
+            .reduce((total, transaction) => total + transaction.valor, 0)
+        : 0
 
-            const token = localStorage.getItem('user');
-            const idUser = localStorage.getItem('userId')
-            const idAccount = accounts.id
 
-            try {
-                const response = await SaldoAXIOS(idUser, idAccount, token);
-                console.log(response.data)
+        setSaldo(despesaTotal - receitaTotal)
 
-                const receitas = response.data.transactions.filter(transactions => transactions.type === 'RECEITA')
-
-                const despesas = response.data.transactions.filter(transactions => transactions.type === 'DESPESA')
-
-                const somaReceitas = receitas.reduce((total, transactions) => total + transactions.valor, 0);
-
-                const somaDespesas = despesas.reduce((total, transactions) => total + transactions.valor, 0);
-
-                setSaldo(somaReceitas - somaDespesas)
-                // atualizarSaldoContas(response.data)
-
-            } catch (error) {
-                console.error("erro ao obter o saldo");
-            }
-        }
-        obterSaldo();
-    }, []);
-
+    },[transacoes])
 
     // const atualizarNavegador = (accountId, saldoNovo) => {
     //     const saldoAlterado = saldo.find(saldo => account.id === accountId)

@@ -54,6 +54,8 @@ const ChangePassword = ()=>{
     const [errorPassword, setErrorPassword] = useState(false);
     const [errorPasswordText, setPasswordErrorText] = useState('');
     const [isValidToken, setIsValidToken] = useState(null);
+
+    
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
         if (password.length < 7) {
