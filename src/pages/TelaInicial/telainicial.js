@@ -88,17 +88,7 @@ const Principal = () => {
           );
         });
 
-        const transacoesDoMeDashBoard = response.data.filter(transacao => {
-          const partesData = transacao.creationDate.split('/');
-          const dataDaTransacao = converterStringParaData(transacao.creationDate);
-
-          return (
-            dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
-            dataDaTransacao.getMonth() === dataAtual.getMonth()
-
-          );
-        });
-        setTransactionDashboard(transacoesDoMeDashBoard);
+        setTransactionDashboard(transacoesDoMesAtual);
 
         transacoesDoMesAtual.sort((a, b) => {
           const dataA = converterStringParaData(a.creationDate)
@@ -172,7 +162,7 @@ const Principal = () => {
 
   const adicionarTransacao = (novaTransacao) => {
     setTransaction((prevTransaction) => [...prevTransaction, novaTransacao]);
-
+    setTransactionDashboard((prevTransaction) => [...prevTransaction, novaTransacao])
   };
 
   const atualizarTransacao = (novaTransacao) => {
@@ -290,6 +280,9 @@ const Principal = () => {
   const removerTransacao = (transacaoId) => {
     setTransaction((prevTransactions) =>
       prevTransactions.filter((transacao) => transacao.id !== transacaoId)
+    );
+    setTransactionDashboard((prevTransactions) =>
+    prevTransactions.filter((transacao) => transacao.id !== transacaoId)
     );
   };
 

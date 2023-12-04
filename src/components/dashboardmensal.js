@@ -19,12 +19,27 @@ const labelStyle = {
 
 const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
 
-  const total = gastosMensais.reduce((acc, gasto) => acc + gasto.valor, 0);
+
+  const dataAtual = new Date();
+  const transacoesDoMeDashBoard = gastosMensais.filter(transacao => {
+    const partesData = transacao.creationDate.split('/');
+    const dataDaTransacao = converterStringParaData(transacao.creationDate);
+
+    return (
+      dataDaTransacao.getFullYear() === dataAtual.getFullYear() &&
+      dataDaTransacao.getMonth() === dataAtual.getMonth()
+
+    );
+  });
+
+
+
+  const total = transacoesDoMeDashBoard.reduce((acc, gasto) => acc + gasto.valor, 0);
 
   const formatChartData = () => {
     const consolidatedData = {};
 
-    gastosMensais.forEach((gasto) => {
+    transacoesDoMeDashBoard.forEach((gasto) => {
       const category = categories && categories.find((c) => c.id === gasto.idCategory);
 
       if (category) {
@@ -50,7 +65,7 @@ const DashBoardGastosMensais = ({ gastosMensais, categories }) => {
       <Paper elevation={10} style={paperStyle}>
         <h2>Maiores gastos do mês atual</h2>
         <Grid container justifyContent="center" alignItems="center">
-          {gastosMensais.length > 0 ? (
+          {transacoesDoMeDashBoard.length > 0 ? (
             <>
               <div style={labelStyle}>
                 <Typography variant="body2"></Typography>
