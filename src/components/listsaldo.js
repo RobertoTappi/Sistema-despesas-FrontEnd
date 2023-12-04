@@ -45,26 +45,8 @@ const ListSaldo = ({ accounts, transacoes }) => {
 
         setSaldo(receitaTotal - despesaTotal);
 
-    }, []);
+    }, [transacoes]);
 
-
-    // const atualizarNavegador = (accountId, saldoNovo) => {
-    //     const saldoAlterado = saldo.find(saldo => account.id === accountId)
-    //     saldoAlterado.saldo = saldoNovo
-
-    //     if (saldoAlterado) {
-    //         setAccounts((prevSaldo) => {
-    //             const index = prevSaldo.findIndex((saldo) => saldo.id === accountId);
-
-    //             if (index !== -1) {
-    //                 const newCategory = [...prevCategorys];
-    //                 newCategory[index] = categoriaEncontrada;
-    //                 return newCategory;
-    //             }
-    //             return prevCategorys;
-    //         });
-    //     }
-    // }
 
     const handleSaldoStyle = () => {
         return saldo < 0 ? { color: 'red' } : { color: 'green' };

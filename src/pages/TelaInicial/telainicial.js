@@ -126,11 +126,11 @@ const Principal = () => {
       }
     }
 
-    await obterDadosUser();
-    await obterCategory();
-    await obterAccounts();
-    await obterSaldoContas();
-    await obterTransacoes();
+     obterDadosUser();
+     obterCategory();
+     obterAccounts();
+     obterSaldoContas();
+     obterTransacoes();
   }, []);
 
   useEffect(()=>{

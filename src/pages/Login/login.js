@@ -105,10 +105,10 @@ const Login = () => {
         }
     }
 
-    const handleLogin = () => {
+     const handleLogin = async () => {
 
         if (validarFormulario()) {
-            logar()
+             await logar()
         } else {
             notify("Preencha corretamente email/senha", true)
         }
