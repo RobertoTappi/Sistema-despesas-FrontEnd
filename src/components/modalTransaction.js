@@ -180,8 +180,8 @@ const ModalTransaction = ({ style,tipo, accounts, onAdicionarTransacao, category
             setErrorValor(false)
             setMsgAjudaAccount('')
             setErrorAccount(false)
-            setMsgAjudaCategoria("")
-            setErrorCategoria(false)
+            // setMsgAjudaCategoria("")
+            // setErrorCategoria(false)
             return true
         }
     }

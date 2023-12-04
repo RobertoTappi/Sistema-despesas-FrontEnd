@@ -147,24 +147,6 @@ const Principal = () => {
   }
   const isPagaTransacao = (transacaoId) => {
     const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
-    const data = {
-      idTransaction: Transacao.id,
-      idUser: idUser,
-      valor: Transacao.valor,
-      idCategory: Transacao.idCategory,
-      descricao: Transacao.descricao,
-      idAccount: Transacao.idAccount,
-      isPaga: true,
-      dataTransacao: Transacao.creationDate,
-      tipoTransacao: Transacao.type,
-      account: {
-        id: Transacao.idAccount,
-      }
-    }
-
-    const isPagaTransacao = (transacaoId) => {
-
-      const Transacao = transactionData && transactionData.find((transacao) => transacao.id === transacaoId);
       const data = {
         idTransaction: Transacao.id,
         idUser: idUser,
@@ -179,6 +161,7 @@ const Principal = () => {
           id: Transacao.idAccount,
         }
       }
+
 
 
       try {
@@ -206,7 +189,6 @@ const Principal = () => {
       } catch (error) {
         console.error('Erro ao buscar dados: accounts', error);
       }
-    }
   }
   
   const removerTransacao = (transacaoId) => {
